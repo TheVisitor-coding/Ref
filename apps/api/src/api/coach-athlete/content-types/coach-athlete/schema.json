@@ -1,0 +1,74 @@
+{
+  "kind": "collectionType",
+  "collectionName": "coach_athletes",
+  "info": {
+    "singularName": "coach-athlete",
+    "pluralName": "coach-athletes",
+    "displayName": "Coach_athlete"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "coach": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "coached_athletes",
+      "required": true
+    },
+    "athlete": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "athlete_relations",
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "default": "pending",
+      "enum": [
+        "pending",
+        "active",
+        "archived",
+        "blocked"
+      ]
+    },
+    "invitation_email": {
+      "type": "email",
+      "required": true
+    },
+    "invitation_token": {
+      "type": "string",
+      "maxLength": 64,
+      "required": false
+    },
+    "invitation_expires_at": {
+      "type": "datetime",
+      "required": false
+    },
+    "invitation_attempts": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 3
+    },
+    "invited_at": {
+      "type": "datetime",
+      "required": true
+    },
+    "joined_at": {
+      "type": "datetime",
+      "required": false
+    },
+    "archived_at": {
+      "type": "datetime",
+      "required": false
+    },
+    "notes": {
+      "type": "text",
+      "required": false
+    }
+  }
+}
