@@ -389,13 +389,11 @@ export interface ApiCoachAthleteCoachAthlete
     athlete: Schema.Attribute.Relation<
       'manyToOne',
       'plugin::users-permissions.user'
-    > &
-      Schema.Attribute.Required;
+    >;
     coach: Schema.Attribute.Relation<
       'manyToOne',
       'plugin::users-permissions.user'
-    > &
-      Schema.Attribute.Required;
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -428,6 +426,271 @@ export interface ApiCoachAthleteCoachAthlete
       ['pending', 'active', 'archived', 'blocked']
     > &
       Schema.Attribute.DefaultTo<'pending'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiConversationParticipantConversationParticipant
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'conversation_participants';
+  info: {
+    displayName: 'Conversation_participant';
+    pluralName: 'conversation-participants';
+    singularName: 'conversation-participant';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    conversation: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::conversation.conversation'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    joined_at: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    last_read_at: Schema.Attribute.DateTime;
+    left_at: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::conversation-participant.conversation-participant'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    role: Schema.Attribute.Enumeration<['admin', 'member']>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
+export interface ApiConversationConversation
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'conversations';
+  info: {
+    displayName: 'Conversation';
+    pluralName: 'conversations';
+    singularName: 'conversation';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    coach_id: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    conversation_participants: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::conversation-participant.conversation-participant'
+    >;
+    conversation_type: Schema.Attribute.Enumeration<['individual', 'group']>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_archived: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    last_message_at: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::conversation.conversation'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPlanningConflictPlanningConflict
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'planning_conflicts';
+  info: {
+    displayName: 'Planning_conflict';
+    pluralName: 'planning-conflicts';
+    singularName: 'planning-conflict';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    conflict_type: Schema.Attribute.Enumeration<
+      ['time_overlap', 'double_booking', 'resource_conflict']
+    > &
+      Schema.Attribute.Required;
+    conflicting_session: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::session.session'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::planning-conflict.planning-conflict'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    resolution_action: Schema.Attribute.Enumeration<
+      ['moved', 'cancelled', 'kept_conflict']
+    >;
+    resolution_status: Schema.Attribute.Enumeration<
+      ['pending', 'accepted', 'resolved', 'ignored']
+    > &
+      Schema.Attribute.DefaultTo<'pending'>;
+    resolved_at: Schema.Attribute.DateTime;
+    resolved_by: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    session: Schema.Attribute.Relation<'manyToOne', 'api::session.session'>;
+    severity: Schema.Attribute.Enumeration<['blocking', 'warning', 'info']> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSessionSession extends Struct.CollectionTypeSchema {
+  collectionName: 'sessions';
+  info: {
+    displayName: 'Session';
+    pluralName: 'sessions';
+    singularName: 'session';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    actual_duration_minutes: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    athlete: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    athlete_feedback: Schema.Attribute.Text;
+    athlete_rating: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 5;
+          min: 1;
+        },
+        number
+      >;
+    base_session: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::planning-conflict.planning-conflict'
+    >;
+    child_sessions: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::session.session'
+    >;
+    coach: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    coach_rating: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 5;
+          min: 1;
+        },
+        number
+      >;
+    conflict_session: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::planning-conflict.planning-conflict'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    difficulty_level: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 1;
+        },
+        number
+      >;
+    end_datetime: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    equipment_needed: Schema.Attribute.Text;
+    expected_duration_minutes: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    intensity_level: Schema.Attribute.Enumeration<
+      ['low', 'medium', 'high', 'very_high']
+    >;
+    is_recurring: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    is_template: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::session.session'
+    > &
+      Schema.Attribute.Private;
+    location: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    objectives: Schema.Attribute.Text;
+    parent_session: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::session.session'
+    >;
+    preparation_notes: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    recurring_rule: Schema.Attribute.JSON;
+    requires_presence: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    session_notes: Schema.Attribute.Text;
+    session_type: Schema.Attribute.Enumeration<
+      ['training', 'consultation', 'personal', 'reminder', 'template']
+    > &
+      Schema.Attribute.DefaultTo<'training'>;
+    start_datetime: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    status: Schema.Attribute.Enumeration<
+      [
+        'draft',
+        'scheduled',
+        'confirmed',
+        'in_progress',
+        'completed',
+        'cancelled',
+        'conflict_pending',
+      ]
+    > &
+      Schema.Attribute.DefaultTo<'draft'>;
+    template_name: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -901,9 +1164,17 @@ export interface PluginUsersPermissionsUser
       'oneToMany',
       'api::coach-athlete.coach-athlete'
     >;
-    companyName: Schema.Attribute.String;
+    company_name: Schema.Attribute.String;
     confirmationToken: Schema.Attribute.String & Schema.Attribute.Private;
     confirmed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    conversation_participations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::conversation-participant.conversation-participant'
+    >;
+    conversations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::conversation.conversation'
+    >;
     country: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 2;
@@ -918,14 +1189,14 @@ export interface PluginUsersPermissionsUser
         minLength: 6;
       }>;
     email_verified_at: Schema.Attribute.DateTime;
-    firstName: Schema.Attribute.String &
+    first_name: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 50;
       }>;
     language: Schema.Attribute.Enumeration<['fr', 'en']> &
       Schema.Attribute.DefaultTo<'fr'>;
     last_login_at: Schema.Attribute.DateTime;
-    lastName: Schema.Attribute.String &
+    last_name: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 100;
       }>;
@@ -950,6 +1221,14 @@ export interface PluginUsersPermissionsUser
     role: Schema.Attribute.Relation<
       'manyToOne',
       'plugin::users-permissions.role'
+    >;
+    sessions_as_athlete: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::session.session'
+    >;
+    sessions_as_coach: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::session.session'
     >;
     statusUser: Schema.Attribute.Enumeration<
       ['active', 'pending', 'inactive', 'suspended']
@@ -978,6 +1257,10 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::coach-athlete.coach-athlete': ApiCoachAthleteCoachAthlete;
+      'api::conversation-participant.conversation-participant': ApiConversationParticipantConversationParticipant;
+      'api::conversation.conversation': ApiConversationConversation;
+      'api::planning-conflict.planning-conflict': ApiPlanningConflictPlanningConflict;
+      'api::session.session': ApiSessionSession;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

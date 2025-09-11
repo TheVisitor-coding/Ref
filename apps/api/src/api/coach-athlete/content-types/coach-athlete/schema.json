@@ -15,15 +15,13 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "coached_athletes",
-      "required": true
+      "inversedBy": "coached_athletes"
     },
     "athlete": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "athlete_relations",
-      "required": true
+      "inversedBy": "athlete_relations"
     },
     "status": {
       "type": "enumeration",

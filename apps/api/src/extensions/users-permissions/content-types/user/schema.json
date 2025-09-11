@@ -66,15 +66,15 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "firstName": {
+    "first_name": {
       "type": "string",
       "maxLength": 50
     },
-    "lastName": {
+    "last_name": {
       "type": "string",
       "maxLength": 100
     },
-    "companyName": {
+    "company_name": {
       "type": "string"
     },
     "phone": {
@@ -134,6 +134,30 @@
       "relation": "oneToMany",
       "target": "api::coach-athlete.coach-athlete",
       "mappedBy": "athlete"
+    },
+    "sessions_as_coach": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::session.session",
+      "mappedBy": "coach"
+    },
+    "sessions_as_athlete": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::session.session",
+      "mappedBy": "athlete"
+    },
+    "conversations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::conversation.conversation",
+      "mappedBy": "coach_id"
+    },
+    "conversation_participations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::conversation-participant.conversation-participant",
+      "mappedBy": "user"
     }
   }
 }
