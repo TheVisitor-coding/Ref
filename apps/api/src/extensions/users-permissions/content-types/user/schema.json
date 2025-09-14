@@ -158,6 +158,36 @@
       "relation": "oneToMany",
       "target": "api::conversation-participant.conversation-participant",
       "mappedBy": "user"
+    },
+    "messages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::message.message",
+      "mappedBy": "sender"
+    },
+    "platform_subscriptions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::platform-subscription.platform-subscription",
+      "mappedBy": "coach"
+    },
+    "pricing_formulas": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::pricing-formula.pricing-formula",
+      "mappedBy": "coach"
+    },
+    "athlete_subscriptions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::athlete-subscription.athlete-subscription",
+      "mappedBy": "athlete"
+    },
+    "notifications": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::notification.notification",
+      "mappedBy": "user"
     }
   }
 }

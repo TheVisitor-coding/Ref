@@ -1,0 +1,78 @@
+{
+  "kind": "collectionType",
+  "collectionName": "athlete_invoices",
+  "info": {
+    "singularName": "athlete-invoice",
+    "pluralName": "athlete-invoices",
+    "displayName": "Athlete_invoice"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "athlete_subscription": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::athlete-subscription.athlete-subscription",
+      "inversedBy": "athlete_invoices"
+    },
+    "invoice_type": {
+      "type": "enumeration",
+      "enum": [
+        "invoice",
+        "estimate",
+        "credit_note"
+      ]
+    },
+    "invoice_number": {
+      "type": "string",
+      "maxLength": 50,
+      "required": true,
+      "unique": true
+    },
+    "amount": {
+      "type": "biginteger",
+      "required": true
+    },
+    "currency": {
+      "type": "string",
+      "default": "EUR",
+      "maxLength": 3
+    },
+    "statusInvoice": {
+      "type": "enumeration",
+      "enum": [
+        "draft",
+        "sent",
+        "paid",
+        "overdue",
+        "cancelled"
+      ]
+    },
+    "due_date": {
+      "type": "date",
+      "required": true
+    },
+    "issued_date": {
+      "type": "date"
+    },
+    "paid_date": {
+      "type": "date"
+    },
+    "description": {
+      "type": "text"
+    },
+    "tax_rate": {
+      "type": "decimal",
+      "default": 0.2
+    },
+    "tax_amount": {
+      "type": "biginteger",
+      "default": "0"
+    },
+    "metadata": {
+      "type": "json"
+    }
+  }
+}

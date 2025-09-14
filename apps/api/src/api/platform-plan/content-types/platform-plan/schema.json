@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "platform_plans",
+  "info": {
+    "singularName": "platform-plan",
+    "pluralName": "platform-plans",
+    "displayName": "Platform_plan"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "price_monthly": {
+      "type": "biginteger",
+      "required": true
+    },
+    "price_yearly": {
+      "type": "biginteger",
+      "required": true
+    },
+    "features": {
+      "type": "json",
+      "required": true
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "platform_subscriptions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::platform-subscription.platform-subscription",
+      "mappedBy": "platform_plan"
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pricing_formulas",
+  "info": {
+    "singularName": "pricing-formula",
+    "pluralName": "pricing-formulas",
+    "displayName": "Pricing_formula"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "coach": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "pricing_formulas"
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "formula_type": {
+      "type": "enumeration",
+      "enum": [
+        "per_session",
+        "package",
+        "subscription"
+      ]
+    },
+    "price": {
+      "type": "biginteger",
+      "required": true
+    },
+    "currency": {
+      "type": "string",
+      "default": "EUR",
+      "maxLength": 3
+    },
+    "session_count": {
+      "type": "integer"
+    },
+    "duration_days": {
+      "type": "integer"
+    },
+    "is_template": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "athlete_subscriptions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::athlete-subscription.athlete-subscription",
+      "mappedBy": "pricing_formula"
+    }
+  }
+}

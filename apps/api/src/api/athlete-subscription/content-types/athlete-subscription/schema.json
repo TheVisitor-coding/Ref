@@ -1,0 +1,87 @@
+{
+  "kind": "collectionType",
+  "collectionName": "athlete_subscriptions",
+  "info": {
+    "singularName": "athlete-subscription",
+    "pluralName": "athlete-subscriptions",
+    "displayName": "Athlete_subscription"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "athlete": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "athlete_subscriptions"
+    },
+    "pricing_formula": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::pricing-formula.pricing-formula",
+      "inversedBy": "athlete_subscriptions"
+    },
+    "snapshot_name": {
+      "type": "string",
+      "required": true
+    },
+    "snapshot_type": {
+      "type": "string",
+      "maxLength": 50,
+      "required": true
+    },
+    "snapshot_price": {
+      "type": "biginteger"
+    },
+    "snapshot_session_count": {
+      "type": "integer"
+    },
+    "sessions_consumed": {
+      "type": "integer",
+      "default": 0
+    },
+    "sessions_remaining": {
+      "type": "integer"
+    },
+    "start_date": {
+      "type": "date",
+      "required": true
+    },
+    "end_date": {
+      "type": "date"
+    },
+    "auto_renew": {
+      "type": "boolean",
+      "default": false
+    },
+    "statusSubscription": {
+      "type": "enumeration",
+      "enum": [
+        "active",
+        "paused",
+        "expired",
+        "cancelled"
+      ]
+    },
+    "cancelled_at": {
+      "type": "datetime"
+    },
+    "cancellation_reason": {
+      "type": "text"
+    },
+    "athlete_invoices": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::athlete-invoice.athlete-invoice",
+      "mappedBy": "athlete_subscription"
+    },
+    "payments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::payment.payment",
+      "mappedBy": "athlete_subscription"
+    }
+  }
+}

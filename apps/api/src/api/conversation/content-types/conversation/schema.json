@@ -39,6 +39,12 @@
       "relation": "oneToMany",
       "target": "api::conversation-participant.conversation-participant",
       "mappedBy": "conversation"
+    },
+    "messages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::message.message",
+      "mappedBy": "conversation"
     }
   }
 }
