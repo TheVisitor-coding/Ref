@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "conversations",
+  "info": {
+    "singularName": "conversation",
+    "pluralName": "conversations",
+    "displayName": "Conversation"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "coach_id": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "conversations"
+    },
+    "conversation_type": {
+      "type": "enumeration",
+      "enum": [
+        "individual",
+        "group"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "last_message_at": {
+      "type": "datetime"
+    },
+    "is_archived": {
+      "type": "boolean",
+      "default": false
+    },
+    "conversation_participants": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::conversation-participant.conversation-participant",
+      "mappedBy": "conversation"
+    },
+    "messages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::message.message",
+      "mappedBy": "conversation"
+    }
+  }
+}

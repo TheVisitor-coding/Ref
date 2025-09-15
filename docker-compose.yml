@@ -64,6 +64,7 @@ services:
       
       # Strapi Security
       ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       JWT_SECRET: ${ENCRYPTION_KEY}
       API_TOKEN_SALT: ${API_TOKEN_SALT}
       APP_KEYS: ${APP_KEYS}

@@ -1,0 +1,57 @@
+{
+  "kind": "collectionType",
+  "collectionName": "planning_conflicts",
+  "info": {
+    "singularName": "planning-conflict",
+    "pluralName": "planning-conflicts",
+    "displayName": "Planning_conflict"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "session": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::session.session",
+      "inversedBy": "base_session"
+    },
+    "conflicting_session": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::session.session",
+      "inversedBy": "conflict_session"
+    },
+    "conflict_type": {
+      "type": "enumeration",
+      "enum": ["time_overlap", "double_booking", "resource_conflict"],
+      "required": true
+    },
+    "severity": {
+      "type": "enumeration",
+      "enum": ["blocking", "warning", "info"],
+      "required": true
+    },
+    "resolution_status": {
+      "type": "enumeration",
+      "enum": ["pending", "accepted", "resolved", "ignored"],
+      "default": "pending"
+    },
+    "resolved_by": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": false
+    },
+    "resolved_at": {
+      "type": "datetime",
+      "required": false
+    },
+    "resolution_action": {
+      "type": "enumeration",
+      "enum": ["moved", "cancelled", "kept_conflict"],
+      "required": false
+    }
+  }
+}
