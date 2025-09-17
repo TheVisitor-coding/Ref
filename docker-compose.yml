@@ -106,8 +106,8 @@ services:
       # Next.js Configuration
       NODE_ENV: ${NODE_ENV:-development}
       NEXT_PUBLIC_FRONTEND_URL: ${NEXT_PUBLIC_FRONTEND_URL:-http://localhost:3000}
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:1337}
-      NEXT_PUBLIC_STRAPI_URL: ${NEXT_PUBLIC_STRAPI_URL:-http://localhost:1337}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://backend:1337}
+      NEXT_PUBLIC_STRAPI_URL: ${NEXT_PUBLIC_STRAPI_URL:-http://backend:1337}
       
       # Analytics
       NEXT_PUBLIC_GOOGLE_ANALYTICS: ${NEXT_PUBLIC_GOOGLE_ANALYTICS:-}
