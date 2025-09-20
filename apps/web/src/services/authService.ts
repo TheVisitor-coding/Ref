@@ -16,7 +16,7 @@ export class AuthError extends Error {
  * Service Register
  */
 export const signupUser = async (userData: SignupRequestType): Promise<AuthResponseType> => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/local/register`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register-coach`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
