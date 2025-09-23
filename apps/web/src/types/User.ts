@@ -14,7 +14,6 @@ export type User = {
 
 export type AuthStoreType = {
     user: User | null;
-    token: string | null;
     isAuthenticated: boolean;
     setUser: (user: User) => void;
     setToken: (token: string) => void;

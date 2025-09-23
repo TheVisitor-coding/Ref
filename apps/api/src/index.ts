@@ -15,7 +15,6 @@ export default {
         path: '/api/auth/register-coach',
         handler: async (ctx) => {
           const { username, email, password } = ctx.request.body;
-          console.log("Registering user:", { username, email });
 
           if (!username || !email || !password) {
             return ctx.badRequest('Username, email and password are required');
@@ -45,9 +44,22 @@ export default {
               provider: 'local'
             }
           });
+         
+          const userWithRole = await strapi.query('plugin::users-permissions.user').findOne({
+            where: { id: user.id },
+            populate: {
+              role: { populate: { permissions: true } },
+            },
+          })
 
-          const jwt = strapi.plugin('users-permissions').service('jwt').issue({ id: user.id });
-          const sanitizedUser = await strapi.contentAPI.sanitize.output(user, strapi.getModel('plugin::users-permissions.user'));
+          const jwt = strapi.plugin('users-permissions').service('jwt').issue({ 
+            role: 'coach',
+            id: user.id,
+            permissions: userWithRole.role?.permissions?.map(p => p.action) || []
+           });
+
+
+          const sanitizedUser = await strapi.contentAPI.sanitize.output(userWithRole, strapi.getModel('plugin::users-permissions.user'));
 
           ctx.send({
             jwt,
