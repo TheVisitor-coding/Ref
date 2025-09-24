@@ -1,12 +1,9 @@
-'use client'
 
-import usePermissions from "@/hooks/usePermissions";
-
-export default function Home() {
+export default function Dashboard() {
 
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <h1>Hello World</h1>
-    </div>
+    <>
+      {/* <h1 className="text-2xl font-semibold text-primary mb-4">Dashboard</h1> */}
+    </>
   );
 }
