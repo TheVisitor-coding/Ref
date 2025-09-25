@@ -4,12 +4,18 @@
   /* Color Variables */
   --color-primary: #333;
   --color-secondary: #666666;
-  --color-accent: ;
+  --color-accent: #FF5B02;
+  --color-grey: #757575;
+  --color-primary-blue: #0655FF;
   --color-background: #FCF8F6;
   --color-background-light: #F2EEEC;
+  --color-background-lighter: #F4F7FF;
   --color-white: #FFFFFF;
+  --color-white-100: #FAFAFA;
   --color-black: #000000;
 
   /* Shadow Variables */
   --shadow-container: 0 0 0 1px rgba(31, 34, 37, 0.09), 0 24px 48px 0 rgba(0, 0, 0, 0.04), 0 4px 16px 0 rgba(0, 0, 0, 0.02);
+  --shadow-button: 0 8px 16px 0 rgba(6, 85, 255, 0.20);
+  --shadow-authContainer: 0 8px 16px 0 rgba(1, 48, 96, 0.04);
 }

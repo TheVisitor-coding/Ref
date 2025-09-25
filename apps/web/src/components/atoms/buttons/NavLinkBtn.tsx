@@ -2,14 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 function NavLinkButton({ children, isOpen, href, src, alt }: { children: React.ReactNode; isOpen: boolean; href: string; src: string; alt: string }) {
     const [isFocused, setIsFocused] = useState(false);
+    const pathname = usePathname()
 
-    useEffect(() => {
-        setIsFocused(window.location.pathname === href);
-    }, [href]);
+    if (pathname === href && !isFocused) {
+        setIsFocused(true);
+    } else if (pathname !== href && isFocused) {
+        setIsFocused(false);
+    }
+
 
     return (
         <Link href={href} className={`group w-full px-3 py-2 flex gap-3 items-center rounded-lg hover:bg-background-light transition-colors ${isFocused ? 'bg-background-light' : ''}`}>
