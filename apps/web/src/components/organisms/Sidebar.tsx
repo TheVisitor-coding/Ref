@@ -8,7 +8,9 @@ function Sidebar() {
     const { isOpen, setIsOpen } = useSidebar()
 
     return (
-        <header className={`sticky top-0 flex flex-col gap-4 pt-6 h-full max-h-screen d-flex transition-[width] ${isOpen ? 'w-56' : 'w-11'}`}>
+        <header
+            className={`sticky top-0 flex flex-col gap-4 pt-6 h-full max-h-screen d-flex transition-[width] duration-300
+             ${isOpen ? 'w-56' : 'w-11'}`}>
             <Navbar isOpen={isOpen} setIsOpen={setIsOpen} />
 
             <BottomSidebar isOpen={isOpen} />
