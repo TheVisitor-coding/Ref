@@ -1,43 +1,10 @@
 'use client'
 
-import { useLayoutEffect, useRef } from "react";
-import { gsap } from "@/lib/gsap";
 import PreDashboardModal from "@/components/molecules/modal/preDashboardModal";
+import { useGradientAnimation } from "@/hooks/animations/useGradientAnimation";
 
 function PreDashboard() {
-    const backgroundRef = useRef<HTMLDivElement>(null);
-    const backgroundAccentRef = useRef<HTMLDivElement>(null);
-
-    useLayoutEffect(() => {
-        const background = backgroundRef.current;
-        const backgroundAccent = backgroundAccentRef.current;
-        if (!background || !backgroundAccent) return;
-
-        gsap.set(background, {
-            y: '-20%',
-            scale: 0,
-        })
-
-        gsap.to(background, {
-            y: '0%',
-            scale: 1,
-            duration: 2,
-            ease: 'power2.out',
-        })
-
-        gsap.set(backgroundAccent, {
-            y: '-20%',
-            scale: 0,
-        })
-
-        gsap.to(backgroundAccent, {
-            y: '0%',
-            scale: 1,
-            duration: 3,
-            ease: 'power2.out',
-        })
-
-    }, []);
+    const { backgroundRef, backgroundAccentRef } = useGradientAnimation();
 
     return (
         <div className="w-full h-full relative overflow-hidden">
@@ -46,12 +13,12 @@ function PreDashboard() {
             >
                 <div
                     ref={backgroundAccentRef}
-                    className="absolute top-[40%] w-full h-2/5 bg-accent rounded-[50%] blur-[250px]"
+                    className="absolute top-1/6 w-full h-2/5 bg-accent rounded-[50%] opacity-75 blur-[250px]"
                 />
 
                 <div
                     ref={backgroundRef}
-                    className="absolute -bottom-1/5 w-full h-3/5 bg-primary-blue rounded-[50%] blur-[150px]"
+                    className="absolute top-5/12 w-full h-3/5 bg-primary-blue rounded-[50%] opacity-75 blur-[150px]"
                 />
             </div>
 
