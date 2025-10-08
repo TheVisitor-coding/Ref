@@ -1,3 +1,5 @@
+'use client';
+
 import NavbarDivider from "@/components/atoms/divider/NavbarDivider";
 import FormEmailRegister from "@/components/molecules/auth/formEmailRegister";
 import AuthList from "@/components/molecules/list/AuthList";

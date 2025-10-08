@@ -13,6 +13,12 @@
   --color-white: #FFFFFF;
   --color-white-100: #FAFAFA;
   --color-black: #000000;
+  --color-grey-button: #D6D6D6;
+
+  --color-error-50: #FCE9E9;
+  --color-error: #DC2626;
+
+  --color-disabled: #999;
 
   /* Shadow Variables */
   --shadow-container: 0 0 0 1px rgba(31, 34, 37, 0.09), 0 24px 48px 0 rgba(0, 0, 0, 0.04), 0 4px 16px 0 rgba(0, 0, 0, 0.02);
