@@ -8,7 +8,7 @@ function IconBtn({
     className?: string;
 }) {
     return (
-        <button className={`w-fit p-2 bg-primary-blue rounded-lg outline-4 outline-primary-blue/20 cursor-pointer ${className}`}>
+        <button className={`w-fit p-2 cursor-pointer ${className}`}>
             <img src={src} alt={alt} width={18} height={18} />
         </button>
     );

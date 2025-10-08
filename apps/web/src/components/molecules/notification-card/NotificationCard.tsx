@@ -46,6 +46,8 @@ const NotificationCard = ({
             )}
 
             <Card>
+                <IconBtn src="/icons/Close.svg" alt="close" className="absolute top-1 right-1" />
+
                 <div className="p-4">
                     <h3 className="font-medium text-primary mb-2 text-lg">{title}</h3>
                     <p className="text-secondary text-sm">{description}</p>
@@ -59,7 +61,7 @@ const NotificationCard = ({
                             <p className='text-secondary'>Aujourd'hui 16h</p>
                         </span>
                     </div>
-                    <IconBtn src="/icons/arrow-up.svg" alt="arrow up" />
+                    <IconBtn src="/icons/arrow-up.svg" alt="arrow up" className=' bg-primary-blue rounded-lg outline-4 outline-primary-blue/20' />
                 </div>
             </Card>
         </div>
