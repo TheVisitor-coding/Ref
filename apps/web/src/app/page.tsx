@@ -1,9 +1,12 @@
+import PreDashboard from "@/components/organisms/dashboard/PreDashboard";
 
 export default function Dashboard() {
 
   return (
     <>
-      {/* <h1 className="text-2xl font-semibold text-primary mb-4">Dashboard</h1> */}
+      <div className="w-full h-full relative overflow-hidden">
+        <PreDashboard />
+      </div>
     </>
   );
 }
