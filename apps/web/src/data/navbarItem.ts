@@ -15,6 +15,11 @@ export const navbarItems = [
         href: "/athletes"
     },
     {
+        title: "Modèles",
+        icon: "/icons/Folder.svg",
+        href: "/models"
+    },
+    {
         title: "Messagerie",
         icon: "/icons/Chat.svg",
         href: "/chat"
@@ -29,11 +34,6 @@ export const navbarItems = [
         icon: "/icons/Clipboard.svg",
         href: "/tasks"
     },
-    {
-        title: "Ressources",
-        icon: "/icons/Folder.svg",
-        href: "/resources"
-    }
 ] as {
     title: string;
     icon: string;
