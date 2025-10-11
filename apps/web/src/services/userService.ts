@@ -17,12 +17,14 @@ export const getUserInfo = async (jwtToken: string): Promise<User | null> => {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch user info: ${response.statusText}`);
+      console.warn("Failed to fetch user info, status:", response.status);
+      return null;
     }
     
     const user = await response.json();
     return user as User;
   } catch (error) {
-    throw new Error("Failed to fetch user info", { cause: error });
+    console.error("Error fetching user info:", error);
+    return null;
   }
 };

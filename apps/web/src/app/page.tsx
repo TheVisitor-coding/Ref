@@ -1,3 +1,4 @@
+import { updateLastPreDashboardViewAction } from "@/actions/user-actions";
 import DashboardClient from "@/components/organisms/dashboard/DashboardClient";
 import { getTokenFromCookie } from "@/services/authService";
 import { getUserInfo } from "@/services/userService";
@@ -25,6 +26,7 @@ export default async function Dashboard() {
       <DashboardClient
         initialShowPreDashboard={shouldShowPreDashboard}
         userInfo={userInfo}
+        updateLastPreDashboardViewAction={updateLastPreDashboardViewAction}
       />
     </>
   );
