@@ -7,7 +7,7 @@ function PreDashboard({ onClose }: { onClose: () => void }) {
     const { backgroundRef, backgroundAccentRef } = useGradientAnimation();
 
     return (
-        <div className="w-full h-full relative overflow-hidden">
+        <div className="w-full h-full relative overflow-hidden rounded-2xl">
             <div
                 className="absolute right-0 w-full h-full -bottom-2/5"
             >

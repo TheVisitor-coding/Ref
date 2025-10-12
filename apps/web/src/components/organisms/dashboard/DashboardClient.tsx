@@ -4,6 +4,7 @@ import { User } from "@/types/User";
 import { useState, useTransition } from "react";
 import PreDashboard from "./PreDashboard";
 import { updateLastPreDashboardViewAction } from "@/actions/user-actions";
+import MainDashboard from "./MainDashboard";
 
 type UpdateLastPreDashboardViewResult = typeof updateLastPreDashboardViewAction;
 
@@ -39,14 +40,13 @@ function DashboardClient({
     };
 
     return (
-        <div className="w-full h-full relative overflow-hidden">
+        <div className={`w-full h-full relative rounded-2xl ${showPreDashboard ? 'bg-white shadow-container overflow-hidden' : ''}`}>
             {showPreDashboard ? (
                 <PreDashboard
                     onClose={handleDashboardClose}
                 />
             ) : (
-                // <MainDashboard />
-                <></>
+                <MainDashboard />
             )}
         </div>
     );
