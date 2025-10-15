@@ -1,5 +1,4 @@
 import { AuthResponseType, SignupRequestType } from "@/types/Auth";
-import { cookies } from "next/headers";
 
 export class AuthError extends Error {
     constructor(
@@ -60,13 +59,4 @@ export const loginUser = async (credentials: { identifier: string; password: str
     }
 
     return response.json();
-}
-
-/**
- * Service Retrieve Token JWT from Cookie
- */
-export const getTokenFromCookie = async (): Promise<string | null> => {
-    const cookieStore = await cookies();
-    const authCookie = cookieStore.get('auth-token')?.value;
-    return authCookie || null;
 }

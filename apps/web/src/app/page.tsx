@@ -1,6 +1,6 @@
 import { updateLastPreDashboardViewAction } from "@/actions/user-actions";
 import DashboardClient from "@/components/organisms/dashboard/DashboardClient";
-import { getTokenFromCookie } from "@/services/authService";
+import { getTokenFromCookie } from "@/actions/auth-actions";
 import { getUserInfo } from "@/services/userService";
 import { isToday } from "@/utils/date";
 

@@ -17,7 +17,7 @@ export const getUserInfo = async (jwtToken: string): Promise<User | null> => {
     });
 
     if (!response.ok) {
-      console.warn("Failed to fetch user info, status:", response.status);
+      console.warn("Failed to fetch user info, status:", response.status, response.statusText);
       return null;
     }
     

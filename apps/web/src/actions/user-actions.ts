@@ -1,6 +1,6 @@
 'use server'
 
-import { getTokenFromCookie } from "@/services/authService";
+import { getTokenFromCookie } from "@/actions/auth-actions";
 
 type UpdateLastPreDashboardViewResult =
   | { success: true }
