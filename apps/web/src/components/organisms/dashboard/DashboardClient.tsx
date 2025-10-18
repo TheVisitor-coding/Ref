@@ -40,7 +40,7 @@ function DashboardClient({
     };
 
     return (
-        <div className={`w-full h-full relative rounded-2xl ${showPreDashboard ? 'bg-white shadow-container overflow-hidden' : ''}`}>
+        <div className={`w-full h-full rounded-2xl ${showPreDashboard ? 'bg-white shadow-container overflow-hidden' : ''}`}>
             {showPreDashboard ? (
                 <PreDashboard
                     onClose={handleDashboardClose}

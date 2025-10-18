@@ -15,12 +15,10 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <div className="flex gap-6 pb-6 px-3 h-dvh min-h-fit">
+        <div className="flex gap-6 pb-6 px-3 h-dvh">
             <Sidebar />
-            <main className="pt-6 pr-3 w-full h-full min-h-fit overflow-hidden">
-                <div className="w-full h-full overflow-y-auto overflow-x-hidden">
-                    {children}
-                </div>
+            <main className="pt-6 pr-3 w-full h-full overflow-y-auto">
+                {children}
             </main>
         </div>
     );

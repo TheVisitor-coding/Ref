@@ -7,7 +7,7 @@ import { JSX } from "react";
 
 function MainDashboard(): JSX.Element {
     return (
-        <div className="w-full h-full overflow-y-auto overflow-x-hidden px-1">
+        <>
             <div className="w-full flex gap-6 mb-6">
                 <ShortcutCard title="Gérer mes suivis" description="Consultez le statut de vos sportifs" src="/icons/shortcutIconStatus.svg" />
                 <ShortcutCard title="Programmer une séance" description="Créez rapidement une séance" src="/icons/shortcutCreateSession.svg" />
@@ -25,14 +25,14 @@ function MainDashboard(): JSX.Element {
                 </div>
             </div>
 
-            <div className="w-full flex flex-col gap-6 pb-4">
+            <div className="w-full flex flex-col gap-6">
                 <h2 className="text-primary text-lg font-semibold">Dernières pages consultées</h2>
 
-                <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1">
+                <div className="flex gap-4 overflow-x-auto pb-2">
                     <LastOpenedPageCard iconSrc="/icons/Wallet.svg" label="Portefeuille" />
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
