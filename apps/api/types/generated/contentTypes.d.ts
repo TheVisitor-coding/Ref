@@ -500,6 +500,13 @@ export interface ApiAuditLogAuditLog extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    action: Schema.Attribute.Enumeration<
+      ['create', 'update', 'delete', 'view']
+    >;
+    affected_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -509,10 +516,18 @@ export interface ApiAuditLogAuditLog extends Struct.CollectionTypeSchema {
       'api::audit-log.audit-log'
     > &
       Schema.Attribute.Private;
+    new_values: Schema.Attribute.JSON;
+    old_values: Schema.Attribute.JSON;
     publishedAt: Schema.Attribute.DateTime;
+    record_id: Schema.Attribute.String & Schema.Attribute.Required;
+    table_name: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
   };
 }
 
@@ -1636,6 +1651,14 @@ export interface PluginUsersPermissionsUser
     athlete_subscriptions: Schema.Attribute.Relation<
       'oneToMany',
       'api::athlete-subscription.athlete-subscription'
+    >;
+    audit_logs: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::audit-log.audit-log'
+    >;
+    audit_logs_affected: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::audit-log.audit-log'
     >;
     avatar: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;

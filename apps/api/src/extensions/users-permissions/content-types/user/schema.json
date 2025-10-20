@@ -191,6 +191,18 @@
       "relation": "oneToMany",
       "target": "api::notification.notification",
       "mappedBy": "user"
+    },
+    "audit_logs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::audit-log.audit-log",
+      "mappedBy": "user"
+    },
+    "audit_logs_affected": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::audit-log.audit-log",
+      "mappedBy": "affected_user"
     }
   }
 }

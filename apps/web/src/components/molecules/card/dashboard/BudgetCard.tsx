@@ -12,7 +12,7 @@ function BudgetCard() {
 
             <BudgetChart />
 
-            <div className="w-full flex flex-col gap-6 p-6 bg-background-grey-light rounded-xl">
+            <div className="w-full flex flex-col gap-6 p-6 bg-background-light rounded-xl">
                 <div className="w-full flex items-center justify-between">
                     <h4 className="text-primary font-medium">Revenu mensuel (Juin)</h4>
                     <div className="flex items-center gap-3">
