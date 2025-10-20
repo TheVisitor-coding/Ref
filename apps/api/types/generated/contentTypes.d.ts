@@ -521,6 +521,7 @@ export interface ApiAuditLogAuditLog extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     record_id: Schema.Attribute.String & Schema.Attribute.Required;
     table_name: Schema.Attribute.String & Schema.Attribute.Required;
+    timestamp: Schema.Attribute.DateTime & Schema.Attribute.DefaultTo<'now'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

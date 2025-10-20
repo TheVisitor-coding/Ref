@@ -45,6 +45,10 @@
     },
     "new_values": {
       "type": "json"
+    },
+    "timestamp": {
+      "type": "datetime",
+      "default": "now"
     }
   }
 }
