@@ -10,5 +10,45 @@
     "draftAndPublish": true
   },
   "pluginOptions": {},
-  "attributes": {}
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "audit_logs"
+    },
+    "affected_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "audit_logs_affected"
+    },
+    "table_name": {
+      "type": "string",
+      "required": true
+    },
+    "record_id": {
+      "type": "string",
+      "required": true
+    },
+    "action": {
+      "type": "enumeration",
+      "enum": [
+        "create",
+        "update",
+        "delete",
+        "view"
+      ]
+    },
+    "old_values": {
+      "type": "json"
+    },
+    "new_values": {
+      "type": "json"
+    },
+    "timestamp": {
+      "type": "datetime",
+      "default": "now"
+    }
+  }
 }

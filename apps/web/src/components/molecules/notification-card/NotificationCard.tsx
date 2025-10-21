@@ -45,7 +45,7 @@ const NotificationCard = ({
                 </Badge>
             )}
 
-            <Card>
+            <Card className='p-2 flex flex-col bg-white-100'>
                 <IconBtn src="/icons/Close.svg" alt="close" className="absolute top-1 right-1" />
 
                 <div className="p-4">

@@ -10,6 +10,7 @@ export type User = {
     language: string;
     country: string;
     statusUser: string;
+    lastPredashboardSeenAt?: string | null;
 };
 
 export type AuthStoreType = {

@@ -1,13 +1,14 @@
 'use client'
 
+import Button from "@/components/atoms/buttons/Button";
 import PreDashboardModal from "@/components/molecules/modal/preDashboardModal";
 import { useGradientAnimation } from "@/hooks/animations/useGradientAnimation";
 
-function PreDashboard() {
+function PreDashboard({ onClose }: { onClose: () => void }) {
     const { backgroundRef, backgroundAccentRef } = useGradientAnimation();
 
     return (
-        <div className="w-full h-full relative overflow-hidden">
+        <div className="w-full h-full relative overflow-hidden rounded-2xl">
             <div
                 className="absolute right-0 w-full h-full -bottom-2/5"
             >
@@ -24,9 +25,7 @@ function PreDashboard() {
 
             <div className="w-full h-full relative z-10 flex flex-col justify-between items-center px-10 pt-8">
                 <div className="w-full flex justify-end">
-                    <button className="cursor-pointer px-3 py-1 rounded-lg border-b-2 border-[1px] border-grey-button transition-all hover:-translate-y-0.5">
-                        Fermer
-                    </button>
+                    <Button onClick={onClose} label="Fermer" />
                 </div>
 
                 <PreDashboardModal />
