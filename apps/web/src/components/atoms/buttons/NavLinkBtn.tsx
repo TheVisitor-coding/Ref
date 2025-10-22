@@ -17,9 +17,9 @@ function NavLinkButton({ children, isOpen, href, src, alt }: { children: React.R
 
 
     return (
-        <Link href={href} className={`group w-full px-3 py-2 flex gap-3 items-center rounded-lg hover:bg-background-light transition-colors ${isFocused ? 'bg-background-light' : ''}`}>
+        <Link href={href} className={`group w-full px-3 py-2 flex gap-3 items-center rounded-lg hover:bg-background-grey-light transition-colors ${isFocused ? 'bg-background-grey-light' : ''}`}>
             <Image src={src} alt={alt} width={18} height={18} />
-            <p className={`${isOpen ? 'block' : 'hidden'} ${isFocused ? 'text-primary' : 'text-secondary'} text-sm leading-4 group-hover:text-primary group-hover:font-medium`}>
+            <p className={`${isOpen ? 'block' : 'hidden'} ${isFocused ? 'text-primary font-medium' : 'text-secondary'} text-sm leading-4 group-hover:text-primary group-hover:font-medium`}>
                 {children}
             </p>
         </Link>
