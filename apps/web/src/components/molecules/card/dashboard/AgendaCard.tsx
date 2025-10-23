@@ -1,6 +1,6 @@
-import Button from "@/components/atoms/buttons/Button";
 import Card from "../Card";
 import AgendaEventCard from "../event/AgendaEventCard";
+import SecondaryButton from "@/components/atoms/buttons/SecondaryButton";
 
 function AgendaCard() {
     const participants: { name: string; image: string }[] = [
@@ -12,7 +12,7 @@ function AgendaCard() {
         <Card className="py-6 pl-6 gap-6 flex flex-col bg-white border-[1px] border-grey-button w-full">
             <div className="w-full flex items-center justify-between pr-6">
                 <h2 className="text-primary text-lg font-semibold">Aujourd'hui</h2>
-                <Button onClick={() => { }} label="Ouvrir l'agenda" />
+                <SecondaryButton onClick={() => { }} label="Ouvrir l'agenda" />
             </div>
 
             <div className="w-full relative flex gap-4 overflow-x-auto">

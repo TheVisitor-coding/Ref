@@ -1,6 +1,6 @@
 'use client'
 
-import Button from "@/components/atoms/buttons/Button";
+import SecondaryButton from "@/components/atoms/buttons/SecondaryButton";
 import PreDashboardModal from "@/components/molecules/modal/preDashboardModal";
 import { useGradientAnimation } from "@/hooks/animations/useGradientAnimation";
 
@@ -25,7 +25,7 @@ function PreDashboard({ onClose }: { onClose: () => void }) {
 
             <div className="w-full h-full relative z-10 flex flex-col justify-between items-center px-10 pt-8">
                 <div className="w-full flex justify-end">
-                    <Button onClick={onClose} label="Fermer" />
+                    <SecondaryButton onClick={onClose} label="Fermer" />
                 </div>
 
                 <PreDashboardModal />

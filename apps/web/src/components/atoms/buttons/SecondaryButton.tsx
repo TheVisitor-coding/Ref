@@ -1,4 +1,4 @@
-function Button({ onClick, label }: { onClick: () => void, label?: string }) {
+function SecondaryButton({ onClick, label }: { onClick: () => void, label?: string }) {
     return (
         <button
             onClick={onClick}
@@ -9,4 +9,4 @@ function Button({ onClick, label }: { onClick: () => void, label?: string }) {
     );
 }
 
-export default Button;
+export default SecondaryButton;
