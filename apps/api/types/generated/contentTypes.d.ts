@@ -581,7 +581,7 @@ export interface ApiCoachAthleteCoachAthlete
       Schema.Attribute.Private;
     notes: Schema.Attribute.Text;
     publishedAt: Schema.Attribute.DateTime;
-    status: Schema.Attribute.Enumeration<
+    status_relation: Schema.Attribute.Enumeration<
       ['pending', 'active', 'archived', 'blocked']
     > &
       Schema.Attribute.DefaultTo<'pending'>;

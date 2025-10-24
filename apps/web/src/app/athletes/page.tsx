@@ -1,94 +1,14 @@
 import Breadcrumbs from "@/components/atoms/breadcrumb/breadcrumbs";
 import PrimaryButton from "@/components/atoms/buttons/PrimaryButton";
-import { Athlete, columns } from "@/components/molecules/table/athletes/Columns";
+import { columns } from "@/components/molecules/table/athletes/Columns";
 import DataTable from "@/components/molecules/table/athletes/DataTable";
 import DashboardLayout from "@/components/organisms/layouts/DashboardLayout";
+import { getAthletes } from "@/services/athleteService";
 import Image from "next/image";
 
 export default async function AthletesPage() {
-    const data: Athlete[] = [
-        {
-            avatar: '/users/profilePic.png',
-            name: 'John Doe',
-            email: 'john.doe@example.com',
-            phone: '+1 234 567 890',
-            tag: 'Premium',
-        },
-        {
-            avatar: '/users/profilePic.png',
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            phone: '+1 234 567 891',
-            tag: 'Basic',
-        },
-        {
-            avatar: '/users/profilePic.png',
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            phone: '+1 234 567 891',
-            tag: 'Basic',
-        }, {
-            avatar: '/users/profilePic.png',
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            phone: '+1 234 567 891',
-            tag: 'Basic',
-        }, {
-            avatar: '/users/profilePic.png',
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            phone: '+1 234 567 891',
-            tag: 'Basic',
-        }, {
-            avatar: '/users/profilePic.png',
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            phone: '+1 234 567 891',
-            tag: 'Basic',
-        }, {
-            avatar: '/users/profilePic.png',
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            phone: '+1 234 567 891',
-            tag: 'Basic',
-        }, {
-            avatar: '/users/profilePic.png',
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            phone: '+1 234 567 891',
-            tag: 'Basic',
-        }, {
-            avatar: '/users/profilePic.png',
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            phone: '+1 234 567 891',
-            tag: 'Basic',
-        }, {
-            avatar: '/users/profilePic.png',
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            phone: '+1 234 567 891',
-            tag: 'Basic',
-        }, {
-            avatar: '/users/profilePic.png',
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            phone: '+1 234 567 891',
-            tag: 'Basic',
-        }, {
-            avatar: '/users/profilePic.png',
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            phone: '+1 234 567 891',
-            tag: 'Basic',
-        }, {
-            avatar: '/users/profilePic.png',
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            phone: '+1 234 567 891',
-            tag: 'Basic',
-        },
-    ];
+
+    const athletes = await getAthletes();
 
     return (
         <>
@@ -104,7 +24,7 @@ export default async function AthletesPage() {
                     <PrimaryButton label="Inviter un sportif" icon="/icons/Sportifs/user-plus.svg" alt="Plus Icon" />
                 </div>
 
-                <DataTable columns={columns} data={data} />
+                <DataTable columns={columns} data={athletes} />
             </DashboardLayout>
         </>
     );

@@ -21,3 +21,10 @@ export type AuthStoreType = {
     setIsAuthenticated: (isAuthenticated: boolean) => void;
     logout: () => void;
 };
+
+export type Athlete = User & {
+    avatar: {
+        url: string;
+    };
+    tag: string;
+}

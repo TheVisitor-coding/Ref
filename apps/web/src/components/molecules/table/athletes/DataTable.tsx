@@ -59,7 +59,7 @@ function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValu
                             <TableRow
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
-                                className="text-primary text-sm"
+                                className="text-primary text-sm cursor-pointer hover:bg-grey-light/30"
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id} className="py-3 first:pl-4 last:pr-4">
