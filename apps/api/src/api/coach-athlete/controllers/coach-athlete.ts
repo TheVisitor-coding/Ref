@@ -21,7 +21,6 @@ export default factories.createCoreController('api::coach-athlete.coach-athlete'
             relation_status?: string | null;
         };
 
-        console.log("Received request to fetch coach's athletes");
         const coachId = ctx.state.user.id;
         if (!coachId) { return ctx.unauthorized('You must be logged in as a coach to access this resource.'); }
 
@@ -35,7 +34,6 @@ export default factories.createCoreController('api::coach-athlete.coach-athlete'
             },
         }) as PopulatedCoachAthlete[];
 
-        console.log("Coach-Athlete entries fetched:", entries);
         const athletes = entries
             .map(entry => entry.athlete)
             .filter(Boolean);

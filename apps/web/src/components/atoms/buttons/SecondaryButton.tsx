@@ -1,4 +1,4 @@
-function SecondaryButton({ onClick, label }: { onClick: () => void, label?: string }) {
+function SecondaryButton({ onClick, label }: { onClick?: () => void, label?: string }) {
     return (
         <button
             onClick={onClick}

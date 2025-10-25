@@ -14,6 +14,7 @@
   --color-grey: #757575;
   --color-grey-light: #EAEAEA;
   --color-primary-blue: #0655FF;
+  --color-information-light: #F2FAFF;
   --color-background: #FCF8F6;
   --color-background-light: #FBF7F4;
   --color-background-lighter: #F4F7FF;
@@ -22,6 +23,7 @@
   --color-white-100: #FAFAFA;
   --color-black: #000000;
   --color-grey-button: #D6D6D6;
+  --color-border-input: #666;
 
   --color-error-50: #FCE9E9;
   --color-error: #DC2626;

@@ -22,7 +22,7 @@ export default function Loading() {
         <Skeleton className="h-10 w-48" />
       </div>
 
-      <Skeleton className="h-8 w-32 mt-6" />
+      <Skeleton className="h-56 w-full mt-6" />
 
       <div className="mt-4 flex justify-end">
         <Skeleton className="h-8 w-48" />
