@@ -8,9 +8,10 @@ import { DataTablePagination } from "../Pagination";
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
+    onRowClick?: (row: TData) => void;
 }
 
-function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+function DataTable<TData, TValue>({ columns, data, onRowClick }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [pagination, setPagination] = useState({
         pageIndex: 0,
@@ -57,6 +58,7 @@ function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValu
                     {table.getRowModel().rows?.length ? (
                         table.getRowModel().rows.map((row) => (
                             <TableRow
+                                onClick={() => onRowClick?.(row.original)}
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
                                 className="text-primary text-sm cursor-pointer hover:bg-grey-light/30"

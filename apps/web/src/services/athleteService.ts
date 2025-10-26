@@ -20,3 +20,40 @@ export async function fetchCoachAthletesServer(): Promise<Athlete[]> {
   const payload = await res.json();
   return payload.data as Athlete[];
 }
+
+export async function fetchCoachAthleteById(athleteId: number): Promise<Athlete | null> {
+  const token = await getTokenFromCookie();
+  if (!token) return null;
+
+  const meRes = await fetch(`${STRAPI}/api/users/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: 'no-store',
+  });
+
+  if (!meRes.ok) {
+    throw new Error(`Strapi /users/me: ${meRes.status} ${meRes.statusText}`);
+  }
+
+  const me = await meRes.json();
+  const coachId = me.id as number;
+
+  const params = new URLSearchParams({
+    'filters[id][$eq]': String(athleteId),
+    'filters[athlete_relations][coach][id][$eq]': String(coachId),
+    populate: 'avatar',
+  });
+
+  const res = await fetch(`${STRAPI}/api/users?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    throw new Error(`Strapi /users: ${res.status} ${res.statusText}`);
+  }
+
+  const payload = await res.json();
+  console.log(payload, 'payload athlete by id');
+  const athlete = (payload?.[0] ?? null) as Athlete | null;
+  return athlete;
+}

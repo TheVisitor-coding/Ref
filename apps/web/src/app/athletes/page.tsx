@@ -1,5 +1,4 @@
 import Breadcrumbs from "@/components/atoms/breadcrumb/breadcrumbs";
-import PrimaryButton from "@/components/atoms/buttons/PrimaryButton";
 import DashboardLayout from "@/components/organisms/layouts/DashboardLayout";
 import Image from "next/image";
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
