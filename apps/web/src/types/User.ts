@@ -27,4 +27,13 @@ export type Athlete = User & {
         url: string;
     };
     tag: string;
+    birth_date: string | null;
+    height: number | null;
+    weight: number | null;
+    age: number | null;
+    profession: string | null;
+    level: string | null;
+    createdAt: string | null;
+    objective: string | null;
+    status: string | null;
 }
