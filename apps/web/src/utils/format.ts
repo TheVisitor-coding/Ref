@@ -1,6 +1,6 @@
 const FALLBACK_VALUE = "N/A";
 
-const isEmptyValue = (value: unknown): boolean => {
+export const isEmptyValue = (value: unknown): boolean => {
     if (value === null || value === undefined) {
         return true;
     }

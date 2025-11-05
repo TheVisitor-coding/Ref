@@ -6,11 +6,7 @@ import { formatDateLocalized, formatMeasurement, formatOptional } from "@/utils/
 import { Athlete } from "@/types/User";
 import { AlertTriangle, ClipboardListIcon, MessageCircle } from "lucide-react";
 
-type OverviewSectionProps = {
-    athlete: Athlete;
-};
-
-const OverviewSection = ({ athlete }: OverviewSectionProps) => {
+const OverviewSection = ({ athlete }: { athlete: Athlete }) => {
     const generalInfoRows = [
         {
             key: "contact",
@@ -35,7 +31,7 @@ const OverviewSection = ({ athlete }: OverviewSectionProps) => {
             padding: "px-6 pb-6",
             items: [
                 { label: "Inscription", value: formatDateLocalized(athlete.createdAt) },
-                { label: "Statut d'activité", value: formatOptional(athlete.status) },
+                { label: "Statut d'activité", value: formatOptional(athlete.statusUser) },
                 { label: "Objectif", value: formatOptional(athlete.objective) },
             ],
         },
@@ -62,23 +58,21 @@ const OverviewSection = ({ athlete }: OverviewSectionProps) => {
             title: "Nom de séance mais vraiment trèèèsss longuee ??",
             tags: [
                 { label: "12/09/2023", icon: "/icons/Clock.svg", iconAlt: "Horloge" },
-                { label: "12/09/2023", icon: "/icons/Clock.svg", iconAlt: "Horloge" },
+                { label: "Course à pied", icon: "/icons/Clock.svg", iconAlt: "Course à pied" },
             ],
         },
         {
-            title: "Nom de séance mais vraiment trèèèsss longuee ??",
+            title: "Séance de fractionné",
             tags: [
-                { label: "12/09/2023", icon: "/icons/Clock.svg", iconAlt: "Horloge" },
-                { label: "12/09/2023", icon: "/icons/Clock.svg", iconAlt: "Horloge" },
+                { label: "15/09/2023", icon: "/icons/Clock.svg", iconAlt: "Horloge" },
             ],
         },
         {
-            title: "Nom de séance mais vraiment trèèèsss longuee ??",
+            title: "Séance de récupération",
             tags: [
-                { label: "12/09/2023", icon: "/icons/Clock.svg", iconAlt: "Horloge" },
-                { label: "12/09/2023", icon: "/icons/Clock.svg", iconAlt: "Horloge" },
+                { label: "18/09/2023", icon: "/icons/Clock.svg", iconAlt: "Horloge" },
             ],
-        },
+        }
     ];
 
     return (

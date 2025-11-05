@@ -1,10 +1,6 @@
 import { Athlete } from "@/types/User";
 
-type CalendarSectionProps = {
-    athlete: Athlete;
-};
-
-const CalendarSection = ({ athlete }: CalendarSectionProps) => {
+const CalendarSection = ({ athlete }: { athlete: Athlete }) => {
     return (
         <section className="rounded-xl border border-border bg-card p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-foreground">Calendrier</h2>

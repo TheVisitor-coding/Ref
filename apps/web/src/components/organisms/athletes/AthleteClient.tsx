@@ -11,6 +11,7 @@ import Image from "next/image";
 import CalendarSection from "./tabs/CalendarSection";
 import InvoicesSection from "./tabs/InvoicesSection";
 import OverviewSection from "./tabs/OverviewSection";
+import InformationSection from "./tabs/InformationSection";
 
 type AthleteResponse = { data: Athlete };
 
@@ -24,6 +25,7 @@ type AthleteTabDefinition = {
 
 const athleteTabs: AthleteTabDefinition[] = [
     { value: "overview", label: "Vue d'ensemble", Component: OverviewSection },
+    { value: "information", label: "Informations", Component: InformationSection },
     { value: "calendar", label: "Calendrier", Component: CalendarSection },
     { value: "invoices", label: "Factures", Component: InvoicesSection },
 ];

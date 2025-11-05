@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Sidebar from "../Sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 function AppLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
@@ -20,6 +21,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
             <main className="w-full flex-1">
                 {children}
             </main>
+            <Toaster />
         </div>
     );
 }

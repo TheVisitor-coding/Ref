@@ -1,10 +1,6 @@
 import { Athlete } from "@/types/User";
 
-type InvoicesSectionProps = {
-    athlete: Athlete;
-};
-
-const InvoicesSection = ({ athlete }: InvoicesSectionProps) => {
+const InvoicesSection = ({ athlete }: { athlete: Athlete }) => {
     return (
         <section className="rounded-xl border border-border bg-card p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-foreground">Factures</h2>

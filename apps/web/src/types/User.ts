@@ -22,6 +22,8 @@ export type AuthStoreType = {
     logout: () => void;
 };
 
+export type AthleteLevel = "beginner" | "intermediate" | "expert" | "professional";
+
 export type Athlete = User & {
     avatar: {
         url: string;
@@ -32,8 +34,20 @@ export type Athlete = User & {
     weight: number | null;
     age: number | null;
     profession: string | null;
-    level: string | null;
+    level: AthleteLevel | undefined;
     createdAt: string | null;
     objective: string | null;
-    status: string | null;
+    statusUser: string | null;
+    discipline: string | undefined;
+    mainObjective: string | null;
+    secondaryObjective: string | null;
 }
+
+export type CoachAthleteRelation = {
+    id?: number;
+    documentId: string;
+    notes?: string | null;
+    status_relation?: 'pending' | 'active' | 'archived' | 'blocked';
+};
+
+export type AthleteWithRelation = Athlete & { athlete_relations?: CoachAthleteRelation };
