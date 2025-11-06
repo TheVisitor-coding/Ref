@@ -1,8 +1,10 @@
 'use server';
 
 import { getTokenFromCookie } from '@/actions/auth-actions';
+import { addLogAction } from '@/actions/log-actions';
 import { AthleteUpdatePayload } from '@/schema/AthleteSchema';
 import { Athlete, AthleteWithRelation, CoachAthleteRelation } from '@/types/User';
+import { diffChanges, pick } from '@/utils/diffChanges';
 
 const STRAPI = process.env.STRAPI_INTERNAL_URL;
 
@@ -84,12 +86,15 @@ export async function updateAthleteById(athleteId: number, input: AthleteUpdateP
   const token = await getTokenFromCookie();
   if (!token) throw new Error('Unauthenticated');
 
+  const userId = await getMeId(token);
+
   const current = await fetchCoachAthleteById(athleteId);
   if (!current || !current.athlete_relations) {
     throw new Error('Not authorized');
   }
 
   const relationDocumentId = current.athlete_relations.documentId;
+  const beforeValues = current as AthleteWithRelation
 
   if (typeof input.relation_notes !== 'undefined') {
     const resRel = await fetch(`${STRAPI}/api/coach-athletes/${relationDocumentId}`, {
@@ -137,6 +142,52 @@ export async function updateAthleteById(athleteId: number, input: AthleteUpdateP
   const freshAthlete = await fetchCoachAthleteById(athleteId);
   if (!freshAthlete) {
     throw new Error('Failed to fetch updated athlete');
+  }
+
+  console.log('logging data', { userId, athleteId, beforeValues, freshAthlete });
+  try {
+    const userKeys = [
+      'first_name', 'last_name', 'email', 'phone',
+      'height', 'weight', 'birth_date', 'tag',
+      'level', 'discipline', 'mainObjective', 'secondaryObjective',
+    ];
+
+    const { old_values: oldUserVals, new_values: newUserVals } =
+      diffChanges(
+        pick(beforeValues, userKeys as unknown as (keyof Athlete)[]),
+        pick(freshAthlete as Athlete, userKeys as unknown as (keyof Athlete)[]),
+        userKeys as unknown as (keyof Athlete)[]
+      );
+
+    if (Object.keys(newUserVals).length > 0) {
+      addLogAction({
+        userId,
+        affectedUserId: athleteId,
+        tableName: 'users',
+        recordId: String(athleteId),
+        action: 'update',
+        old_values: oldUserVals,
+        new_values: newUserVals,
+        authCookie: token,
+      });
+    }
+
+    const afterRelationNotes = freshAthlete.athlete_relations?.notes ?? null;
+    if (beforeValues.athlete_relations?.notes !== afterRelationNotes) {
+      addLogAction({
+        userId,
+        affectedUserId: athleteId,
+        tableName: 'coach_athletes',
+        recordId: String(freshAthlete.athlete_relations?.id ?? ''),
+        action: 'update',
+        old_values: { notes: beforeValues.athlete_relations?.notes ?? null },
+        new_values: { notes: afterRelationNotes },
+        authCookie: token,
+      });
+    }
+
+  } catch (e) {
+    console.error('Failed to log athlete update action', e);
   }
 
   return freshAthlete;

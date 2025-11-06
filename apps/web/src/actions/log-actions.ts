@@ -11,6 +11,8 @@ export async function addLogAction({ userId, affectedUserId, tableName, recordId
     authCookie: string;
 }) {
     try {
+
+
         const payload = {
             data: {
                 user: userId,
@@ -20,6 +22,7 @@ export async function addLogAction({ userId, affectedUserId, tableName, recordId
                 action,
                 ...(old_values ? { old_values } : {}),
                 ...(new_values ? { new_values } : {}),
+                timestamp: new Date().toISOString()
             }
         };
 
