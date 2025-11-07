@@ -1,40 +1,34 @@
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import ChartBar from './core/ChartBar';
 import { mockMonthlyRevenue, monthLabels } from '@/data/budgetChart';
-import { getBudgetChartOptions, BUDGET_CHART_CONFIG } from '@/config/budgetChartConfig';
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+import { BUDGET_CHART_CONFIG } from '@/config/budgetChartConfig';
 
 function BudgetChart() {
-    const options = getBudgetChartOptions();
+    const formatCurrencyValue = (value: number): string => {
+        return `${value.toLocaleString('fr-FR')} €`;
+    };
 
-    const data = {
-        labels: monthLabels,
-        datasets: [
-            {
-                label: 'Chiffre d\'affaires',
-                data: mockMonthlyRevenue,
-                backgroundColor: BUDGET_CHART_CONFIG.barColor,
-                borderColor: BUDGET_CHART_CONFIG.barColor,
-                borderWidth: 0,
-                barThickness: BUDGET_CHART_CONFIG.barThickness,
-                borderRadius: BUDGET_CHART_CONFIG.borderRadius,
-            },
-        ],
+    const formatAxisValue = (value: number): string => {
+        return value >= 1000 ? `${value / 1000}k` : value.toString();
     };
 
     return (
-        <div style={{ height: `${BUDGET_CHART_CONFIG.height}px`, width: '100%' }}>
-            <Bar options={options} data={data} />
-        </div>
+        <ChartBar
+            labels={monthLabels}
+            data={mockMonthlyRevenue}
+            datasetLabel="Chiffre d'affaires"
+            config={{
+                height: BUDGET_CHART_CONFIG.height,
+                barThickness: BUDGET_CHART_CONFIG.barThickness,
+                barColor: BUDGET_CHART_CONFIG.barColor,
+                borderRadius: BUDGET_CHART_CONFIG.borderRadius,
+                maxTicksLimit: BUDGET_CHART_CONFIG.maxTicksLimit,
+                yAxisPosition: 'right',
+                showGridLines: true,
+                showLegend: false,
+            }}
+            formatTooltip={formatCurrencyValue}
+            formatYAxis={formatAxisValue}
+        />
     );
 }
 
