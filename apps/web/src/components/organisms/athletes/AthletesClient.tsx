@@ -1,6 +1,6 @@
 'use client';
 
-import DataTable from '@/components/molecules/table/athletes/DataTable';
+import DataTable from '@/components/molecules/table/DataTable';
 import { columns } from '@/components/molecules/table/athletes/Columns';
 import { Athlete } from '@/types/User';
 import { useApi } from '@/hooks/useApi';

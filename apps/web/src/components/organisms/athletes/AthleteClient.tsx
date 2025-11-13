@@ -64,7 +64,7 @@ function AthleteClient({ athleteId }: { athleteId: number }) {
                     {
                         label: `${athlete.first_name ?? ""} ${athlete.last_name ?? ""}`.trim() || athlete.username,
                         href: `/athletes/${athlete.id}`,
-                        icon: <Image src="/icons/Account.svg" alt="Account Icon" width={16} height={16} />,
+                        icon: <Image src={avatarUrl} alt="Athlete Avatar" width={16} height={16} className="rounded-sm object-cover mr-1" />,
                     },
                 ]}
             />
