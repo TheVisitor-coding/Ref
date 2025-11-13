@@ -126,6 +126,36 @@
     "lastPredashboardSeenAt": {
       "type": "datetime"
     },
+    "birth_date": {
+      "type": "string"
+    },
+    "height": {
+      "type": "integer"
+    },
+    "weight": {
+      "type": "integer"
+    },
+    "profession": {
+      "type": "string"
+    },
+    "discipline": {
+      "type": "string"
+    },
+    "mainObjective": {
+      "type": "string"
+    },
+    "secondaryObjective": {
+      "type": "string"
+    },
+    "level": {
+      "type": "enumeration",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "expert",
+        "professional"
+      ]
+    },
     "coached_athletes": {
       "type": "relation",
       "relation": "oneToMany",

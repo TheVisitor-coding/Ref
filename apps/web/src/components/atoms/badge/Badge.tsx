@@ -11,7 +11,7 @@ const Badge = ({ children, variant = 'info', className = '' }: BadgeProps) => {
         error: 'bg-error-50 text-error',
         success: 'bg-success-50 text-success',
         warning: 'bg-warning-50 text-warning',
-        info: 'bg-info-50 text-info'
+        info: 'bg-primary-blue-light'
     };
 
     return (

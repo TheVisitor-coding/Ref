@@ -1,13 +1,18 @@
-import { useRegister } from "@/hooks/useAuth";
+import { useLogin, useRegister } from "@/hooks/useAuth";
 
 function FormEmailRegister() {
     const { register } = useRegister()
+    const { login } = useLogin()
 
     const handleRegister = (e: React.FormEvent) => {
         e.preventDefault();
-        register({
-            email: "contact@email.fr",
-            username: "contact",
+        // register({
+        //     email: "contact@email.fr",
+        //     username: "contact",
+        //     password: "#SuperPassword123"
+        // })
+        login({
+            identifier: "contact",
             password: "#SuperPassword123"
         })
     }

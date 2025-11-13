@@ -2,7 +2,7 @@ import { ChartOptions } from 'chart.js';
 
 const CHART_HEIGHT = 232;
 const BAR_THICKNESS = 32;
-const BAR_COLOR = '#FFBD9A';
+const BAR_COLOR = '#EC5849';
 const BORDER_RADIUS = 4;
 const MAX_TICKS_LIMIT = 3;
 

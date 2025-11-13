@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Sidebar from "../Sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 function AppLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
@@ -15,11 +16,12 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <div className="flex gap-6 pb-6 px-3 h-dvh">
+        <div className="flex gap-6 p-6 min-h-screen">
             <Sidebar />
-            <main className="pt-6 pr-3 w-full h-full overflow-y-auto">
+            <main className="w-full flex-1">
                 {children}
             </main>
+            <Toaster />
         </div>
     );
 }

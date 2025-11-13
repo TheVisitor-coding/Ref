@@ -1,20 +1,31 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
+@custom-variant dark (&:is(.dark *));
+
+/* ====================================
+   Variables du projet (originales)
+   ==================================== */
 @theme {
   /* Color Variables */
   --color-primary: #333;
   --color-secondary: #666666;
-  --color-accent: #FF5B02;
+  --color-accent: #EC5849;
   --color-grey: #757575;
+  --color-grey-light: #EAEAEA;
   --color-primary-blue: #0655FF;
+  --color-primary-blue-light: #E6EEFF;
+  --color-information-light: #F2FAFF;
   --color-background: #FCF8F6;
   --color-background-light: #FBF7F4;
   --color-background-lighter: #F4F7FF;
-  --color-background-grey-light: #EAEAEA;
+  --color-background-grey-light: #F2EEEC;
+  --color-backeground-hover: #F5F5F5;
   --color-white: #FFFFFF;
   --color-white-100: #FAFAFA;
   --color-black: #000000;
   --color-grey-button: #D6D6D6;
+  --color-border-input: #666;
 
   --color-error-50: #FCE9E9;
   --color-error: #DC2626;
@@ -25,4 +36,142 @@
   --shadow-container: 0 0 0 1px rgba(31, 34, 37, 0.09), 0 24px 48px 0 rgba(0, 0, 0, 0.04), 0 4px 16px 0 rgba(0, 0, 0, 0.02);
   --shadow-button: 0 8px 16px 0 rgba(6, 85, 255, 0.20);
   --shadow-authContainer: 0 8px 16px 0 rgba(1, 48, 96, 0.04);
+}
+
+/* ====================================
+   Variables Shadcn/UI
+   ==================================== */
+@theme inline {
+  /* Radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Shadcn Colors - Préfixées pour éviter les conflits */
+  --color-shadcn-background: var(--shadcn-background);
+  --color-shadcn-foreground: var(--shadcn-foreground);
+  --color-shadcn-card: var(--shadcn-card);
+  --color-shadcn-card-foreground: var(--shadcn-card-foreground);
+  --color-shadcn-popover: var(--shadcn-popover);
+  --color-shadcn-popover-foreground: var(--shadcn-popover-foreground);
+  --color-shadcn-primary: var(--shadcn-primary);
+  --color-shadcn-primary-foreground: var(--shadcn-primary-foreground);
+  --color-shadcn-secondary: var(--shadcn-secondary);
+  --color-shadcn-secondary-foreground: var(--shadcn-secondary-foreground);
+  --color-shadcn-muted: var(--shadcn-muted);
+  --color-shadcn-muted-foreground: var(--shadcn-muted-foreground);
+  --color-shadcn-accent: var(--shadcn-accent);
+  --color-shadcn-accent-foreground: var(--shadcn-accent-foreground);
+  --color-shadcn-destructive: var(--shadcn-destructive);
+  --color-shadcn-border: var(--shadcn-border);
+  --color-shadcn-input: var(--shadcn-input);
+  --color-shadcn-ring: var(--shadcn-ring);
+  
+  /* Charts */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  
+  /* Sidebar */
+  --color-shadcn-sidebar: var(--shadcn-sidebar);
+  --color-shadcn-sidebar-foreground: var(--shadcn-sidebar-foreground);
+  --color-shadcn-sidebar-primary: var(--shadcn-sidebar-primary);
+  --color-shadcn-sidebar-primary-foreground: var(--shadcn-sidebar-primary-foreground);
+  --color-shadcn-sidebar-accent: var(--shadcn-sidebar-accent);
+  --color-shadcn-sidebar-accent-foreground: var(--shadcn-sidebar-accent-foreground);
+  --color-shadcn-sidebar-border: var(--shadcn-sidebar-border);
+  --color-shadcn-sidebar-ring: var(--shadcn-sidebar-ring);
+}
+
+:root {
+  /* Shadcn Base Variables */
+  --radius: 0.625rem;
+  
+  /* Light Theme */
+  --shadcn-background: oklch(1 0 0);
+  --shadcn-foreground: oklch(0.145 0 0);
+  --shadcn-card: oklch(1 0 0);
+  --shadcn-card-foreground: oklch(0.145 0 0);
+  --shadcn-popover: oklch(1 0 0);
+  --shadcn-popover-foreground: oklch(0.145 0 0);
+  --shadcn-primary: oklch(0.205 0 0);
+  --shadcn-primary-foreground: oklch(0.985 0 0);
+  --shadcn-secondary: oklch(0.97 0 0);
+  --shadcn-secondary-foreground: oklch(0.205 0 0);
+  --shadcn-muted: oklch(0.97 0 0);
+  --shadcn-muted-foreground: oklch(0.556 0 0);
+  --shadcn-accent: oklch(0.97 0 0);
+  --shadcn-accent-foreground: oklch(0.205 0 0);
+  --shadcn-destructive: oklch(0.577 0.245 27.325);
+  --shadcn-border: oklch(0.922 0 0);
+  --shadcn-input: oklch(0.922 0 0);
+  --shadcn-ring: oklch(0.708 0 0);
+  
+  /* Charts */
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  
+  /* Sidebar */
+  --shadcn-sidebar: oklch(0.985 0 0);
+  --shadcn-sidebar-foreground: oklch(0.145 0 0);
+  --shadcn-sidebar-primary: oklch(0.205 0 0);
+  --shadcn-sidebar-primary-foreground: oklch(0.985 0 0);
+  --shadcn-sidebar-accent: oklch(0.97 0 0);
+  --shadcn-sidebar-accent-foreground: oklch(0.205 0 0);
+  --shadcn-sidebar-border: oklch(0.922 0 0);
+  --shadcn-sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  /* Dark Theme */
+  --shadcn-background: oklch(0.145 0 0);
+  --shadcn-foreground: oklch(0.985 0 0);
+  --shadcn-card: oklch(0.205 0 0);
+  --shadcn-card-foreground: oklch(0.985 0 0);
+  --shadcn-popover: oklch(0.205 0 0);
+  --shadcn-popover-foreground: oklch(0.985 0 0);
+  --shadcn-primary: oklch(0.922 0 0);
+  --shadcn-primary-foreground: oklch(0.205 0 0);
+  --shadcn-secondary: oklch(0.269 0 0);
+  --shadcn-secondary-foreground: oklch(0.985 0 0);
+  --shadcn-muted: oklch(0.269 0 0);
+  --shadcn-muted-foreground: oklch(0.708 0 0);
+  --shadcn-accent: oklch(0.269 0 0);
+  --shadcn-accent-foreground: oklch(0.985 0 0);
+  --shadcn-destructive: oklch(0.704 0.191 22.216);
+  --shadcn-border: oklch(1 0 0 / 10%);
+  --shadcn-input: oklch(1 0 0 / 15%);
+  --shadcn-ring: oklch(0.556 0 0);
+  
+  /* Charts */
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  
+  /* Sidebar */
+  --shadcn-sidebar: oklch(0.205 0 0);
+  --shadcn-sidebar-foreground: oklch(0.985 0 0);
+  --shadcn-sidebar-primary: oklch(0.488 0.243 264.376);
+  --shadcn-sidebar-primary-foreground: oklch(0.985 0 0);
+  --shadcn-sidebar-accent: oklch(0.269 0 0);
+  --shadcn-sidebar-accent-foreground: oklch(0.985 0 0);
+  --shadcn-sidebar-border: oklch(1 0 0 / 10%);
+  --shadcn-sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-shadcn-border outline-shadcn-ring/50;
+  }
+  body {
+    @apply bg-shadcn-background text-shadcn-foreground;
+  }
 }

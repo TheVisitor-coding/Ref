@@ -23,13 +23,13 @@ const DashboardHeader = ({
             <div className="flex gap-2 text-base text-secondary items-center flex-wrap">
                 <p>Depuis votre dernière connexion, vous avez</p>
 
-                <Chip icon="/icons/chat.svg" iconAlt="chat icon">
+                <Chip icon="/icons/chat.svg" iconAlt="chat icon" className="bg-white-100 rounded-lg">
                     <p>{messageCount} messages</p>
                 </Chip>
 
                 <p>et</p>
 
-                <Chip icon="/icons/chat.svg" iconAlt="urgence icon">
+                <Chip icon="/icons/chat.svg" iconAlt="urgence icon" className="bg-white-100 rounded-lg">
                     <p>{urgentCount} urgences à traiter</p>
                 </Chip>
             </div>

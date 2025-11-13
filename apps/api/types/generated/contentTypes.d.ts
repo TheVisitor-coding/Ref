@@ -521,7 +521,7 @@ export interface ApiAuditLogAuditLog extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     record_id: Schema.Attribute.String & Schema.Attribute.Required;
     table_name: Schema.Attribute.String & Schema.Attribute.Required;
-    timestamp: Schema.Attribute.DateTime & Schema.Attribute.DefaultTo<'now'>;
+    timestamp: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -581,7 +581,7 @@ export interface ApiCoachAthleteCoachAthlete
       Schema.Attribute.Private;
     notes: Schema.Attribute.Text;
     publishedAt: Schema.Attribute.DateTime;
-    status: Schema.Attribute.Enumeration<
+    status_relation: Schema.Attribute.Enumeration<
       ['pending', 'active', 'archived', 'blocked']
     > &
       Schema.Attribute.DefaultTo<'pending'>;
@@ -1662,6 +1662,7 @@ export interface PluginUsersPermissionsUser
       'api::audit-log.audit-log'
     >;
     avatar: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    birth_date: Schema.Attribute.String;
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     coached_athletes: Schema.Attribute.Relation<
       'oneToMany',
@@ -1686,6 +1687,7 @@ export interface PluginUsersPermissionsUser
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    discipline: Schema.Attribute.String;
     email: Schema.Attribute.Email &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
@@ -1696,6 +1698,7 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 50;
       }>;
+    height: Schema.Attribute.Integer;
     language: Schema.Attribute.Enumeration<['fr', 'en']> &
       Schema.Attribute.DefaultTo<'fr'>;
     last_login_at: Schema.Attribute.DateTime;
@@ -1704,12 +1707,16 @@ export interface PluginUsersPermissionsUser
         maxLength: 100;
       }>;
     lastPredashboardSeenAt: Schema.Attribute.DateTime;
+    level: Schema.Attribute.Enumeration<
+      ['beginner', 'intermediate', 'expert', 'professional']
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'plugin::users-permissions.user'
     > &
       Schema.Attribute.Private;
+    mainObjective: Schema.Attribute.String;
     messages: Schema.Attribute.Relation<'oneToMany', 'api::message.message'>;
     notifications: Schema.Attribute.Relation<
       'oneToMany',
@@ -1732,6 +1739,7 @@ export interface PluginUsersPermissionsUser
       'oneToMany',
       'api::pricing-formula.pricing-formula'
     >;
+    profession: Schema.Attribute.String;
     provider: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
@@ -1739,6 +1747,7 @@ export interface PluginUsersPermissionsUser
       'manyToOne',
       'plugin::users-permissions.role'
     >;
+    secondaryObjective: Schema.Attribute.String;
     sessions_as_athlete: Schema.Attribute.Relation<
       'oneToMany',
       'api::session.session'
@@ -1760,6 +1769,7 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 3;
       }>;
+    weight: Schema.Attribute.Integer;
   };
 }
 
