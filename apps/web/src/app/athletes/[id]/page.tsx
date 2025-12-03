@@ -1,9 +1,7 @@
-import Breadcrumbs from "@/components/atoms/breadcrumb/breadcrumbs";
 import AthleteClient from "@/components/organisms/athletes/AthleteClient";
 import DashboardLayout from "@/components/organisms/layouts/DashboardLayout";
 import { fetchCoachAthleteById } from "@/services/athleteService";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 
 async function AthletePage({ params }: { params: { id: string } }) {

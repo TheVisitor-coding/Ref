@@ -16,9 +16,9 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <div className="flex gap-6 p-6 min-h-screen">
+        <div className="flex p-6 min-h-screen">
             <Sidebar />
-            <main className="w-full flex-1">
+            <main className="pl-6 w-full flex-1">
                 {children}
             </main>
             <Toaster />

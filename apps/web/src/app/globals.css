@@ -32,6 +32,12 @@
 
   --color-disabled: #999;
 
+  /* Sports Colors */
+  --color-sport-running-light: #D2E9DB;
+  --color-sport-running-dark: #088D36;
+  --color-sport-cycling-light: #EADDEE;
+  --color-sport-cycling-dark: #8E529E;
+
   /* Shadow Variables */
   --shadow-container: 0 0 0 1px rgba(31, 34, 37, 0.09), 0 24px 48px 0 rgba(0, 0, 0, 0.04), 0 4px 16px 0 rgba(0, 0, 0, 0.02);
   --shadow-button: 0 8px 16px 0 rgba(6, 85, 255, 0.20);
