@@ -1097,6 +1097,7 @@ export interface ApiSessionSession extends Struct.CollectionTypeSchema {
       'manyToOne',
       'plugin::users-permissions.user'
     >;
+    coach_comment: Schema.Attribute.Text;
     coach_rating: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
@@ -1121,12 +1122,20 @@ export interface ApiSessionSession extends Struct.CollectionTypeSchema {
         },
         number
       >;
-    end_datetime: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    distance_km: Schema.Attribute.Decimal;
+    end_datetime: Schema.Attribute.DateTime;
     equipment_needed: Schema.Attribute.Text;
     expected_duration_minutes: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
           min: 1;
+        },
+        number
+      >;
+    heart_rate_avg: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
         },
         number
       >;
@@ -1155,16 +1164,37 @@ export interface ApiSessionSession extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::session.session'
     >;
+    power_watts: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
     preparation_notes: Schema.Attribute.Text;
     publishedAt: Schema.Attribute.DateTime;
     recurring_rule: Schema.Attribute.JSON;
     requires_presence: Schema.Attribute.Boolean &
-      Schema.Attribute.DefaultTo<true>;
+      Schema.Attribute.DefaultTo<false>;
+    rpe: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 1;
+        },
+        number
+      >;
+    session_body: Schema.Attribute.Text;
     session_notes: Schema.Attribute.Text;
     session_type: Schema.Attribute.Enumeration<
       ['training', 'consultation', 'personal', 'reminder', 'template']
     > &
       Schema.Attribute.DefaultTo<'training'>;
+    speed_kmh: Schema.Attribute.Decimal;
+    sport: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
     start_datetime: Schema.Attribute.DateTime & Schema.Attribute.Required;
     status: Schema.Attribute.Enumeration<
       [
@@ -1178,6 +1208,7 @@ export interface ApiSessionSession extends Struct.CollectionTypeSchema {
       ]
     > &
       Schema.Attribute.DefaultTo<'draft'>;
+    tags: Schema.Attribute.JSON;
     template_name: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;

@@ -1,22 +1,11 @@
 import { Clock, MoveHorizontal, Heart, Gauge, Zap, Menu } from 'lucide-react';
+import { Control, Controller, UseFormRegister } from 'react-hook-form';
 import RpeScale from './RpeScale';
 import LayoutCard from '../card/LayoutCard';
 
 interface SessionFormSectionProps {
-    duration?: string;
-    rpe?: number;
-    distance?: string;
-    heartRate?: string;
-    speed?: string;
-    power?: string;
-    sessionBody?: string;
-    onDurationChange?: (value: string) => void;
-    onRpeChange?: (value: number) => void;
-    onDistanceChange?: (value: string) => void;
-    onHeartRateChange?: (value: string) => void;
-    onSpeedChange?: (value: string) => void;
-    onPowerChange?: (value: string) => void;
-    onSessionBodyChange?: (value: string) => void;
+    control: Control<any>;
+    register: UseFormRegister<any>;
     disabled?: boolean;
 }
 
@@ -25,20 +14,8 @@ const Row: React.FC<{ children: React.ReactNode; padding?: string }> = ({ childr
 );
 
 export default function SessionFormSection({
-    duration,
-    rpe,
-    distance,
-    heartRate,
-    speed,
-    power,
-    sessionBody,
-    onDurationChange,
-    onRpeChange,
-    onDistanceChange,
-    onHeartRateChange,
-    onSpeedChange,
-    onPowerChange,
-    onSessionBodyChange,
+    control,
+    register,
     disabled
 }: SessionFormSectionProps) {
     return (
@@ -46,49 +23,56 @@ export default function SessionFormSection({
             <Row padding='p-4'>
                 <div className="flex items-center gap-2 w-full">
                     <label className='flex items-center gap-2 text-secondary w-[200px]'>
-                        <Clock className="size-4 " />
+                        <Clock className="size-4" />
                         Durée
                     </label>
                     <input
                         type="text"
-                        value={duration}
-                        onChange={(e) => onDurationChange?.(e.target.value)}
+                        {...register('duration')}
                         disabled={disabled}
-                        placeholder="00:00:00"
+                        placeholder="Vide"
                         className="px-2 py-1 text-base text-primary placeholder:text-disabled bg-transparent border-none outline-none"
                     />
                 </div>
 
-                <RpeScale value={rpe} onChange={onRpeChange} disabled={disabled} />
+                <Controller
+                    name="rpe"
+                    control={control}
+                    render={({ field }) => (
+                        <RpeScale
+                            value={field.value}
+                            onChange={field.onChange}
+                            disabled={disabled}
+                        />
+                    )}
+                />
             </Row>
 
             <Row padding='px-4 pb-4'>
                 <div className="flex items-center gap-2 w-full">
                     <label className='flex items-center gap-2 text-secondary w-[200px]'>
-                        <MoveHorizontal className="size-4 " />
+                        <MoveHorizontal className="size-4" />
                         Distance
                     </label>
                     <input
                         type="text"
-                        value={distance}
-                        onChange={(e) => onDistanceChange?.(e.target.value)}
+                        {...register('distance')}
                         disabled={disabled}
-                        placeholder="0 km"
+                        placeholder="Vide"
                         className="px-2 py-1 text-base text-primary placeholder:text-disabled bg-transparent border-none outline-none w-20"
                     />
                 </div>
 
                 <div className="flex items-center gap-2 w-full">
                     <label className='flex items-center gap-2 text-secondary w-[200px]'>
-                        <Heart className="size-4 " />
+                        <Heart className="size-4" />
                         Fréquence cardiaque
                     </label>
                     <input
                         type="text"
-                        value={heartRate}
-                        onChange={(e) => onHeartRateChange?.(e.target.value)}
+                        {...register('heartRate')}
                         disabled={disabled}
-                        placeholder="0 bpm"
+                        placeholder="Vide"
                         className="px-2 py-1 text-base text-primary placeholder:text-disabled bg-transparent border-none outline-none w-20"
                     />
                 </div>
@@ -97,30 +81,28 @@ export default function SessionFormSection({
             <Row padding='px-4 pb-4'>
                 <div className="flex items-center gap-2 w-full">
                     <label className='flex items-center gap-2 text-secondary w-[200px]'>
-                        <Gauge className="size-4 " />
+                        <Gauge className="size-4" />
                         Vitesse
                     </label>
                     <input
                         type="text"
-                        value={speed}
-                        onChange={(e) => onSpeedChange?.(e.target.value)}
+                        {...register('speed')}
                         disabled={disabled}
-                        placeholder="0 km/h"
+                        placeholder="Vide"
                         className="px-2 py-1 text-base text-primary placeholder:text-disabled bg-transparent border-none outline-none w-20"
                     />
                 </div>
 
                 <div className="flex items-center gap-2 w-full">
                     <label className='flex items-center gap-2 text-secondary w-[200px]'>
-                        <Zap className="size-4 " />
+                        <Zap className="size-4" />
                         Puissance
                     </label>
                     <input
                         type="text"
-                        value={power}
-                        onChange={(e) => onPowerChange?.(e.target.value)}
+                        {...register('power')}
                         disabled={disabled}
-                        placeholder="0 W"
+                        placeholder="Vide"
                         className="px-2 py-1 text-base text-primary placeholder:text-disabled bg-transparent border-none outline-none w-20"
                     />
                 </div>
@@ -129,14 +111,13 @@ export default function SessionFormSection({
             <Row padding='px-4 pb-4'>
                 <div className="flex items-start gap-2 w-full">
                     <label className='flex items-center gap-2 text-secondary w-[200px]'>
-                        <Menu className="size-4 " />
+                        <Menu className="size-4" />
                         Corps de séance
                     </label>
                     <textarea
-                        value={sessionBody}
-                        onChange={(e) => onSessionBodyChange?.(e.target.value)}
+                        {...register('sessionBody')}
                         disabled={disabled}
-                        placeholder="Saisir le corps de séance"
+                        placeholder="Vide"
                         className="flex-1 px-2 py-1 text-base text-primary placeholder:text-disabled bg-transparent border-none outline-none"
                     />
                 </div>

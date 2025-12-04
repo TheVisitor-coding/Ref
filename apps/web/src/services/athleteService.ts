@@ -5,18 +5,11 @@ import { addLogAction } from '@/actions/log-actions';
 import { AthleteUpdatePayload } from '@/schema/AthleteSchema';
 import { Athlete, AthleteWithRelation, CoachAthleteRelation } from '@/types/User';
 import { diffChanges, pick } from '@/utils/diffChanges';
+import { getMeId } from './userService';
 
 const STRAPI = process.env.STRAPI_INTERNAL_URL;
 
-async function getMeId(token: string): Promise<number> {
-  const meRes = await fetch(`${STRAPI}/api/users/me`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: 'no-store',
-  });
-  if (!meRes.ok) throw new Error(`Strapi /users/me: ${meRes.status} ${meRes.statusText}`);
-  const me = await meRes.json();
-  return me.id as number;
-}
+
 
 export async function fetchCoachAthletesServer(): Promise<Athlete[]> {
   const token = await getTokenFromCookie();

@@ -1,37 +1,108 @@
 'use client'
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Breadcrumbs from "@/components/atoms/breadcrumb/breadcrumbs";
 import SecondaryButton from "@/components/atoms/buttons/SecondaryButton";
 import CalendarActions from "@/components/molecules/calendar/CalendarActions";
 import WeekCalendar, { DayData } from "@/components/molecules/calendar/WeekCalendar";
-import SessionContent, { SessionData } from "./SessionContent";
-import SessionModal from "@/components/molecules/modal/sessionModal";
+import SessionContent from "./SessionContent";
 import { useGradientAnimation } from "@/hooks/animations/useGradientAnimation";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import SessionModal from "@/components/molecules/modal/SessionModal";
+import { Athlete } from "@/types/User";
+import Image from "next/image";
+import { getWeekStart } from "@/utils/date";
+import { getSessionForDate } from "@/utils/session";
+import { Session, SessionDisplay } from "@/types/Session";
+import { useApi } from "@/hooks/useApi";
+import { sportConfig, normalizeSportType } from "@/data/sports/sportsList";
 
-function SessionsClient({ athleteId }: { athleteId?: number }) {
+interface SessionsClientProps {
+    athleteId: number;
+    athlete: Athlete;
+}
+
+const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+
+const DAY_NAMES = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+
+function generateWeekDaysWithSessions(
+    weekStart: Date,
+    selectedDate: Date,
+    sessions: Session[]
+): DayData[] {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return DAY_NAMES.map((dayName, i) => {
+        const currentDate = new Date(weekStart);
+        currentDate.setDate(weekStart.getDate() + i);
+        currentDate.setHours(0, 0, 0, 0);
+
+        const dayNumber = currentDate.getDate();
+        const isToday = currentDate.getTime() === today.getTime();
+        const isPast = currentDate < today;
+        const isSelected = currentDate.getTime() === new Date(selectedDate.setHours(0, 0, 0, 0)).getTime();
+
+        const sessionForDay = getSessionForDate(sessions, currentDate);
+        const sessionTag = sessionForDay ? {
+            label: sessionForDay.title,
+            sportType: sessionForDay.sportType,
+        } : undefined;
+
+        return {
+            dayName,
+            dayNumber,
+            date: currentDate,
+            isSelected,
+            isPast,
+            isToday,
+            sessionTag,
+        };
+    });
+}
+
+function SessionsClient({ athleteId, athlete }: SessionsClientProps) {
+    const router = useRouter();
+    const { backgroundRef, backgroundAccentRef } = useGradientAnimation();
+
     const [currentWeekStart, setCurrentWeekStart] = useState<Date>(getWeekStart(new Date()));
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
-    const { backgroundRef, backgroundAccentRef } = useGradientAnimation();
+    const [selectedSession, setSelectedSession] = useState<SessionDisplay | null>(null);
 
-    const router = useRouter();
+    const { data, isLoading } = useApi<{ data: Session[] }>(
+        ["athleteSessions", athleteId],
+        `/api/athletes/${athleteId}/sessions`,
+        { credentials: "include" },
+        {
+            refetchOnMount: true,
+            refetchOnWindowFocus: false,
+            staleTime: 30_000, // 30 secondes
+        }
+    );
 
-    const weekDays = generateWeekDays(currentWeekStart, selectedDate);
+    const sessions = data?.data ?? [];
 
-    const mockSession: SessionData = {
-        id: 1,
-        date: formatDate(selectedDate),
-        title: "Fractionné court",
-        sportType: "running",
-        duration: 50,
-        distance: 9,
-        heartRate: 155,
-        comment: "Après les 20min d'échauffement, à écouler sur les récup boisson iso + 37g dans une flasque + 1 gel à la 4eme série  ; total 63G, "
-    };
+    const athleteName = `${athlete.first_name || ''} ${athlete.last_name || ''}`.trim() || 'Athlète';
+    const avatarUrl = athlete.avatar?.url
+        ? `${STRAPI_BASE_URL}${athlete.avatar.url}`
+        : "/icons/Account.svg";
+
+    const currentSession = useMemo(() =>
+        getSessionForDate(sessions, selectedDate),
+        [sessions, selectedDate]
+    );
+
+    const weekDays = useMemo(() =>
+        generateWeekDaysWithSessions(currentWeekStart, selectedDate, sessions),
+        [currentWeekStart, selectedDate, sessions]
+    );
+
+    const gradientSport = currentSession?.sportType ?? 'running';
+    const gradientConfig = sportConfig[gradientSport];
 
     const handleNavigatePrev = () => {
         const newDate = new Date(currentWeekStart);
@@ -55,23 +126,23 @@ function SessionsClient({ athleteId }: { athleteId?: number }) {
         setSelectedDate(date);
     };
 
-    const handleEdit = () => {
-        setModalMode('edit');
+    const openModal = (mode: 'create' | 'edit' | 'view', session?: SessionDisplay | null) => {
+        setModalMode(mode);
+        setSelectedSession(session ?? null);
         setIsModalOpen(true);
     };
+
+    const handleEdit = () => {
+        if (currentSession) {
+            openModal('edit', currentSession);
+        }
+    };
+
+    const handleAdd = () => openModal('create');
 
     const handleDelete = () => {
-        console.log('Delete session');
-    };
-
-    const handleAdd = () => {
-        setModalMode('create');
-        setIsModalOpen(true);
-    };
-
-    const handleView = () => {
-        setModalMode('view');
-        setIsModalOpen(true);
+        // TODO: Implement delete with confirmation dialog
+        console.log('Delete session:', currentSession?.id);
     };
 
     return (
@@ -82,12 +153,30 @@ function SessionsClient({ athleteId }: { athleteId?: number }) {
                         {
                             label: "Sportifs",
                             href: "/athletes",
+                            icon: <Image src="/icons/Account.svg" alt="Account Icon" width={16} height={16} />,
+                        },
+                        {
+                            label: athleteName,
+                            href: `/athletes/${athlete.id}`,
+                            icon: (
+                                <Image
+                                    src={avatarUrl}
+                                    alt="Athlete Avatar"
+                                    width={16}
+                                    height={16}
+                                    className="rounded-sm object-cover mr-1"
+                                />
+                            ),
                         },
                     ]}
                 />
 
                 <div className="flex items-center justify-between gap-6 max-lg:flex-col max-lg:items-start w-full">
-                    <SecondaryButton onClick={() => router.back()} className="flex items-center gap-2" label={<><ChevronLeft className="size-5" /> Retour</>} />
+                    <SecondaryButton
+                        onClick={() => router.back()}
+                        className="flex items-center gap-2"
+                        label={<><ChevronLeft className="size-5" /> Retour</>}
+                    />
 
                     <CalendarActions
                         onTodayClick={handleTodayClick}
@@ -101,9 +190,9 @@ function SessionsClient({ athleteId }: { athleteId?: number }) {
                     onDayClick={handleDayClick}
                 />
 
-
                 <SessionContent
-                    session={mockSession}
+                    session={currentSession}
+                    isLoading={isLoading}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                     onAdd={handleAdd}
@@ -114,83 +203,41 @@ function SessionsClient({ athleteId }: { athleteId?: number }) {
                 open={isModalOpen}
                 onOpenChange={setIsModalOpen}
                 mode={modalMode}
+                athleteId={athleteId}
+                athleteName={athleteName}
+                selectedDate={selectedDate}
+                initialData={selectedSession ? {
+                    title: selectedSession.title,
+                    sport: selectedSession.sportType,
+                    date: selectedSession.date.toISOString().split('T')[0],
+                    rpe: selectedSession.rpe ?? undefined,
+                    distance: selectedSession.distance?.toString() ?? '',
+                    heartRate: selectedSession.heartRate?.toString() ?? '',
+                    duration: selectedSession.duration?.toString() ?? '',
+                    comment: selectedSession.comment ?? '',
+                } : undefined}
             />
 
-            {
-                mockSession && (
+            {currentSession && (
+                <div className="absolute right-0 w-full h-[577px] -bottom-[190px] pointer-events-none">
                     <div
-                        className="absolute right-0 w-full h-[577px] -bottom-[190px]"
-                    >
-                        <div
-                            ref={backgroundAccentRef}
-                            className="absolute top-1/6 w-full h-2/5 bg-sport-running-light rounded-[50%] opacity-75 blur-[250px]"
-                        />
-
-                        <div
-                            ref={backgroundRef}
-                            className="absolute top-5/12 w-full h-3/5 bg-sport-running-dark rounded-[50%] opacity-75 blur-[150px]"
-                        />
-                    </div>
-                )
-            }
+                        ref={backgroundAccentRef}
+                        className={`absolute top-1/6 w-full h-2/5 rounded-[50%] opacity-75 blur-[250px] ${gradientSport === 'running' ? 'bg-sport-running-light' :
+                            gradientSport === 'cycling' ? 'bg-sport-cycling-light' :
+                                'bg-sport-swimming-light'
+                            }`}
+                    />
+                    <div
+                        ref={backgroundRef}
+                        className={`absolute top-5/12 w-full h-3/5 rounded-[50%] opacity-75 blur-[150px] ${gradientSport === 'running' ? 'bg-sport-running-dark' :
+                            gradientSport === 'cycling' ? 'bg-sport-cycling-dark' :
+                                'bg-sport-swimming-dark'
+                            }`}
+                    />
+                </div>
+            )}
         </div>
     );
-}
-
-function getWeekStart(date: Date): Date {
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    return new Date(d.setDate(diff));
-}
-
-function formatDate(date: Date): string {
-    const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-    const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-
-    const dayName = days[date.getDay()];
-    const dayNumber = date.getDate();
-    const monthName = months[date.getMonth()];
-
-    return `${dayName} ${dayNumber} ${monthName}`;
-}
-
-function generateWeekDays(weekStart: Date, selectedDate: Date): DayData[] {
-    const dayNames = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-    const days: DayData[] = [];
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const mockSessions: Record<string, { label: string; sportType: 'running' | 'cycling' | 'swimming' }> = {
-        '1': { label: 'Natation', sportType: 'swimming' },
-        '3': { label: 'Course à pied', sportType: 'running' },
-        '4': { label: 'Cyclisme', sportType: 'cycling' },
-        '6': { label: 'Course à pied', sportType: 'running' },
-        '7': { label: 'Cyclisme', sportType: 'cycling' },
-    };
-
-    for (let i = 0; i < 7; i++) {
-        const currentDate = new Date(weekStart);
-        currentDate.setDate(weekStart.getDate() + i);
-        currentDate.setHours(0, 0, 0, 0);
-
-        const dayNumber = currentDate.getDate();
-        const isToday = currentDate.getTime() === today.getTime();
-        const isPast = currentDate < today;
-        const isSelected = currentDate.getTime() === selectedDate.getTime();
-
-        days.push({
-            dayName: dayNames[i],
-            dayNumber,
-            date: currentDate,
-            isSelected,
-            isPast,
-            isToday,
-            sessionTag: mockSessions[i.toString()]
-        });
-    }
-
-    return days;
 }
 
 export default SessionsClient;

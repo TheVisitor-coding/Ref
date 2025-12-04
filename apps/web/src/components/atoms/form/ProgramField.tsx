@@ -1,13 +1,9 @@
+import { forwardRef, InputHTMLAttributes } from 'react';
 import { User, Calendar, Tag, Dumbbell } from 'lucide-react';
-import Chip from '../chip/Chip';
 
-interface ProgramFieldProps {
+type ProgramFieldProps = InputHTMLAttributes<HTMLInputElement> & {
     icon: 'user' | 'sport' | 'calendar' | 'tag';
-    value?: string;
-    placeholder?: string;
-    disabled?: boolean;
-    onChange?: (value: string) => void;
-}
+};
 
 const iconMap = {
     user: User,
@@ -16,24 +12,23 @@ const iconMap = {
     tag: Tag
 };
 
-export default function ProgramField({ icon, value, placeholder, disabled, onChange }: ProgramFieldProps) {
-    const Icon = iconMap[icon];
+const ProgramField = forwardRef<HTMLInputElement, ProgramFieldProps>(
+    ({ icon, className, ...inputProps }, ref) => {
+        const Icon = iconMap[icon];
 
-    return (
-        <div className="flex gap-2 items-center">
-            <Icon className="size-4 text-secondary" />
-
-            <div className="flex items-center rounded-lg hover:bg-[#F5F5F5] transition-colors">
-                {onChange ? (
-                    <Chip>
-                        {value || placeholder}
-                    </Chip>
-                ) : (
-                    <Chip>
-                        {value || placeholder}
-                    </Chip>
-                )}
+        return (
+            <div className="flex gap-2 items-center">
+                <Icon className="size-4 text-secondary flex-shrink-0" />
+                <input
+                    ref={ref}
+                    {...inputProps}
+                    className={`h-fit px-3 py-1.5 text-base text-primary placeholder:text-disabled bg-[#F5F5F5] hover:bg-[#EBEBEB] focus:bg-white focus:ring-1 focus:ring-primary-blue border-none outline-none rounded-lg transition-colors min-w-[120px] ${className || ''}`}
+                />
             </div>
-        </div>
-    );
-}
+        );
+    }
+);
+
+ProgramField.displayName = 'ProgramField';
+
+export default ProgramField;

@@ -28,11 +28,28 @@
       "maxLength": 255,
       "required": true
     },
+    "sport": {
+      "type": "string",
+      "maxLength": 100,
+      "required": false
+    },
+    "tags": {
+      "type": "json",
+      "required": false
+    },
     "description": {
       "type": "text",
       "required": false
     },
     "objectives": {
+      "type": "text",
+      "required": false
+    },
+    "session_body": {
+      "type": "text",
+      "required": false
+    },
+    "coach_comment": {
       "type": "text",
       "required": false
     },
@@ -42,7 +59,7 @@
     },
     "end_datetime": {
       "type": "datetime",
-      "required": true
+      "required": false
     },
     "location": {
       "type": "string",
@@ -62,7 +79,7 @@
     },
     "requires_presence": {
       "type": "boolean",
-      "default": true
+      "default": false
     },
     "status": {
       "type": "enumeration",
@@ -96,6 +113,30 @@
       "type": "integer",
       "required": false,
       "min": 1
+    },
+    "rpe": {
+      "type": "integer",
+      "required": false,
+      "min": 1,
+      "max": 10
+    },
+    "distance_km": {
+      "type": "decimal",
+      "required": false
+    },
+    "heart_rate_avg": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "speed_kmh": {
+      "type": "decimal",
+      "required": false
+    },
+    "power_watts": {
+      "type": "integer",
+      "required": false,
+      "min": 0
     },
     "difficulty_level": {
       "type": "integer",

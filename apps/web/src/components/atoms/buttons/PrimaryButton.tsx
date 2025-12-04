@@ -6,17 +6,20 @@ function PrimaryButton({
     alt,
     onClick,
     disabled,
-    className
+    className,
+    type = "button"
 }: {
     label: string | React.ReactNode,
     icon?: string,
     alt?: string,
     onClick?: () => void,
     disabled?: boolean,
-    className?: string
+    className?: string,
+    type?: "button" | "submit" | "reset"
 }) {
     return (
         <button
+            type={type}
             onClick={onClick}
             className={` cursor-pointer justify-center px-3 py-1 bg-primary-blue text-white disabled:bg-disabled disabled:text-secondary disabled:cursor-not-allowed rounded-lg flex items-center gap-2 ${className}`}
             disabled={disabled}
