@@ -19,25 +19,6 @@ interface SessionContentProps {
 function SessionContent({ session, isLoading, onEdit, onDelete, onAdd }: SessionContentProps) {
     const config = session ? sportConfig[session.sportType] : sportConfig.running;
 
-    if (isLoading) {
-        return (
-            <div className="relative flex-1 flex flex-col gap-10 items-center w-full overflow-hidden pt-2">
-                <div className="relative z-10 flex flex-col gap-10 items-center w-full px-6">
-                    <div className="bg-white outline-8 outline-white/30 rounded-2xl max-w-[600px] w-full animate-pulse">
-                        <div className="p-1 rounded-[inherit]">
-                            <div className="h-24 bg-gray-200 rounded-t-xl" />
-                            <div className="flex flex-col gap-4 p-6">
-                                <div className="h-4 bg-gray-200 rounded w-3/4" />
-                                <div className="h-4 bg-gray-200 rounded w-1/2" />
-                                <div className="h-20 bg-gray-200 rounded" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="relative flex-1 flex flex-col gap-10 items-center w-full overflow-hidden pt-2">
             <div className="relative z-10 flex flex-col gap-10 items-center w-full px-6">

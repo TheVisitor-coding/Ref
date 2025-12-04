@@ -180,4 +180,12 @@
   body {
     @apply bg-shadcn-background text-shadcn-foreground;
   }
+
+  .select--noarrow button > svg {
+    display: none;
+  }
+
+  .select--noarrow button span {
+    font-size: 1rem;
+  }
 }

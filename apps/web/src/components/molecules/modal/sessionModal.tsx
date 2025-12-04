@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import SecondaryButton from "@/components/atoms/buttons/SecondaryButton";
 import ProgramField from "@/components/atoms/form/ProgramField";
 import SessionFormSection from "@/components/molecules/form/SessionFormSection";
 import CommentSection from "@/components/molecules/form/CommentSection";
 import PrimaryButton from "@/components/atoms/buttons/PrimaryButton";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Session } from "@/types/Session";
 import { toast } from "sonner";
@@ -15,13 +15,15 @@ import { SessionFormInput, SessionFormSchema } from "@/schema/SessionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 
+type AthleteOption = { value: string; label: string };
+
 interface SessionModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     mode?: 'create' | 'edit' | 'view';
     initialData?: Partial<SessionFormInput>;
     athleteId: number;
-    athleteName?: string;
+    athleteOptions?: AthleteOption[];
     selectedDate?: Date;
 }
 
@@ -60,13 +62,15 @@ export default function SessionModal({
     onOpenChange,
     mode = 'create',
     initialData,
-    athleteId,
-    athleteName,
+    athleteId: initialAthleteId,
+    athleteOptions = [],
     selectedDate,
 }: SessionModalProps) {
     const queryClient = useQueryClient();
     const isReadOnly = mode === 'view';
     const config = MODAL_CONFIG[mode];
+
+    const [selectedAthleteId, setSelectedAthleteId] = useState(initialAthleteId);
 
     const {
         register,
@@ -79,16 +83,16 @@ export default function SessionModal({
         defaultValues: getDefaultValues(initialData, selectedDate),
     });
 
-    // Remove UseEffect
     useEffect(() => {
         if (open) {
             reset(getDefaultValues(initialData, selectedDate));
+            setSelectedAthleteId(initialAthleteId);
         }
-    }, [open, initialData, selectedDate, reset]);
+    }, [open, initialData, selectedDate, reset, initialAthleteId]);
 
     const mutation = useMutation({
         mutationFn: async (data: SessionFormInput) => {
-            const endpoint = `/api/athletes/${athleteId}/sessions`;
+            const endpoint = `/api/athletes/${selectedAthleteId}/sessions`;
             const method = mode === 'edit' ? 'PUT' : 'POST';
 
             const response = await fetch(endpoint, {
@@ -106,7 +110,7 @@ export default function SessionModal({
             return response.json() as Promise<{ data: Session }>;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['athleteSessions', athleteId] });
+            queryClient.invalidateQueries({ queryKey: ['athleteSessions', selectedAthleteId] });
             toast.success(mode === 'create' ? 'Séance créée avec succès !' : 'Séance mise à jour !');
             handleClose();
         },
@@ -125,6 +129,8 @@ export default function SessionModal({
     };
 
     const isPending = mutation.isPending || isSubmitting;
+
+    console.log(athleteOptions)
 
     return (
         <Dialog open={open} onOpenChange={handleClose}>
@@ -154,15 +160,25 @@ export default function SessionModal({
                             <div className="flex gap-6 items-center flex-wrap">
                                 <ProgramField
                                     icon="user"
-                                    value={athleteName || 'Athlète'}
-                                    readOnly
-                                    placeholder="Athlète"
+                                    type="select"
+                                    value={String(selectedAthleteId)}
+                                    onChange={(val) => setSelectedAthleteId(Number(val))}
+                                    options={athleteOptions}
+                                    disabled={isReadOnly || athleteOptions.length <= 1}
                                 />
-                                <ProgramField
-                                    icon="sport"
-                                    {...register('sport')}
-                                    placeholder="Sport"
-                                    disabled={isReadOnly}
+                                <Controller
+                                    name="sport"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <ProgramField
+                                            icon="run"
+                                            type="select"
+                                            selectVariant="sport"
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            disabled={isReadOnly}
+                                        />
+                                    )}
                                 />
                                 <ProgramField
                                     icon="calendar"

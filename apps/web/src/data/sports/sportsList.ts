@@ -4,18 +4,21 @@ export const sportConfig = {
     running: {
         icon: '/sports/Run.svg',
         bgColor: 'bg-[#d2e9db]',
+        shapeColor: 'bg-[#088D36]',
         textColor: 'text-[#00581a]',
         label: 'Course à pied',
     },
     cycling: {
         icon: '/sports/Bike.svg',
         bgColor: 'bg-[#eaddee]',
+        shapeColor: 'bg-[#C146A1]',
         textColor: 'text-[#764782]',
         label: 'Cyclisme',
     },
     swimming: {
         icon: '/sports/Swim.svg',
-        bgColor: 'bg-[rgba(147,95,7,0.1)]',
+        bgColor: 'bg-[#FDECCE]',
+        shapeColor: 'bg-[#F59E0B]',
         textColor: 'text-[#935f07]',
         label: 'Natation',
     },

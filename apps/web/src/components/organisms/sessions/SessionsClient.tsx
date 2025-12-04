@@ -16,14 +16,14 @@ import { getWeekStart } from "@/utils/date";
 import { getSessionForDate } from "@/utils/session";
 import { Session, SessionDisplay } from "@/types/Session";
 import { useApi } from "@/hooks/useApi";
-import { sportConfig, normalizeSportType } from "@/data/sports/sportsList";
+import { sportConfig } from "@/data/sports/sportsList";
 
 interface SessionsClientProps {
     athleteId: number;
     athlete: Athlete;
 }
 
-const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+const STRAPI_BASE_URL = process.env.STRAPI_INTERNAL_URL || "http://backend:1337";
 
 const DAY_NAMES = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
 
@@ -168,6 +168,11 @@ function SessionsClient({ athleteId, athlete }: SessionsClientProps) {
                                 />
                             ),
                         },
+                        {
+                            label: "Séances",
+                            href: `/athletes/${athlete.id}/sessions`,
+                            icon: <Image src="/icons/Calendar.svg" alt="Calendar Icon" width={16} height={16} />,
+                        }
                     ]}
                 />
 
@@ -204,7 +209,7 @@ function SessionsClient({ athleteId, athlete }: SessionsClientProps) {
                 onOpenChange={setIsModalOpen}
                 mode={modalMode}
                 athleteId={athleteId}
-                athleteName={athleteName}
+                athleteOptions={[{ value: String(athleteId), label: athleteName }]}
                 selectedDate={selectedDate}
                 initialData={selectedSession ? {
                     title: selectedSession.title,
@@ -222,17 +227,11 @@ function SessionsClient({ athleteId, athlete }: SessionsClientProps) {
                 <div className="absolute right-0 w-full h-[577px] -bottom-[190px] pointer-events-none">
                     <div
                         ref={backgroundAccentRef}
-                        className={`absolute top-1/6 w-full h-2/5 rounded-[50%] opacity-75 blur-[250px] ${gradientSport === 'running' ? 'bg-sport-running-light' :
-                            gradientSport === 'cycling' ? 'bg-sport-cycling-light' :
-                                'bg-sport-swimming-light'
-                            }`}
+                        className={`absolute top-1/6 w-full h-2/5 rounded-[50%] opacity-75 blur-[250px] ${gradientConfig.shapeColor}`}
                     />
                     <div
                         ref={backgroundRef}
-                        className={`absolute top-5/12 w-full h-3/5 rounded-[50%] opacity-75 blur-[150px] ${gradientSport === 'running' ? 'bg-sport-running-dark' :
-                            gradientSport === 'cycling' ? 'bg-sport-cycling-dark' :
-                                'bg-sport-swimming-dark'
-                            }`}
+                        className={`absolute top-5/12 w-full h-3/5 rounded-[50%] opacity-75 blur-[150px] ${gradientConfig.shapeColor}`}
                     />
                 </div>
             )}
