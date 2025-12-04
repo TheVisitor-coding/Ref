@@ -1,6 +1,7 @@
 import z from "zod";
 
 export const SessionFormSchema = z.object({
+    documentId: z.string().optional(),
     title: z.string().min(1, "Le nom de la séance est requis").max(255),
     date: z.string().min(1, "La date est requise"), // Format ISO string depuis le form
 

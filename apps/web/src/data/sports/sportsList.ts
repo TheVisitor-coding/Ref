@@ -11,7 +11,7 @@ export const sportConfig = {
     cycling: {
         icon: '/sports/Bike.svg',
         bgColor: 'bg-[#eaddee]',
-        shapeColor: 'bg-[#C146A1]',
+        shapeColor: 'bg-[#8E529E]',
         textColor: 'text-[#764782]',
         label: 'Cyclisme',
     },

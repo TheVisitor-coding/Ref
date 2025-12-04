@@ -36,6 +36,7 @@ const getDefaultValues = (
     initialData?: Partial<SessionFormInput>,
     selectedDate?: Date
 ): SessionFormInput => ({
+    documentId: initialData?.documentId,
     title: initialData?.title ?? '',
     sport: initialData?.sport ?? '',
     date: initialData?.date ?? formatDateForInput(selectedDate),
@@ -71,7 +72,6 @@ export default function SessionModal({
     const config = MODAL_CONFIG[mode];
 
     const [selectedAthleteId, setSelectedAthleteId] = useState(initialAthleteId);
-
     const {
         register,
         control,
@@ -94,6 +94,8 @@ export default function SessionModal({
         mutationFn: async (data: SessionFormInput) => {
             const endpoint = `/api/athletes/${selectedAthleteId}/sessions`;
             const method = mode === 'edit' ? 'PUT' : 'POST';
+
+            console.log(data, 'Submitting to', endpoint, 'with method', method);
 
             const response = await fetch(endpoint, {
                 method,
@@ -244,7 +246,7 @@ export default function SessionModal({
                                     )
                                 }
                                 disabled={isPending}
-                                className="py-3 px-6"
+                                className="py-3 px-6 shadow-button"
                             />
                         )}
                     </div>

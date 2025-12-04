@@ -212,6 +212,7 @@ function SessionsClient({ athleteId, athlete }: SessionsClientProps) {
                 athleteOptions={[{ value: String(athleteId), label: athleteName }]}
                 selectedDate={selectedDate}
                 initialData={selectedSession ? {
+                    documentId: selectedSession.documentId,
                     title: selectedSession.title,
                     sport: selectedSession.sportType,
                     date: selectedSession.date.toISOString().split('T')[0],
@@ -227,11 +228,11 @@ function SessionsClient({ athleteId, athlete }: SessionsClientProps) {
                 <div className="absolute right-0 w-full h-[577px] -bottom-[190px] pointer-events-none">
                     <div
                         ref={backgroundAccentRef}
-                        className={`absolute top-1/6 w-full h-2/5 rounded-[50%] opacity-75 blur-[250px] ${gradientConfig.shapeColor}`}
+                        className={`absolute top-2/6 w-full h-2/5 rounded-[50%] opacity-75 blur-[250px] ${gradientConfig.shapeColor}`}
                     />
                     <div
                         ref={backgroundRef}
-                        className={`absolute top-5/12 w-full h-3/5 rounded-[50%] opacity-75 blur-[150px] ${gradientConfig.shapeColor}`}
+                        className={`absolute top-4/12 w-full h-3/5 rounded-[50%] opacity-75 blur-[150px] ${gradientConfig.shapeColor}`}
                     />
                 </div>
             )}

@@ -20,9 +20,9 @@ export default function RpeScale({ value, onChange, disabled }: RpeScaleProps) {
                         key={num}
                         onClick={() => !disabled && onChange?.(num)}
                         disabled={disabled}
-                        className={`rounded-lg py-1 px-2 flex items-center justify-center text-base transition-colors ${value === num
-                            ? 'bg-primary text-white'
-                            : 'bg-[#F5F5F5] text-secondary hover:bg-grey-button'
+                        className={`rounded-lg cursor-pointer py-1 px-2 flex border-[1px] items-center justify-center text-base transition-colors ${value === num
+                            ? 'bg-primary-blue-light text-primary-blue border-primary-blue'
+                            : 'bg-[#F5F5F5] text-secondary hover:bg-grey-button border-transparent'
                             } disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
                         {num}
