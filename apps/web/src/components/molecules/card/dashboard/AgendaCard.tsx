@@ -11,7 +11,7 @@ function AgendaCard() {
     return (
         <Card className="py-6 pl-6 gap-6 flex flex-col bg-white border-[1px] border-grey-button w-full">
             <div className="w-full flex items-center justify-between pr-6">
-                <h2 className="text-primary text-lg font-semibold">Aujourd'hui</h2>
+                <h2 className="text-primary text-lg font-semibold">Aujourd&apos;hui</h2>
                 <SecondaryButton onClick={() => { }} label="Ouvrir l'agenda" />
             </div>
 
