@@ -9,7 +9,7 @@ import SessionContent from "./SessionContent";
 import { useGradientAnimation } from "@/hooks/animations/useGradientAnimation";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import SessionModal from "@/components/molecules/modal/SessionModal";
+import SessionModal from "@/components/molecules/modal/sessionModal";
 import { Athlete } from "@/types/User";
 import Image from "next/image";
 import { getWeekStart } from "@/utils/date";
@@ -84,7 +84,8 @@ function SessionsClient({ athleteId, athlete }: SessionsClientProps) {
         }
     );
 
-    const sessions = data?.data ?? [];
+    const sessionsData = data?.data;
+    const sessions = useMemo(() => sessionsData ?? [], [sessionsData]);
 
     const athleteName = `${athlete.first_name || ''} ${athlete.last_name || ''}`.trim() || 'Athlète';
     const avatarUrl = athlete.avatar?.url

@@ -56,9 +56,23 @@ export async function fetchCoachAthleteById(athleteId: number): Promise<AthleteW
   const athlete = (payload?.[0] ?? null) as AthleteWithRelation | null;
   if (!athlete) return null;
 
-  const raw = (athlete as any).athlete_relations;
-  const rels: any[] = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
-  const rel = rels.find(r => r?.coach?.id === coachId);
+  type RelationFromApi = CoachAthleteRelation & { coach?: { id: number } };
+  type RelationPayload = RelationFromApi | RelationFromApi[] | { data?: RelationFromApi[] } | null | undefined;
+
+  const hasDataArray = (value: RelationPayload): value is { data?: RelationFromApi[] } =>
+    typeof value === 'object' && value !== null && 'data' in value;
+
+  const normalizeRelations = (value: RelationPayload): RelationFromApi[] => {
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    if (hasDataArray(value)) {
+      return Array.isArray(value.data) ? value.data : [];
+    }
+    return [value as RelationFromApi];
+  };
+
+  const rawRelations: RelationPayload = (athlete as { athlete_relations?: RelationPayload }).athlete_relations;
+  const rel = normalizeRelations(rawRelations).find(r => r?.coach?.id === coachId);
 
   const athleteWithRelation: AthleteWithRelation = {
     ...(athlete as Athlete),
@@ -139,18 +153,17 @@ export async function updateAthleteById(athleteId: number, input: AthleteUpdateP
 
   console.log('logging data', { userId, athleteId, beforeValues, freshAthlete });
   try {
-    const userKeys = [
+    const userKeys: ReadonlyArray<keyof Athlete> = [
       'first_name', 'last_name', 'email', 'phone',
       'height', 'weight', 'birth_date', 'tag',
       'level', 'discipline', 'mainObjective', 'secondaryObjective',
     ];
 
+    const beforeSubset = pick(beforeValues, userKeys);
+    const afterSubset = pick(freshAthlete, userKeys);
+
     const { old_values: oldUserVals, new_values: newUserVals } =
-      diffChanges(
-        pick(beforeValues, userKeys as unknown as (keyof Athlete)[]),
-        pick(freshAthlete as Athlete, userKeys as unknown as (keyof Athlete)[]),
-        userKeys as unknown as (keyof Athlete)[]
-      );
+      diffChanges(beforeSubset, afterSubset, userKeys);
 
     if (Object.keys(newUserVals).length > 0) {
       addLogAction({

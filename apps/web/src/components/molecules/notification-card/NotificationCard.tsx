@@ -1,6 +1,7 @@
 import Badge from '@/components/atoms/badge/Badge';
 import Card from '../card/Card';
 import IconBtn from '@/components/atoms/buttons/IconBtn';
+import Image from "next/image";
 
 interface NotificationCardProps {
     title: string;
@@ -54,10 +55,10 @@ const NotificationCard = ({
                 </div>
                 <div className='p-4 bg-white flex justify-between items-center gap-4'>
                     <div className='flex items-center'>
-                        <img src={'/icons/Calendar.svg'} alt='calendar icon' className='w-5 h-5 mr-3' />
+                        <Image src={'/icons/Calendar.svg'} alt='calendar icon' width={20} height={20} className='mr-3' />
                         <span className='flex items-center text-sm'>
                             <p className='text-disabled line-through'>Aujourd&apos;hui 11h</p>
-                            <img src={'/icons/chevron-right.svg'} alt='chevron right icon' className='inline w-5 h-5 mx-1' />
+                            <Image src={'/icons/chevron-right.svg'} alt='chevron right icon' width={20} height={20} className='inline mx-1' />
                             <p className='text-secondary'>Aujourd&apos;hui 16h</p>
                         </span>
                     </div>

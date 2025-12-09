@@ -2,10 +2,11 @@ import { Clock, MoveHorizontal, Heart, Gauge, Zap, Menu } from 'lucide-react';
 import { Control, Controller, UseFormRegister } from 'react-hook-form';
 import RpeScale from './RpeScale';
 import LayoutCard from '../card/LayoutCard';
+import { SessionFormInput } from '@/schema/SessionSchema';
 
 interface SessionFormSectionProps {
-    control: Control<any>;
-    register: UseFormRegister<any>;
+    control: Control<SessionFormInput>;
+    register: UseFormRegister<SessionFormInput>;
     disabled?: boolean;
 }
 

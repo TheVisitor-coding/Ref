@@ -1,6 +1,9 @@
 import { fetchCoachAthletesServer } from '@/services/athleteService';
 import { NextResponse } from 'next/server';
 
+const toErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : 'Failed';
+
 export async function GET() {
     try {
         const data = await fetchCoachAthletesServer();
@@ -10,7 +13,7 @@ export async function GET() {
                 'Cache-Control': 'no-store',
             },
         });
-    } catch (e: any) {
-        return NextResponse.json({ error: e?.message ?? 'Failed' }, { status: 500 });
+    } catch (error: unknown) {
+        return NextResponse.json({ error: toErrorMessage(error) }, { status: 500 });
     }
 }

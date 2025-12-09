@@ -40,11 +40,17 @@ function DashboardClient({
     };
 
     return (
-        <div className={`w-full h-full rounded-2xl ${showPreDashboard ? 'bg-white shadow-container overflow-hidden' : ''}`}>
+        <div
+            className={`w-full h-full rounded-2xl ${showPreDashboard ? 'bg-white shadow-container overflow-hidden' : ''}`}
+            aria-busy={isPending}
+        >
             {showPreDashboard ? (
-                <PreDashboard
-                    onClose={handleDashboardClose}
-                />
+                <>
+                    <PreDashboard onClose={handleDashboardClose} />
+                    {errorMessage && (
+                        <p className="px-6 py-2 text-center text-sm text-red-500">{errorMessage}</p>
+                    )}
+                </>
             ) : (
                 <MainDashboard />
             )}

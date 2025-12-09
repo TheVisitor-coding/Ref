@@ -1,7 +1,6 @@
-import { useLogin, useRegister } from "@/hooks/useAuth";
+import { useLogin } from "@/hooks/useAuth";
 
 function FormEmailRegister() {
-    const { register } = useRegister()
     const { login } = useLogin()
 
     const handleRegister = (e: React.FormEvent) => {
