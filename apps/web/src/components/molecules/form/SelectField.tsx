@@ -25,7 +25,7 @@ type Props = {
 
 const SelectField = forwardRef<HTMLButtonElement, Props>(function SelectField(
     { label, value, onChange, placeholder, required, error, className = '', options, disabled },
-    _ref
+    ref
 ) {
     return (
         <div className={`w-full flex flex-col gap-2 ${className}`}>
@@ -34,7 +34,10 @@ const SelectField = forwardRef<HTMLButtonElement, Props>(function SelectField(
             </label>
 
             <UISelect value={value} onValueChange={onChange} disabled={disabled}>
-                <SelectTrigger className={`w-full h-12 rounded-md ${error ? 'border-red-500' : 'border-border-input'} text-primary px-4 text-sm`}>
+                <SelectTrigger
+                    ref={ref}
+                    className={`w-full h-12 rounded-md ${error ? 'border-red-500' : 'border-border-input'} text-primary px-4 text-sm`}
+                >
                     <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
                 <SelectContent className='bg-white'>

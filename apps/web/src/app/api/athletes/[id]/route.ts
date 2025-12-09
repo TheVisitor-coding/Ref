@@ -3,7 +3,10 @@ import { fetchCoachAthleteById, updateAthleteById } from '@/services/athleteServ
 import { NextResponse } from 'next/server';
 import z from 'zod';
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+const toErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : 'Failed';
+
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const idNum = Number(id);
 
@@ -13,12 +16,12 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
         const athlete = await fetchCoachAthleteById(idNum);
         if (!athlete) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         return NextResponse.json({ data: athlete }, { status: 200, headers: { 'Cache-Control': 'no-store' } });
-    } catch (e: any) {
-        return NextResponse.json({ error: e?.message ?? 'Failed' }, { status: 500 });
+    } catch (error: unknown) {
+        return NextResponse.json({ error: toErrorMessage(error) }, { status: 500 });
     }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const idNum = Number(id);
 
@@ -28,7 +31,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     try {
         const body = await req.json();
-        const { relation_notes, ...rest } = body;
+        const { relation_notes } = body;
         const parsed = athleteUpdateSchema.safeParse(body);
         if (!parsed.success) {
             return NextResponse.json(
@@ -37,7 +40,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
             );
         }
 
-        const updated = await updateAthleteById(idNum, {
+        await updateAthleteById(idNum, {
             ...parsed.data,
             relation_notes: typeof relation_notes === 'string' ? relation_notes : undefined,
         });
@@ -48,8 +51,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         }
 
         return NextResponse.json({ data: getAthlete }, { status: 200 });
-    } catch (e: any) {
-        const msg = e?.message ?? 'Failed';
+    } catch (error: unknown) {
+        const msg = toErrorMessage(error);
         const code = msg === 'Not authorized' ? 403 : 500;
         return NextResponse.json({ error: msg }, { status: code });
     }

@@ -62,7 +62,7 @@ const ProgramField = forwardRef<HTMLInputElement, ProgramFieldProps>(
                         <SelectTrigger
                             className={`h-fit px-2 py-1 rounded-md cursor-pointer border-none shadow-none focus:ring-0 ${triggerClass}`}
                         >
-                            <SelectValue className='text-base' />
+                            <SelectValue className='text-base' placeholder={placeholder} />
                         </SelectTrigger>
                         <SelectContent className='bg-white'>
                             {selectOptions.map((option) => {

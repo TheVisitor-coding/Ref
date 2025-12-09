@@ -1,13 +1,15 @@
 'use server'
 
+type AuditValueMap = Record<string, unknown>;
+
 export async function addLogAction({ userId, affectedUserId, tableName, recordId, action, old_values, new_values, authCookie }: {
     userId: number;
     affectedUserId?: number;
     tableName: string;
     recordId: string;
     action: 'create' | 'update' | 'delete' | 'view';
-    old_values?: Record<string, any>;
-    new_values?: Record<string, any>;
+    old_values?: AuditValueMap;
+    new_values?: AuditValueMap;
     authCookie: string;
 }) {
     try {
@@ -41,7 +43,7 @@ export async function addLogAction({ userId, affectedUserId, tableName, recordId
         } else {
             console.log('Log action added successfully');
         }
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Error adding log action:', error);
     }
 }

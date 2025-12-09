@@ -138,36 +138,37 @@ export async function updateSession(
     const result = await res.json();
 
     try {
-        const sessionKeys = [
-            'id', 'documentId', 'coach', 'athlete', 'name', 'sport', 'tags',
-            'description', 'objectives', 'session_body', 'coach_comment',
-            'start_datetime', 'end_datetime', 'location', 'session_type',
-            'requires_presence', 'status', 'intensity_level',
-            'expected_duration_minutes', 'difficulty_level',
-            'actual_duration_minutes', 'rpe', 'distance_km',
-            'heart_rate_avg', 'speed_kmh', 'power_watts',
-            'equipment_needed', 'preparation_notes', 'session_notes',
-            'athlete_feedback', 'coach_rating'
-        ]
+        if (sessionBeforeUpdate) {
+            const sessionKeys: ReadonlyArray<keyof Session> = [
+                'id', 'documentId', 'coach', 'athlete', 'name', 'sport', 'tags',
+                'description', 'objectives', 'session_body', 'coach_comment',
+                'start_datetime', 'end_datetime', 'location', 'session_type',
+                'requires_presence', 'status', 'intensity_level',
+                'expected_duration_minutes', 'difficulty_level',
+                'actual_duration_minutes', 'rpe', 'distance_km',
+                'heart_rate_avg', 'speed_kmh', 'power_watts',
+                'equipment_needed', 'preparation_notes', 'session_notes',
+                'athlete_feedback', 'coach_rating'
+            ];
 
-        const { old_values: oldUserVals, new_values: newUserVals } =
-            diffChanges(
-                pick(sessionBeforeUpdate as Session, sessionKeys as unknown as (keyof Session)[]),
-                pick(result.data as Session, sessionKeys as unknown as (keyof Session)[]),
-                sessionKeys as unknown as (keyof Session)[]
-            );
+            const previousValues = pick(sessionBeforeUpdate, sessionKeys);
+            const updatedValues = pick(result.data as Session, sessionKeys);
 
-        if (Object.keys(newUserVals).length > 0) {
-            addLogAction({
-                userId,
-                affectedUserId: (result.data as Session).athlete as number,
-                tableName: 'sessions',
-                recordId: sessionDocumentId,
-                action: 'update',
-                old_values: oldUserVals,
-                new_values: newUserVals,
-                authCookie: token,
-            });
+            const { old_values: oldUserVals, new_values: newUserVals } =
+                diffChanges(previousValues, updatedValues, sessionKeys);
+
+            if (Object.keys(newUserVals).length > 0) {
+                addLogAction({
+                    userId,
+                    affectedUserId: (result.data as Session).athlete as number,
+                    tableName: 'sessions',
+                    recordId: sessionDocumentId,
+                    action: 'update',
+                    old_values: oldUserVals,
+                    new_values: newUserVals,
+                    authCookie: token,
+                });
+            }
         }
     } catch (e) {
         console.error('Error logging session update:', e);

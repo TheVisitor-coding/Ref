@@ -45,7 +45,7 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
         mode: 'onBlur'
     })
 
-    const { register, control, handleSubmit, formState: { errors, isDirty, isSubmitting } } = form;
+    const { register, control, handleSubmit, formState: { errors, isDirty } } = form;
 
     const mutation = useMutation<
         { data: AthleteWithRelation },
@@ -131,8 +131,8 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                                 type={f.type}
                                 placeholder={f.placeholder}
                                 required={f.required}
-                                error={errors[f.name as keyof typeof errors]?.message as string | undefined}
-                                {...register(f.name as any)}
+                                error={errors[f.name]?.message as string | undefined}
+                                {...register(f.name)}
                             />
                         ))}
                     </Row>
@@ -145,8 +145,8 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                                 type={f.type}
                                 placeholder={f.placeholder}
                                 required={f.required}
-                                error={errors[f.name as keyof typeof errors]?.message as string | undefined}
-                                {...register(f.name as any)}
+                                error={errors[f.name]?.message as string | undefined}
+                                {...register(f.name)}
                             />
                         ))}
                     </Row>
@@ -159,8 +159,8 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                                 type={f.type}
                                 placeholder={f.placeholder}
                                 required={f.required}
-                                error={errors[f.name as keyof typeof errors]?.message as string | undefined}
-                                {...register(f.name as any)}
+                                error={errors[f.name]?.message as string | undefined}
+                                {...register(f.name)}
                             />
                         ))}
                     </Row>
@@ -173,8 +173,8 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                                 type={f.type}
                                 placeholder={f.placeholder}
                                 required={f.required}
-                                error={errors[f.name as keyof typeof errors]?.message as string | undefined}
-                                {...register(f.name as any)}
+                                error={errors[f.name]?.message as string | undefined}
+                                {...register(f.name)}
                             />
                         ))}
                     </Row>
@@ -187,19 +187,21 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                             <Controller
                                 key={f.name}
                                 control={control}
-                                name={f.name as any}
-                                render={({ field }) => (
-                                    <SelectField
-                                        label={f.label}
-                                        placeholder={f.placeholder}
-                                        options={f.options || []}
-                                        value={field.value || undefined}
-                                        onChange={field.onChange}
-                                        error={errors[f.name as keyof typeof errors]?.message as string | undefined}
-                                    />
-                                )}
+                                name={f.name}
+                                render={({ field }) => {
+                                    const selectValue = typeof field.value === 'string' ? field.value : undefined;
+                                    return (
+                                        <SelectField
+                                            label={f.label}
+                                            placeholder={f.placeholder}
+                                            options={f.options || []}
+                                            value={selectValue}
+                                            onChange={field.onChange}
+                                            error={errors[f.name]?.message as string | undefined}
+                                        />
+                                    );
+                                }}
                             />
-
                         ))}
                     </Row>
 
@@ -209,8 +211,8 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                                 key={f.name}
                                 label={f.label}
                                 placeholder={f.placeholder}
-                                error={errors[f.name as keyof typeof errors]?.message as string | undefined}
-                                {...register(f.name as any)}
+                                error={errors[f.name]?.message as string | undefined}
+                                {...register(f.name)}
                             />
                         ))}
                     </Row>

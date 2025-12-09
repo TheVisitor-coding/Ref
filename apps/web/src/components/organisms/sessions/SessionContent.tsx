@@ -7,6 +7,7 @@ import SessionCardActions from "@/components/molecules/session/SessionCardAction
 import { sportConfig } from "@/data/sports/sportsList";
 import { SessionDisplay } from "@/types/Session";
 import { formatDate } from "@/utils/date";
+import Image from "next/image";
 
 interface SessionContentProps {
     session: SessionDisplay | null;
@@ -22,7 +23,11 @@ function SessionContent({ session, isLoading, onEdit, onDelete, onAdd }: Session
     return (
         <div className="relative flex-1 flex flex-col gap-10 items-center w-full overflow-hidden pt-2">
             <div className="relative z-10 flex flex-col gap-10 items-center w-full px-6">
-                {session ? (
+                {isLoading && !session ? (
+                    <div className="flex flex-col items-center gap-4">
+                        <p className="text-primary">Chargement de la séance...</p>
+                    </div>
+                ) : session ? (
                     <>
                         <div className="bg-white outline-8 outline-white/30 rounded-2xl max-w-[600px] w-full">
                             <div className="p-1 rounded-[inherit]">
@@ -54,10 +59,13 @@ function SessionContent({ session, isLoading, onEdit, onDelete, onAdd }: Session
                     </>
                 ) : (
                     <div className="flex flex-col items-center">
-                        <img
+                        <Image
                             className="rounded-2xl"
                             src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbm0yb3lrNmJqZ2Jsd3MwdmI2aGRrdGc3ZHVhenVxcjJseGF1aW02ZCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/evVKsrjZEqVVWvE2VR/giphy.gif"
                             alt="No sessions"
+                            width={320}
+                            height={240}
+                            sizes="(max-width: 640px) 100vw, 320px"
                         />
                         <h1 className="text-primary pt-10 pb-4">Aucune séance programmée</h1>
                         <SecondaryButton className="bg-white" onClick={onAdd} label="Ajouter une séance" />

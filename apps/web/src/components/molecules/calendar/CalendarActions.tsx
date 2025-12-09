@@ -2,14 +2,12 @@ import NavigationButton from "@/components/atoms/buttons/NavigationButton";
 import SecondaryButton from "@/components/atoms/buttons/SecondaryButton";
 
 interface CalendarActionsProps {
-    onPeriodChange?: () => void;
     onTodayClick: () => void;
     onNavigatePrev: () => void;
     onNavigateNext: () => void;
 }
 
 function CalendarActions({
-    onPeriodChange,
     onTodayClick,
     onNavigatePrev,
     onNavigateNext
