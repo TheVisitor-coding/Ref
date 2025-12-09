@@ -44,7 +44,6 @@ services:
       context: .
       dockerfile: docker/backend/production/Dockerfile
       target: production
-    platform: linux/arm64
     expose:
       - "1337"
     volumes:
@@ -105,7 +104,6 @@ services:
       context: .
       dockerfile: docker/frontend/production/Dockerfile
       target: production
-    platform: linux/arm64
     expose:
       - "3000"
     environment:
