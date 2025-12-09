@@ -1,4 +1,20 @@
 import { AthleteLevel } from "@/types/User";
+import { FieldPath } from "react-hook-form";
+import { AthleteUpdateForm } from "@/schema/AthleteSchema";
+
+type AthleteFieldName = FieldPath<AthleteUpdateForm>;
+
+type PersonalFieldConfig = {
+    name: AthleteFieldName;
+    label: string;
+    required?: boolean;
+    placeholder?: string;
+    type?: string;
+};
+
+type SelectFieldConfig = PersonalFieldConfig & {
+    options?: { value: string; label: string }[];
+};
 
 export const personalFields = [
     { name: 'first_name', label: 'Prénom', required: true, placeholder: "Entrez le prénom" },
@@ -9,7 +25,7 @@ export const personalFields = [
     { name: 'weight', label: 'Poids (kg)', placeholder: "ex: 75", type: 'number' },
     { name: 'birth_date', label: 'Date de naissance', type: 'date', placeholder: "YYYY-MM-DD" },
     { name: 'tag', label: 'Tag', placeholder: "Marathon, Triathlon, ..." },
-];
+] as const satisfies ReadonlyArray<PersonalFieldConfig>;
 
 const levelOptions: { value: AthleteLevel; label: string }[] = [
     { value: 'beginner', label: 'Débutant' },
@@ -29,4 +45,4 @@ export const objectiveFields = [
     { name: 'secondaryObjective', label: 'Objectif secondaire', placeholder: "Course à pied" },
     { name: 'level', label: 'Niveau', placeholder: "Débutant, Intermédiaire, Expert, Professionnel", options: levelOptions },
     { name: 'discipline', label: 'Discipline', placeholder: "Choisissez une discipline", options: disciplineOptions },
-];
+] as const satisfies ReadonlyArray<SelectFieldConfig>;

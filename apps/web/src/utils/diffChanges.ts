@@ -1,22 +1,26 @@
-function pick<T extends object, K extends keyof T>(obj: T, keys: K[]): Partial<T> {
-    const out: Partial<T> = {};
-    for (const k of keys) out[k] = obj[k];
+type ValueMap = Record<string, unknown>;
+
+function pick<T extends ValueMap, K extends keyof T>(obj: T, keys: ReadonlyArray<K>): Pick<T, K> {
+    const out = {} as Pick<T, K>;
+    for (const key of keys) {
+        out[key] = obj[key];
+    }
     return out;
 }
 
-function diffChanges<T extends Record<string, any>>(before: T, after: T, keys: (keyof T)[]) {
-    const old_values: Record<string, any> = {};
-    const new_values: Record<string, any> = {};
-    for (const k of keys) {
-        const b = before[k as string];
-        const a = after[k as string];
+function diffChanges<T extends ValueMap, K extends keyof T>(before: Pick<T, K>, after: Pick<T, K>, keys: ReadonlyArray<K>) {
+    const old_values: ValueMap = {};
+    const new_values: ValueMap = {};
+    for (const key of keys) {
+        const previous = before[key];
+        const next = after[key];
         const changed =
-            (b === null || typeof b === 'undefined') && (a === null || typeof a === 'undefined')
+            (previous === null || typeof previous === 'undefined') && (next === null || typeof next === 'undefined')
                 ? false
-                : JSON.stringify(b) !== JSON.stringify(a);
+                : JSON.stringify(previous) !== JSON.stringify(next);
         if (changed) {
-            old_values[k as string] = b;
-            new_values[k as string] = a;
+            old_values[String(key)] = previous;
+            new_values[String(key)] = next;
         }
     }
     return { old_values, new_values };

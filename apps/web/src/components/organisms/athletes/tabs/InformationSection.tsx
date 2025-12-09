@@ -131,8 +131,8 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                                 type={f.type}
                                 placeholder={f.placeholder}
                                 required={f.required}
-                                error={errors[f.name as keyof typeof errors]?.message as string | undefined}
-                                {...register(f.name as any)}
+                                error={errors[f.name]?.message as string | undefined}
+                                {...register(f.name)}
                             />
                         ))}
                     </Row>
@@ -145,8 +145,8 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                                 type={f.type}
                                 placeholder={f.placeholder}
                                 required={f.required}
-                                error={errors[f.name as keyof typeof errors]?.message as string | undefined}
-                                {...register(f.name as any)}
+                                error={errors[f.name]?.message as string | undefined}
+                                {...register(f.name)}
                             />
                         ))}
                     </Row>
@@ -159,8 +159,8 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                                 type={f.type}
                                 placeholder={f.placeholder}
                                 required={f.required}
-                                error={errors[f.name as keyof typeof errors]?.message as string | undefined}
-                                {...register(f.name as any)}
+                                error={errors[f.name]?.message as string | undefined}
+                                {...register(f.name)}
                             />
                         ))}
                     </Row>
@@ -173,8 +173,8 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                                 type={f.type}
                                 placeholder={f.placeholder}
                                 required={f.required}
-                                error={errors[f.name as keyof typeof errors]?.message as string | undefined}
-                                {...register(f.name as any)}
+                                error={errors[f.name]?.message as string | undefined}
+                                {...register(f.name)}
                             />
                         ))}
                     </Row>
@@ -187,7 +187,7 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                             <Controller
                                 key={f.name}
                                 control={control}
-                                name={f.name as any}
+                                name={f.name}
                                 render={({ field }) => (
                                     <SelectField
                                         label={f.label}
@@ -195,7 +195,7 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                                         options={f.options || []}
                                         value={field.value || undefined}
                                         onChange={field.onChange}
-                                        error={errors[f.name as keyof typeof errors]?.message as string | undefined}
+                                        error={errors[f.name]?.message as string | undefined}
                                     />
                                 )}
                             />
@@ -209,8 +209,8 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                                 key={f.name}
                                 label={f.label}
                                 placeholder={f.placeholder}
-                                error={errors[f.name as keyof typeof errors]?.message as string | undefined}
-                                {...register(f.name as any)}
+                                error={errors[f.name]?.message as string | undefined}
+                                {...register(f.name)}
                             />
                         ))}
                     </Row>
