@@ -35,7 +35,7 @@ const athleteTabs: AthleteTabDefinition[] = [
 function AthleteClient({ athleteId }: { athleteId: number }) {
     const STRAPI_BASE_URL = process.env.STRAPI_INTERNAL_URL || "http://backend:1337";
 
-    const { data, isLoading, error } = useApi<AthleteResponse>(
+    const { data } = useApi<AthleteResponse>(
         ["athlete", athleteId],
         `/api/athletes/${athleteId}`,
         { credentials: "include" },

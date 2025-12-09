@@ -84,7 +84,8 @@ function SessionsClient({ athleteId, athlete }: SessionsClientProps) {
         }
     );
 
-    const sessions = data?.data ?? [];
+    const sessionsData = data?.data;
+    const sessions = useMemo(() => sessionsData ?? [], [sessionsData]);
 
     const athleteName = `${athlete.first_name || ''} ${athlete.last_name || ''}`.trim() || 'Athlète';
     const avatarUrl = athlete.avatar?.url

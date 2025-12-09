@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 interface CalendarDayProps {
     dayName: string;
     dayNumber: number;
@@ -67,7 +69,13 @@ function CalendarDay({
                     `}
                 >
                     <div className="w-[13px] h-[13px]">
-                        <img src={sessionTag.icon} alt={sessionTag.label} />
+                        <Image
+                            src={sessionTag.icon}
+                            alt={sessionTag.label}
+                            width={13}
+                            height={13}
+                            className="h-full w-full object-contain"
+                        />
                     </div>
                     <span className={`text-[10px] font-normal leading-[1.25] ${sessionTag.textColor}`}>
                         {sessionTag.label}

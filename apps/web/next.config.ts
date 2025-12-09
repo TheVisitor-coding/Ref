@@ -34,6 +34,12 @@ remotePatterns.push({
   pathname: "/uploads/**",
 });
 
+remotePatterns.push({
+  protocol: "https",
+  hostname: "media.giphy.com",
+  pathname: "/media/**",
+});
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns,

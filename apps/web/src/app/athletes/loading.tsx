@@ -1,7 +1,6 @@
 import Breadcrumbs from "@/components/atoms/breadcrumb/breadcrumbs";
 import DashboardLayout from "@/components/organisms/layouts/DashboardLayout";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Image from "next/image";
 
 export default function Loading() {

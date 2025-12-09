@@ -45,7 +45,7 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
         mode: 'onBlur'
     })
 
-    const { register, control, handleSubmit, formState: { errors, isDirty, isSubmitting } } = form;
+    const { register, control, handleSubmit, formState: { errors, isDirty } } = form;
 
     const mutation = useMutation<
         { data: AthleteWithRelation },

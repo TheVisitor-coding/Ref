@@ -4,6 +4,7 @@ import { columns } from "@/components/molecules/table/invoices/Columns";
 import { Athlete } from "@/types/User";
 
 const InvoicesSection = ({ athlete }: { athlete: Athlete }) => {
+    void athlete;
 
     const fakeInvoices = [
         { id: 1, title: 'Facture Janvier 2024', billing_date: '2024-01-31', state: 'Payée', invoice_number: 'INV-2024-001', amount: 100, due_date: '2024-01-31' },

@@ -17,7 +17,9 @@ export default async function Dashboard() {
     userInfo = await getUserInfo(authCookie);
     if (userInfo) {
       const lastPreDashboardView = userInfo.lastPredashboardSeenAt;
-      lastPreDashboardView ? shouldShowPreDashboard = !isToday(lastPreDashboardView) : null;
+      if (lastPreDashboardView) {
+        shouldShowPreDashboard = !isToday(lastPreDashboardView);
+      }
     }
   }
 
