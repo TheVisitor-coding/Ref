@@ -9,7 +9,7 @@ import SessionContent from "./SessionContent";
 import { useGradientAnimation } from "@/hooks/animations/useGradientAnimation";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import SessionModal from "@/components/molecules/modal/SessionModal";
+import SessionModal from "@/components/molecules/modal/sessionModal";
 import { Athlete } from "@/types/User";
 import Image from "next/image";
 import { getWeekStart } from "@/utils/date";
