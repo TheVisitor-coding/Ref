@@ -52,7 +52,8 @@ function ChartsSection() {
 
                 <LayoutCard title="Suivi et ressenti">
                     <div className="p-6">
-                        <p>Aucune information disponible.</p>
+                        <p className="text-center">Aucune information disponible.</p>
+                        <img className="mx-auto mt-4 rounded-2xl" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXE5aHI3dGowaGF1OGNleGM0OHcybTg5eDgwbW94Z3d3d3V6dDg1bSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/3o6UB5RrlQuMfZp82Y/giphy.gif" alt="No information available" />
                     </div>
                 </LayoutCard>
             </div>

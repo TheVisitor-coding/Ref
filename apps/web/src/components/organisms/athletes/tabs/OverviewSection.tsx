@@ -1,4 +1,5 @@
 import LayoutCard from "@/components/molecules/card/LayoutCard";
+import PlanningCard from "@/components/molecules/card/PlanningCard";
 import HighlightItem from "@/components/molecules/highlight/HighlightItem";
 import InfoRow from "@/components/molecules/info/InfoRow";
 import ScheduleSessionItem, { type ScheduleSessionTag } from "@/components/molecules/schedule/ScheduleSessionItem";
@@ -78,6 +79,8 @@ const OverviewSection = ({ athlete }: { athlete: Athlete }) => {
     return (
         <section className="flex w-full gap-6">
             <div className="flex flex-[2] flex-col gap-6">
+                <PlanningCard athleteId={athlete.id} />
+
                 <LayoutCard title="Informations générales">
                     <div className="flex flex-col">
                         {generalInfoRows.map(({ key, padding, items }) => (

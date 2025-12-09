@@ -17,6 +17,9 @@ function Navbar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: bo
                 <NavlinkButton isOpen={isOpen} href={""} src='/icons/Notification.svg' alt="Notification Icon">
                     Notifications
                 </NavlinkButton>
+                <NavlinkButton isOpen={isOpen} href={"/"} src='/icons/Home.svg' alt="Home Icon">
+                    Accueil
+                </NavlinkButton>
             </div>
 
             <NavbarDivider />
