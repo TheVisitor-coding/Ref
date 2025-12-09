@@ -59,13 +59,16 @@ export async function fetchCoachAthleteById(athleteId: number): Promise<AthleteW
   type RelationFromApi = CoachAthleteRelation & { coach?: { id: number } };
   type RelationPayload = RelationFromApi | RelationFromApi[] | { data?: RelationFromApi[] } | null | undefined;
 
+  const hasDataArray = (value: RelationPayload): value is { data?: RelationFromApi[] } =>
+    typeof value === 'object' && value !== null && 'data' in value;
+
   const normalizeRelations = (value: RelationPayload): RelationFromApi[] => {
     if (!value) return [];
     if (Array.isArray(value)) return value;
-    if (typeof value === 'object' && value !== null && 'data' in value) {
+    if (hasDataArray(value)) {
       return Array.isArray(value.data) ? value.data : [];
     }
-    return [value];
+    return [value as RelationFromApi];
   };
 
   const rawRelations: RelationPayload = (athlete as { athlete_relations?: RelationPayload }).athlete_relations;

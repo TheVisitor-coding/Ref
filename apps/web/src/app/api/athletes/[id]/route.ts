@@ -6,7 +6,7 @@ import z from 'zod';
 const toErrorMessage = (error: unknown) =>
     error instanceof Error ? error.message : 'Failed';
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const idNum = Number(id);
 
@@ -21,7 +21,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
     }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const idNum = Number(id);
 
@@ -31,7 +31,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     try {
         const body = await req.json();
-        const { relation_notes, ...rest } = body;
+        const { relation_notes } = body;
         const parsed = athleteUpdateSchema.safeParse(body);
         if (!parsed.success) {
             return NextResponse.json(
@@ -40,7 +40,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
             );
         }
 
-        const updated = await updateAthleteById(idNum, {
+        await updateAthleteById(idNum, {
             ...parsed.data,
             relation_notes: typeof relation_notes === 'string' ? relation_notes : undefined,
         });

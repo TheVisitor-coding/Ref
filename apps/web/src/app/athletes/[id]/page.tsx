@@ -4,7 +4,7 @@ import { fetchCoachAthleteById } from "@/services/athleteService";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
 
-async function AthletePage({ params }: { params: { id: string } }) {
+async function AthletePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const idNum = Number(id);
     if (!Number.isFinite(idNum)) notFound()

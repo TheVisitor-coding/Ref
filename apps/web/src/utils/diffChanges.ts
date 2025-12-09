@@ -1,6 +1,6 @@
 type ValueMap = Record<string, unknown>;
 
-function pick<T extends ValueMap, K extends keyof T>(obj: T, keys: ReadonlyArray<K>): Pick<T, K> {
+function pick<T, K extends keyof T>(obj: T, keys: ReadonlyArray<K>): Pick<T, K> {
     const out = {} as Pick<T, K>;
     for (const key of keys) {
         out[key] = obj[key];
@@ -8,7 +8,7 @@ function pick<T extends ValueMap, K extends keyof T>(obj: T, keys: ReadonlyArray
     return out;
 }
 
-function diffChanges<T extends ValueMap, K extends keyof T>(before: Pick<T, K>, after: Pick<T, K>, keys: ReadonlyArray<K>) {
+function diffChanges<T, K extends keyof T>(before: Pick<T, K>, after: Pick<T, K>, keys: ReadonlyArray<K>) {
     const old_values: ValueMap = {};
     const new_values: ValueMap = {};
     for (const key of keys) {

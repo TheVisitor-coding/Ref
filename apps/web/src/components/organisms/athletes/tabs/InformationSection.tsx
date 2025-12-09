@@ -188,18 +188,20 @@ function InformationSection({ athlete }: { athlete: AthleteWithRelation }) {
                                 key={f.name}
                                 control={control}
                                 name={f.name}
-                                render={({ field }) => (
-                                    <SelectField
-                                        label={f.label}
-                                        placeholder={f.placeholder}
-                                        options={f.options || []}
-                                        value={field.value || undefined}
-                                        onChange={field.onChange}
-                                        error={errors[f.name]?.message as string | undefined}
-                                    />
-                                )}
+                                render={({ field }) => {
+                                    const selectValue = typeof field.value === 'string' ? field.value : undefined;
+                                    return (
+                                        <SelectField
+                                            label={f.label}
+                                            placeholder={f.placeholder}
+                                            options={f.options || []}
+                                            value={selectValue}
+                                            onChange={field.onChange}
+                                            error={errors[f.name]?.message as string | undefined}
+                                        />
+                                    );
+                                }}
                             />
-
                         ))}
                     </Row>
 

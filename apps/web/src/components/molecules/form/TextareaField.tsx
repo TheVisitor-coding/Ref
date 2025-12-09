@@ -24,4 +24,6 @@ const TextAreaField = forwardRef<HTMLTextAreaElement, Props>(
     )
 )
 
+TextAreaField.displayName = 'TextAreaField';
+
 export default TextAreaField;
