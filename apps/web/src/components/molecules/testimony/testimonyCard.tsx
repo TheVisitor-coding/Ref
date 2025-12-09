@@ -6,7 +6,7 @@ function TestimonyCard() {
             <p className="text-base text-black font-medium relative text-pretty
             before:content-['\201C'] before:text-5xl before:text-accent before:absolute before:-top-4 before:-left-6
             ">Depuis que j’utilise REF, je gagne 8h par semaine tout en offrant à mes clients un suivi plus pro et 100 % personnalisé.
-                <span className="text-5xl text-accent italic align-text-top inline-block h-0 ">"</span>
+                <span className="text-5xl text-accent italic align-text-top inline-block h-0 ">&rdquo;</span>
             </p>
             <AuthorTestimony />
         </div>

@@ -24,7 +24,7 @@ function AddAthleteModal() {
                 <DialogHeader className="gap-4 text-primary">
                     <DialogTitle className="text-[32px] font-medium">Ajouter un sportif dans ma base</DialogTitle>
                     <DialogDescription className="text-lg">
-                        Un email d'accès lui sera envoyé pour qu'il rejoigne votre organisation en un clic.
+                        Un email d&apos;accès lui sera envoyé pour qu&apos;il rejoigne votre organisation en un clic.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -33,7 +33,7 @@ function AddAthleteModal() {
                     type="email"
                     value={email}
                     onChange={handleEmailChange}
-                    placeholder="Entrez l'email du sportif"
+                    placeholder="Entrez l&apos;email du sportif"
                     required={true}
                 />
 
@@ -52,7 +52,7 @@ function AddAthleteModal() {
                     <DialogClose asChild>
                         <SecondaryButton label="Annuler" />
                     </DialogClose>
-                    <PrimaryButton label="Envoyer l'invitation" onClick={() => { }} />
+                    <PrimaryButton label="Envoyer l&apos;invitation" onClick={() => { }} />
                 </DialogFooter>
             </DialogContent>
         </Dialog>
