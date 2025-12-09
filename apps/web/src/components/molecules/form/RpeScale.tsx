@@ -18,6 +18,7 @@ export default function RpeScale({ value, onChange, disabled }: RpeScaleProps) {
                 {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
                     <button
                         key={num}
+                        type="button"
                         onClick={() => !disabled && onChange?.(num)}
                         disabled={disabled}
                         className={`rounded-lg cursor-pointer py-1 px-2 flex border-[1px] items-center justify-center text-base transition-colors ${value === num

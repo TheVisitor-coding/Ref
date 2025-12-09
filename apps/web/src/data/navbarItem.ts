@@ -1,10 +1,5 @@
 export const navbarItems = [
     {
-        title: "Accueil",
-        icon: "/icons/Home.svg",
-        href: "/"
-    },
-    {
         title: "Planning",
         icon: "/icons/Calendar.svg",
         href: "/planning"

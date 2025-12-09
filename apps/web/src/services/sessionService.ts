@@ -4,6 +4,8 @@ import { getTokenFromCookie } from "@/actions/auth-actions";
 import { SessionPayload } from "@/schema/SessionSchema";
 import { Session } from "@/types/Session";
 import { getMeId } from "./userService";
+import { diffChanges, pick } from "@/utils/diffChanges";
+import { addLogAction } from "@/actions/log-actions";
 
 const STRAPI = process.env.STRAPI_INTERNAL_URL;
 
@@ -41,6 +43,21 @@ export async function addSessionForAthlete(
     }
 
     const result = await res.json();
+
+    try {
+        addLogAction({
+            userId: coachId,
+            affectedUserId: athleteId,
+            tableName: 'sessions',
+            recordId: result.data.documentId,
+            action: 'create',
+            new_values: payload,
+            authCookie: token,
+        });
+    } catch (e) {
+        console.error('Error logging session creation:', e);
+    }
+
     return result.data as Session;
 }
 
@@ -69,11 +86,11 @@ export async function fetchSessionsForAthlete(athleteId: number): Promise<Sessio
     return result.data as Session[];
 }
 
-export async function fetchSessionById(sessionId: number): Promise<Session | null> {
+export async function fetchSessionById(sessionId: string): Promise<Session | null> {
     const token = await getTokenFromCookie();
     if (!token) return null;
 
-    const res = await fetch(`${STRAPI}/api/sessions/${sessionId}?populate=*`, {
+    const res = await fetch(`${STRAPI}/api/sessions/${sessionId}`, {
         headers: { Authorization: `Bearer ${token}` },
         cache: 'no-store',
     });
@@ -98,6 +115,10 @@ export async function updateSession(
         data: payload
     };
 
+    const userId = await getMeId(token);
+    const sessionBeforeUpdate = await fetchSessionById(sessionDocumentId);
+    console.log('Session before update:', sessionBeforeUpdate);
+
     const res = await fetch(`${STRAPI}/api/sessions/${sessionDocumentId}`, {
         method: "PUT",
         headers: {
@@ -115,6 +136,43 @@ export async function updateSession(
     }
 
     const result = await res.json();
+
+    try {
+        const sessionKeys = [
+            'id', 'documentId', 'coach', 'athlete', 'name', 'sport', 'tags',
+            'description', 'objectives', 'session_body', 'coach_comment',
+            'start_datetime', 'end_datetime', 'location', 'session_type',
+            'requires_presence', 'status', 'intensity_level',
+            'expected_duration_minutes', 'difficulty_level',
+            'actual_duration_minutes', 'rpe', 'distance_km',
+            'heart_rate_avg', 'speed_kmh', 'power_watts',
+            'equipment_needed', 'preparation_notes', 'session_notes',
+            'athlete_feedback', 'coach_rating'
+        ]
+
+        const { old_values: oldUserVals, new_values: newUserVals } =
+            diffChanges(
+                pick(sessionBeforeUpdate as Session, sessionKeys as unknown as (keyof Session)[]),
+                pick(result.data as Session, sessionKeys as unknown as (keyof Session)[]),
+                sessionKeys as unknown as (keyof Session)[]
+            );
+
+        if (Object.keys(newUserVals).length > 0) {
+            addLogAction({
+                userId,
+                affectedUserId: (result.data as Session).athlete as number,
+                tableName: 'sessions',
+                recordId: sessionDocumentId,
+                action: 'update',
+                old_values: oldUserVals,
+                new_values: newUserVals,
+                authCookie: token,
+            });
+        }
+    } catch (e) {
+        console.error('Error logging session update:', e);
+    }
+
     return result.data as Session;
 }
 
