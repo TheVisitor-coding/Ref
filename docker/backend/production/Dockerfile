@@ -53,7 +53,7 @@ RUN npm ci --only=production && npm cache clean --force
 COPY --from=builder --chown=strapi:nodejs /app/dist ./dist
 COPY --from=builder --chown=strapi:nodejs /app/public ./public
 COPY --from=builder --chown=strapi:nodejs /app/package*.json ./
-COPY --from=builder --chown=strapi:nodejs /app/favicon.ico ./
+COPY --from=builder --chown=strapi:nodejs /app/favicon.png ./
 # COPY --from=builder --chown=strapi:nodejs /app/healthcheck.js ./
 
 # Switch to non-root user
