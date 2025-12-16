@@ -1,12 +1,35 @@
-import { AuthResponseType, SignupRequestType } from "@/types/Auth";
+import type { User } from '@/types/User';
 
-type StrapiErrorPayload = {
+export interface RegisterRequest {
+    username: string;
+    email: string;
+    password: string;
+}
+
+export interface LoginRequest {
+    identifier: string;
+    password: string;
+}
+
+export interface AuthResponse {
+    user: User;
+    message: string;
+}
+
+export interface AuthMeResponse {
+    authenticated: boolean;
+    user: User | null;
+    error?: string;
+}
+
+interface ApiErrorResponse {
     error?: {
-        message?: string;
+        status?: number;
         name?: string;
+        message?: string;
         details?: unknown;
     };
-};
+}
 
 export class AuthError extends Error {
     constructor(
@@ -15,56 +38,56 @@ export class AuthError extends Error {
         public status: number,
         public details?: unknown
     ) {
-        super(message)
-        this.name = 'AuthError'
+        super(message);
+        this.name = 'AuthError';
     }
 }
 
-/**
- * Service Register
- */
-export const signupUser = async (userData: SignupRequestType): Promise<AuthResponseType> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/auth/register-coach`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-    });
+async function handleApiError(response: Response): Promise<never> {
+    const errorData: ApiErrorResponse = await response.json().catch(() => ({}));
+    throw new AuthError(
+        errorData.error?.message || 'An error occurred',
+        errorData.error?.name || 'UNKNOWN_ERROR',
+        response.status,
+        errorData.error?.details
+    );
+}
 
-    if (!response.ok) {
-        const errorData: StrapiErrorPayload = await response.json().catch(() => ({} as StrapiErrorPayload))
-        throw new AuthError(
-            errorData.error?.message || "Erreur lors de l'inscription",
-            errorData.error?.name || 'UNKNOWN_ERROR',
-            response.status,
-            errorData.error?.details
-        )
-    }
+export async function registerCoach(data: RegisterRequest): Promise<AuthResponse> {
+    const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+    });
+    if (!response.ok) await handleApiError(response);
     return response.json();
-};
+}
 
-/**
- * Service Login
- */
-export const loginUser = async (credentials: { identifier: string; password: string }): Promise<AuthResponseType> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/auth/login`, {
+export async function loginUser(credentials: LoginRequest): Promise<AuthResponse> {
+    const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
+        credentials: 'include',
     });
+    if (!response.ok) await handleApiError(response);
+    return response.json();
+}
 
-    if (!response.ok) {
-        const errorData: StrapiErrorPayload = await response.json().catch(() => ({} as StrapiErrorPayload))
-        throw new AuthError(
-            errorData.error?.message || "Erreur lors de la connexion",
-            errorData.error?.name || 'UNKNOWN_ERROR',
-            response.status,
-            errorData.error?.details
-        )
-    }
+export async function getCurrentUser(): Promise<AuthMeResponse> {
+    const response = await fetch('/api/auth/me', {
+        method: 'GET',
+        credentials: 'include',
+        cache: 'no-store',
+    });
+    return response.json();
+}
 
+export async function logoutUser(): Promise<{ success: boolean }> {
+    const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+    });
     return response.json();
 }

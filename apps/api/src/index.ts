@@ -1,5 +1,14 @@
 import type { Core } from '@strapi/strapi';
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
+import {
+  validateRegisterInput,
+  sanitizeRegisterInput,
+  type ValidationResult,
+} from './utils/validation';
+import { createRegisterRateLimiter } from './middlewares/rate-limiter';
+
+// Initialize rate limiter for registration
+const registerRateLimiter = createRegisterRateLimiter();
 
 export default {
   /**
@@ -9,68 +18,146 @@ export default {
    * This gives you an opportunity to extend code.
    */
   register({ strapi }: { strapi: Core.Strapi }) {
+    // =========================================================================
+    // CUSTOM AUTH ROUTES
+    // =========================================================================
     strapi.server.routes([
       {
         method: 'POST',
         path: '/api/auth/register-coach',
         handler: async (ctx) => {
-          const { username, email, password } = ctx.request.body;
+          // Apply rate limiting
+          await registerRateLimiter(ctx, async () => { });
 
-          if (!username || !email || !password) {
-            return ctx.badRequest('Username, email and password are required');
+          // Check if rate limited (ctx.status would be 429)
+          if (ctx.status === 429) {
+            return;
           }
 
-          const existingUser = await strapi.query('plugin::users-permissions.user').findOne({ where: { email } });
+          // =================================================================
+          // VALIDATION
+          // =================================================================
+          const validation: ValidationResult = validateRegisterInput(ctx.request.body);
+
+          if (!validation.valid) {
+            ctx.status = 400;
+            ctx.body = {
+              error: {
+                status: 400,
+                name: 'ValidationError',
+                message: 'Validation failed',
+                details: { errors: validation.errors },
+              },
+            };
+            return;
+          }
+
+          // Sanitize input
+          const { username, email, password } = sanitizeRegisterInput(ctx.request.body);
+
+          // =================================================================
+          // CHECK EXISTING USER
+          // =================================================================
+          const existingUser = await strapi.query('plugin::users-permissions.user').findOne({
+            where: {
+              $or: [
+                { email: email },
+                { username: username },
+              ],
+            },
+          });
+
           if (existingUser) {
-            return ctx.badRequest('Email is already taken');
+            const field = existingUser.email === email ? 'email' : 'username';
+            ctx.status = 400;
+            ctx.body = {
+              error: {
+                status: 400,
+                name: 'ValidationError',
+                message: `This ${field} is already taken`,
+                details: { field },
+              },
+            };
+            return;
           }
 
-          const coachRole = await strapi.query('plugin::users-permissions.role').findOne({ where: { name: 'Coach' } });
+          // =================================================================
+          // GET COACH ROLE
+          // =================================================================
+          const coachRole = await strapi.query('plugin::users-permissions.role').findOne({
+            where: { type: 'coach' },
+          });
+
           if (!coachRole) {
-            return ctx.internalServerError('Coach role not found');
+            strapi.log.error('Coach role not found in database');
+            ctx.status = 500;
+            ctx.body = {
+              error: {
+                status: 500,
+                name: 'InternalServerError',
+                message: 'Server configuration error',
+              },
+            };
+            return;
           }
 
-          const salt = await bcrypt.genSalt(10);
+          // =================================================================
+          // CREATE USER
+          // =================================================================
+          const salt = await bcrypt.genSalt(12); // Increased from 10 to 12 rounds
           const passwordHash = await bcrypt.hash(password, salt);
 
           const user = await strapi.query('plugin::users-permissions.user').create({
             data: {
               username,
-              email: email.toLowerCase(),
+              email,
               password: passwordHash,
               role: coachRole.id,
-              confirmed: false,
+              confirmed: false, // Will be true after email verification (future)
               statusUser: 'pending',
-              provider: 'local'
-            }
+              provider: 'local',
+            },
           });
-         
+
+          // Fetch user with role and permissions for JWT
           const userWithRole = await strapi.query('plugin::users-permissions.user').findOne({
             where: { id: user.id },
             populate: {
               role: { populate: { permissions: true } },
             },
-          })
+          });
 
-          const jwt = strapi.plugin('users-permissions').service('jwt').issue({ 
-            role: 'coach',
+          // =================================================================
+          // GENERATE JWT
+          // =================================================================
+          const jwt = strapi.plugin('users-permissions').service('jwt').issue({
             id: user.id,
-            permissions: userWithRole.role?.permissions?.map(p => p.action) || []
-           });
+            role: userWithRole?.role?.type || 'coach',
+            // Note: Permissions are stored but should be refreshed periodically
+            permissions: userWithRole?.role?.permissions?.map((p: any) => p.action) || [],
+          });
 
+          // =================================================================
+          // SANITIZE & RESPOND
+          // =================================================================
+          const sanitizedUser = await strapi.contentAPI.sanitize.output(
+            userWithRole,
+            strapi.getModel('plugin::users-permissions.user')
+          );
 
-          const sanitizedUser = await strapi.contentAPI.sanitize.output(userWithRole, strapi.getModel('plugin::users-permissions.user'));
+          strapi.log.info(`New coach registered: ${email}`);
 
-          ctx.send({
+          ctx.status = 201;
+          ctx.body = {
             jwt,
             user: sanitizedUser,
-          });
+          };
         },
         config: {
           auth: false,
-        }
-      }
-    ])
+        },
+      },
+    ]);
   },
 
   /**
@@ -80,5 +167,5 @@ export default {
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
    */
-  bootstrap(/* { strapi }: { strapi: Core.Strapi } */) {},
+  bootstrap(/* { strapi }: { strapi: Core.Strapi } */) { },
 };

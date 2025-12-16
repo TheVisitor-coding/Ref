@@ -178,6 +178,7 @@ node_modules
 npm-debug.log
 .next
 .git
+docs/
 
 *.sublime*
 

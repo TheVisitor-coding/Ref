@@ -29,7 +29,7 @@ function Register() {
             </div>
 
             <div className="px-20 pt-20 flex flex-col gap-4 justify-center items-center w-1/2 h-full min-h-screen bg-background-lighter">
-                <div className="bg-white relative rounded-3xl flex flex-col px-10 pb-10 mt-14 gap-10 w-full shadow-authContainer">
+                <div className="bg-white relative rounded-3xl flex flex-col px-10 pb-10 mt-14 gap-10 w-full max-w-[45rem] shadow-authContainer">
                     <div>
                         <Image src={'/screenAuth.svg'} alt="Screen Webapp" width={281} height={257} className="absolute -top-20" />
                         <span className="absolute w-full h-64 top-2 left-0 bg-linear-to-b from-transparent to-white rounded-b-3xl -translate-y-20" />
