@@ -1,11 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+
 @custom-variant dark (&:is(.dark *));
 
-/* ====================================
-   Variables du projet (originales)
-   ==================================== */
 @theme {
   /* Color Variables */
   --color-primary: #333;
