@@ -26,14 +26,3 @@ function Login() {
 }
 
 export default Login;
-
-
-/**
- * TODO Auth :
- * - Internationalisation des messages d'erreur (ex: "Invalid email/username or password")
- * - Bouton retour sur steps onboarding
- * - Animation preview sur colonne de droite à améliorer
- * - Login mutualisé entre coach et athlète ?
- * - Saisie du Nom + Prénom sur step 1 ?
- * - Conserver sur Form création de compte la colonne preview sidebar ?
- */

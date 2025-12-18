@@ -90,9 +90,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 384M
+          memory: 768M
         reservations:
-          memory: 256M
+          memory: 384M
 
   # =============================================================================
   # FRONTEND SERVICE (NEXTJS) - PRODUCTION
@@ -113,6 +113,7 @@ services:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       NEXT_PUBLIC_STRAPI_URL: ${NEXT_PUBLIC_STRAPI_URL}
       STRAPI_INTERNAL_URL: http://backend:1337
+      JWT_SECRET: ${ENCRYPTION_KEY}
 
       # Analytics
       NEXT_PUBLIC_GOOGLE_ANALYTICS: ${NEXT_PUBLIC_GOOGLE_ANALYTICS}
