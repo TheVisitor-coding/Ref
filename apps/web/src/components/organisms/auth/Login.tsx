@@ -12,7 +12,7 @@ function Login() {
                         Heureux de vous revoir, <span className="text-primary-blue font-extrabold italic">Coach.</span>
                     </h1>
                     <p className="text-secondary text-base mt-2">
-                        Reprenez le suivi de vos sportifs là où vous l'aviez laissé.
+                        Reprenez le suivi de vos sportifs là où vous l&apos;aviez laissé.
                     </p>
                 </div>
 

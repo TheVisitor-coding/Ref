@@ -31,7 +31,7 @@ export default function OnboardingSportsPage() {
                         <span className="text-primary">sélectionnez votre spécialité(s)</span>
                     </h1>
                     <p className="text-base text-secondary">
-                        Nous adapterons l'interface et les fonctionnalités à votre sport.
+                        Nous adapterons l&apos;interface et les fonctionnalités à votre sport.
                     </p>
                 </div>
 

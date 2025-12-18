@@ -30,7 +30,7 @@ function Register() {
                     <div className="flex flex-col gap-6">
                         <h2 className="flex flex-col text-black text-2xl font-bold">
                             Optimisez la charge
-                            d'entraînement de vos coureurs
+                            d&apos;entraînement de vos coureurs
                         </h2>
                         <AuthList />
                     </div>
