@@ -1,7 +1,7 @@
-import { featuresList } from './featuresList';
+import { sidebarFeatures } from './featuresList';
 
 export const navbarItems = [
-    ...featuresList.map((feature) => ({
+    ...sidebarFeatures.map((feature) => ({
         title: feature.label,
         icon: feature.icon,
         href: feature.href,
