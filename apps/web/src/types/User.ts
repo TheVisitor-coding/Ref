@@ -1,4 +1,4 @@
-export type User = {
+export interface User {
     id: number;
     documentId: string;
     username: string;
@@ -11,20 +11,12 @@ export type User = {
     country: string;
     statusUser: string;
     lastPredashboardSeenAt?: string | null;
-};
+    role?: string;
+}
 
-export type AuthStoreType = {
-    user: User | null;
-    isAuthenticated: boolean;
-    setUser: (user: User) => void;
-    setToken: (token: string) => void;
-    setIsAuthenticated: (isAuthenticated: boolean) => void;
-    logout: () => void;
-};
+export type AthleteLevel = 'beginner' | 'intermediate' | 'expert' | 'professional';
 
-export type AthleteLevel = "beginner" | "intermediate" | "expert" | "professional";
-
-export type Athlete = User & {
+export interface Athlete extends User {
     avatar: {
         url: string;
     };
@@ -37,17 +29,18 @@ export type Athlete = User & {
     level: AthleteLevel | undefined;
     createdAt: string | null;
     objective: string | null;
-    statusUser: string | null;
     discipline: string | undefined;
     mainObjective: string | null;
     secondaryObjective: string | null;
 }
 
-export type CoachAthleteRelation = {
+export interface CoachAthleteRelation {
     id?: number;
     documentId: string;
     notes?: string | null;
     status_relation?: 'pending' | 'active' | 'archived' | 'blocked';
-};
+}
 
-export type AthleteWithRelation = Athlete & { athlete_relations?: CoachAthleteRelation };
+export interface AthleteWithRelation extends Athlete {
+    athlete_relations?: CoachAthleteRelation;
+}

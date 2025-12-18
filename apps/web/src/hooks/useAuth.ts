@@ -1,84 +1,155 @@
-'use client'
+'use client';
 
-import { useMutation } from "@tanstack/react-query"
-import { useCallback } from "react"
-import authStore from "@/store/AuthStore"
-import { signupSchema } from "@/schema/AuthSchema"
-import { loginUser, signupUser } from "@/services/authService"
-import { SignupRequestType } from "@/types/Auth"
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import useAuthStore from '@/store/AuthStore';
+import { signupSchema, loginSchema } from '@/schema/AuthSchema';
+import {
+    registerCoach,
+    loginUser,
+    getCurrentUser,
+    logoutUser,
+    type RegisterRequest,
+    type LoginRequest,
+    AuthError,
+} from '@/services/authService';
 
-/**
- * Custom Hook for user registration
- */
-const useRegister = () => {
-    const { setUser, setToken, setIsAuthenticated } = authStore()
+export const authKeys = {
+    all: ['auth'] as const,
+    me: () => [...authKeys.all, 'me'] as const,
+};
+
+export function useAuth() {
+    const { syncFromApi, user, isAuthenticated, isLoading, error } = useAuthStore();
+
+    const query = useQuery({
+        queryKey: authKeys.me(),
+        queryFn: getCurrentUser,
+        staleTime: 5 * 60 * 1000,
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
+    });
+
+    useEffect(() => {
+        if (query.data) syncFromApi(query.data);
+    }, [query.data, syncFromApi]);
+
+    return {
+        user: query.data?.user ?? user,
+        isAuthenticated: query.data?.authenticated ?? isAuthenticated,
+        isLoading: query.isLoading || isLoading,
+        error: query.error?.message ?? error,
+        refetch: query.refetch,
+    };
+}
+
+interface UseRegisterOptions {
+    onSuccess?: () => void;
+    onError?: (error: AuthError) => void;
+}
+
+export function useRegister(options?: UseRegisterOptions) {
+    const queryClient = useQueryClient();
+    const { syncFromApi } = useAuthStore();
 
     const mutation = useMutation({
-        mutationFn: signupUser,
+        mutationFn: registerCoach,
         onSuccess: (data) => {
-            setUser(data.user)
-            setToken(data.jwt)
-            setIsAuthenticated(true)
-        }
-    })
+            syncFromApi({ authenticated: true, user: data.user });
+            queryClient.invalidateQueries({ queryKey: authKeys.me() });
+            options?.onSuccess?.();
+        },
+        onError: (error: AuthError) => options?.onError?.(error),
+    });
 
-    const register = useCallback((userData: SignupRequestType) => {
-        const validation = signupSchema.safeParse(userData)
-        if (!validation.success) {
-            console.error("Validation errors:", validation.error.issues)
-            return { success: false, errors: validation.error.issues }
-        }
-        mutation.mutate(validation.data)
-        return { success: true }
-    }, [mutation])
+    const register = useCallback(
+        (userData: RegisterRequest) => {
+            const validation = signupSchema.safeParse(userData);
+            if (!validation.success) {
+                mutation.reset();
+                return { success: false, errors: validation.error.issues, message: validation.error.issues[0].message };
+            }
+            mutation.mutate(validation.data);
+            return { success: true };
+        },
+        [mutation]
+    );
 
     return {
         register,
         isLoading: mutation.isPending,
         error: mutation.error,
         isSuccess: mutation.isSuccess,
-        reset: mutation.reset
-    }
+        reset: mutation.reset,
+    };
 }
 
+interface UseLoginOptions {
+    onSuccess?: () => void;
+    onError?: (error: AuthError) => void;
+    redirectTo?: string;
+}
 
-/**
- * Custom Hook for user login
- */
-const useLogin = () => {
-    const { setUser, setToken, setIsAuthenticated } = authStore()
+export function useLogin(options?: UseLoginOptions) {
+    const queryClient = useQueryClient();
+    const { syncFromApi } = useAuthStore();
+    const router = useRouter();
 
     const mutation = useMutation({
         mutationFn: loginUser,
         onSuccess: (data) => {
-            setUser(data.user)
-            setToken(data.jwt)
-            setIsAuthenticated(true)
-        }
-    })
+            syncFromApi({ authenticated: true, user: data.user });
+            queryClient.invalidateQueries({ queryKey: authKeys.me() });
+            options?.onSuccess?.();
+            if (options?.redirectTo) router.push(options.redirectTo);
+        },
+        onError: (error: AuthError) => options?.onError?.(error),
+    });
 
-    const login = useCallback((credentials: { identifier: string; password: string }) => {
-        mutation.mutate(credentials)
-    }, [mutation])
+    const login = useCallback(
+        (credentials: LoginRequest) => {
+            const validation = loginSchema.safeParse(credentials);
+            if (!validation.success) {
+                return { success: false, errors: validation.error.issues, message: validation.error.issues[0].message };
+            }
+            mutation.mutate(validation.data);
+            return { success: true };
+        },
+        [mutation]
+    );
 
     return {
         login,
-        loading: mutation.isPending,
-        error: mutation.error?.message || null,
+        isLoading: mutation.isPending,
+        error: mutation.error?.message ?? null,
         isSuccess: mutation.isSuccess,
-        reset: mutation.reset
-    }
+        reset: mutation.reset,
+    };
 }
 
-/**
- * Custom Hook for user logout
- */
-const useLogout = () => {
-    const { logout } = authStore()
-    
-    return useCallback(() => {
-        logout()
-    }, [logout])
+interface UseLogoutOptions {
+    redirectTo?: string;
+    onSuccess?: () => void;
 }
 
-export { useRegister, useLogin, useLogout }
+export function useLogout(options?: UseLogoutOptions) {
+    const queryClient = useQueryClient();
+    const { logout: clearStore } = useAuthStore();
+    const router = useRouter();
+
+    return useCallback(async () => {
+        try {
+            await logoutUser();
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            clearStore();
+            queryClient.removeQueries({ queryKey: authKeys.all });
+            options?.onSuccess?.();
+            if (options?.redirectTo) router.push(options.redirectTo);
+        }
+    }, [clearStore, queryClient, router, options]);
+}
+
+export type { RegisterRequest, LoginRequest };

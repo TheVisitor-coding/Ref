@@ -1695,6 +1695,7 @@ export interface PluginUsersPermissionsUser
     avatar: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     birth_date: Schema.Attribute.String;
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    coach_preferences: Schema.Attribute.JSON;
     coached_athletes: Schema.Attribute.Relation<
       'oneToMany',
       'api::coach-athlete.coach-athlete'
@@ -1753,6 +1754,7 @@ export interface PluginUsersPermissionsUser
       'oneToMany',
       'api::notification.notification'
     >;
+    onboarding_completed_at: Schema.Attribute.DateTime;
     password: Schema.Attribute.Password &
       Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
@@ -1795,7 +1797,6 @@ export interface PluginUsersPermissionsUser
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     username: Schema.Attribute.String &
-      Schema.Attribute.Required &
       Schema.Attribute.Unique &
       Schema.Attribute.SetMinMaxLength<{
         minLength: 3;

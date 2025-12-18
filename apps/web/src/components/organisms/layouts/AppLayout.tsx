@@ -7,12 +7,17 @@ import { Toaster } from "@/components/ui/sonner";
 function AppLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
 
-    const pagesWithoutSidebar = ['/auth/login', '/auth/sign-up'];
+    const pagesWithoutSidebar = ['/auth/login', '/auth/sign-up', '/auth/onboarding', '/auth/sign-in'];
 
     const shouldShowSidebar = !pagesWithoutSidebar.some(page => pathname.startsWith(page));
 
     if (!shouldShowSidebar) {
-        return <>{children}</>;
+        return (
+            <>
+                {children}
+                <Toaster />
+            </>
+        );
     }
 
     return (

@@ -1,84 +1,139 @@
 import type { Core } from '@strapi/strapi';
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
+import {
+  validateRegisterInput,
+  sanitizeRegisterInput,
+  type ValidationResult,
+  type OnboardingData,
+} from './utils/validation';
+import { createRegisterRateLimiter } from './middlewares/rate-limiter';
+
+const registerRateLimiter = createRegisterRateLimiter();
 
 export default {
-  /**
-   * An asynchronous register function that runs before
-   * your application is initialized.
-   *
-   * This gives you an opportunity to extend code.
-   */
   register({ strapi }: { strapi: Core.Strapi }) {
     strapi.server.routes([
       {
         method: 'POST',
         path: '/api/auth/register-coach',
         handler: async (ctx) => {
-          const { username, email, password } = ctx.request.body;
+          await registerRateLimiter(ctx, async () => { });
 
-          if (!username || !email || !password) {
-            return ctx.badRequest('Username, email and password are required');
+          if (ctx.status === 429) {
+            return;
           }
 
-          const existingUser = await strapi.query('plugin::users-permissions.user').findOne({ where: { email } });
+          const validation: ValidationResult = validateRegisterInput(ctx.request.body);
+
+          if (!validation.valid) {
+            ctx.status = 400;
+            ctx.body = {
+              error: {
+                status: 400,
+                name: 'ValidationError',
+                message: 'Validation failed',
+                details: { errors: validation.errors },
+              },
+            };
+            return;
+          }
+
+          const { email, password } = sanitizeRegisterInput(ctx.request.body);
+          const onboardingData = ctx.request.body.onboardingData as OnboardingData | undefined;
+
+          const existingUser = await strapi.query('plugin::users-permissions.user').findOne({
+            where: {
+              email: email,
+            },
+          });
+
           if (existingUser) {
-            return ctx.badRequest('Email is already taken');
+            if (existingUser.email === email) {
+              ctx.status = 400;
+              ctx.body = {
+                error: {
+                  status: 400,
+                  name: 'ValidationError',
+                  message: 'This email is already taken',
+                  details: { field: 'email' },
+                },
+              };
+              return;
+            }
           }
 
-          const coachRole = await strapi.query('plugin::users-permissions.role').findOne({ where: { name: 'Coach' } });
+          const coachRole = await strapi.query('plugin::users-permissions.role').findOne({
+            where: { type: 'coach' },
+          });
+
           if (!coachRole) {
-            return ctx.internalServerError('Coach role not found');
+            strapi.log.error('Coach role not found in database');
+            ctx.status = 500;
+            ctx.body = {
+              error: {
+                status: 500,
+                name: 'InternalServerError',
+                message: 'Server configuration error',
+              },
+            };
+            return;
           }
 
-          const salt = await bcrypt.genSalt(10);
+          const salt = await bcrypt.genSalt(12);
           const passwordHash = await bcrypt.hash(password, salt);
 
           const user = await strapi.query('plugin::users-permissions.user').create({
             data: {
-              username,
-              email: email.toLowerCase(),
+              email,
               password: passwordHash,
               role: coachRole.id,
               confirmed: false,
               statusUser: 'pending',
-              provider: 'local'
-            }
+              provider: 'local',
+              ...(onboardingData && {
+                first_name: onboardingData.firstName,
+                coach_preferences: {
+                  sports: onboardingData.selectedSports,
+                  athletesCount: onboardingData.athletesCount,
+                  features: onboardingData.selectedFeatures,
+                },
+                onboarding_completed_at: new Date().toISOString(),
+              }),
+            },
           });
-         
+
           const userWithRole = await strapi.query('plugin::users-permissions.user').findOne({
             where: { id: user.id },
             populate: {
               role: { populate: { permissions: true } },
             },
-          })
+          });
 
-          const jwt = strapi.plugin('users-permissions').service('jwt').issue({ 
-            role: 'coach',
+          const jwt = strapi.plugin('users-permissions').service('jwt').issue({
             id: user.id,
-            permissions: userWithRole.role?.permissions?.map(p => p.action) || []
-           });
+            role: userWithRole?.role?.type || 'coach',
+            permissions: userWithRole?.role?.permissions?.map((p: any) => p.action) || [],
+          });
 
+          const sanitizedUser = await strapi.contentAPI.sanitize.output(
+            userWithRole,
+            strapi.getModel('plugin::users-permissions.user')
+          );
 
-          const sanitizedUser = await strapi.contentAPI.sanitize.output(userWithRole, strapi.getModel('plugin::users-permissions.user'));
+          strapi.log.info(`New coach registered: ${email}`);
 
-          ctx.send({
+          ctx.status = 201;
+          ctx.body = {
             jwt,
             user: sanitizedUser,
-          });
+          };
         },
         config: {
           auth: false,
-        }
-      }
-    ])
+        },
+      },
+    ]);
   },
 
-  /**
-   * An asynchronous bootstrap function that runs before
-   * your application gets started.
-   *
-   * This gives you an opportunity to set up your data model,
-   * run jobs, or perform some special logic.
-   */
-  bootstrap(/* { strapi }: { strapi: Core.Strapi } */) {},
+  bootstrap(/* { strapi }: { strapi: Core.Strapi } */) { },
 };

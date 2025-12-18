@@ -1,44 +1,51 @@
-import { AuthStoreType, User } from "@/types/User";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import type { User } from '@/types/User';
+import { create } from 'zustand';
 
-const authStore = create<AuthStoreType>()(
-  persist(
-    (set) => ({
-      user: null,
-      isAuthenticated: false,
-      setUser: (user: User) => set({ user }),
-      setToken: async (token: string) => {
-        try {
-            await fetch('/api/auth/set-token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ token })
-            });
-        } catch (error) {
-          console.error("Failed to set token cookie:", error);
-        }
-      },
-      setIsAuthenticated: (isAuthenticated: boolean) => set({ isAuthenticated }),
-      logout: async () => {
-        try {
-            await fetch('/api/auth/logout', { method: 'POST' });
-        } catch (error) {
-          console.error("Failed to delete token cookie:", error);
-        }
-        set({ user: null, isAuthenticated: false })
-      }
-    }),
-    {
-      name: "auth",
-      partialize: (state) => ({ 
-        user: state.user,
-        isAuthenticated: state.isAuthenticated 
-      }),
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+}
+
+export interface AuthActions {
+  setUser: (user: User | null) => void;
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
+  setIsLoading: (isLoading: boolean) => void;
+  setError: (error: string | null) => void;
+  logout: () => Promise<void>;
+  reset: () => void;
+  syncFromApi: (data: { authenticated: boolean; user: User | null }) => void;
+}
+
+export type AuthStoreType = AuthState & AuthActions;
+
+const initialState: AuthState = {
+  user: null,
+  isAuthenticated: false,
+  isLoading: true,
+  error: null,
+};
+
+const useAuthStore = create<AuthStoreType>()((set) => ({
+  ...initialState,
+  setUser: (user) => set({ user }),
+  setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
+  setIsLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
+  logout: async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      set({ ...initialState, isLoading: false });
     }
-  )
-);
+  },
+  reset: () => set({ ...initialState, isLoading: false }),
+  syncFromApi: (data) => {
+    set({ user: data.user, isAuthenticated: data.authenticated, isLoading: false, error: null });
+  },
+}));
 
-export default authStore;
+export default useAuthStore;
