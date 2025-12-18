@@ -1,3 +1,4 @@
+import PrimaryButton from "@/components/atoms/buttons/PrimaryButton";
 import { useLogin } from "@/hooks/useAuth";
 
 function FormEmailRegister() {
@@ -18,8 +19,13 @@ function FormEmailRegister() {
     return (
         <form className="flex flex-col gap-4">
             <input type="email" placeholder="contact@email.fr" className="px-4 h-12 rounded-lg border-[#D3D3D3] border-[1px] text-base text-[#A0A0A0] placeholder:text-base" />
-            <button onClick={handleRegister} className="px-6 py-3 bg-primary-blue rounded-xl shadow-button text-white-100 text-[1.125rem]">Continuer</button>
-            <p className="text-grey text-sm">En continuant, vous acceptez les <a href="#">conditions générales d’utilisations</a></p>
+            <input type="password" placeholder="Mot de passe" className="px-4 h-12 rounded-lg border-[#D3D3D3] border-[1px] text-base text-[#A0A0A0] placeholder:text-base" />
+            <PrimaryButton
+                onClick={() => handleRegister}
+                className="px-6 py-3 bg-primary-blue rounded-xl shadow-button text-white-100 text-[1.125rem]"
+                label="Créer mon compte"
+            />
+            <p className="text-grey text-sm">En continuant, vous acceptez les <a className=" underline" href="#">conditions générales d’utilisations</a></p>
         </form>
     );
 }

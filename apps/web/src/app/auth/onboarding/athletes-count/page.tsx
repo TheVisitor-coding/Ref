@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import OnboardingProgressBar from '@/components/molecules/onboarding/OnboardingProgressBar';
 import SelectionTile from '@/components/molecules/onboarding/SelectionTile';
-
-type AthletesCountOption = 'less-than-5' | '5-to-20' | '20-to-50' | 'more-than-50';
+import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
+import useOnboardingStore, { type AthletesCountOption } from '@/store/OnboardingStore';
 
 const athletesCountOptions: { id: AthletesCountOption; label: string }[] = [
     { id: 'less-than-5', label: 'Moins de 5' },
@@ -16,10 +15,10 @@ const athletesCountOptions: { id: AthletesCountOption; label: string }[] = [
 
 export default function OnboardingAthletesCountPage() {
     const router = useRouter();
-    const [selectedOption, setSelectedOption] = useState<AthletesCountOption | null>(null);
+    const { athletesCount, setAthletesCount } = useOnboardingStore();
 
     const handleContinue = () => {
-        if (selectedOption) {
+        if (athletesCount) {
             router.push('/auth/onboarding/features');
         }
     };
@@ -37,8 +36,8 @@ export default function OnboardingAthletesCountPage() {
                             key={option.id}
                             icon="/sports/Run.svg"
                             label={option.label}
-                            selected={selectedOption === option.id}
-                            onClick={() => setSelectedOption(option.id)}
+                            selected={athletesCount === option.id}
+                            onClick={() => setAthletesCount(option.id)}
                         />
                     ))}
                 </div>
@@ -47,13 +46,12 @@ export default function OnboardingAthletesCountPage() {
             <div className="flex items-center justify-between w-full">
                 <OnboardingProgressBar currentStep={3} />
 
-                <button
+                <PrimaryButton
                     onClick={handleContinue}
-                    disabled={!selectedOption}
+                    disabled={!athletesCount}
+                    label="Continuer"
                     className="px-6 py-3 text-base font-semibold text-white transition-opacity rounded-xl bg-primary-blue shadow-button disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
-                >
-                    Continuer
-                </button>
+                />
             </div>
         </>
     );

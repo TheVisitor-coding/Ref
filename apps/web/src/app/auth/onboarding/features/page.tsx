@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import OnboardingProgressBar from '@/components/molecules/onboarding/OnboardingProgressBar';
 import FeatureTile from '@/components/molecules/onboarding/FeatureTile';
-
-type FeatureId = 'athletes-tracking' | 'session-analysis' | 'calendar' | 'messaging' | 'payments' | 'tasks';
+import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
+import useOnboardingStore, { type FeatureId } from '@/store/OnboardingStore';
 
 interface Feature {
     id: FeatureId;
@@ -24,15 +23,7 @@ const features: Feature[] = [
 
 export default function OnboardingFeaturesPage() {
     const router = useRouter();
-    const [selectedFeatures, setSelectedFeatures] = useState<FeatureId[]>([]);
-
-    const handleToggleFeature = (featureId: FeatureId) => {
-        setSelectedFeatures((prev) =>
-            prev.includes(featureId)
-                ? prev.filter((id) => id !== featureId)
-                : [...prev, featureId]
-        );
-    };
+    const { selectedFeatures, toggleFeature } = useOnboardingStore();
 
     const handleContinue = () => {
         router.push('/auth/sign-up');
@@ -61,7 +52,7 @@ export default function OnboardingFeaturesPage() {
                                     icon={feature.icon}
                                     label={feature.label}
                                     selected={selectedFeatures.includes(feature.id)}
-                                    onToggle={() => handleToggleFeature(feature.id)}
+                                    onToggle={() => toggleFeature(feature.id)}
                                 />
                             ))}
                         </div>
@@ -72,12 +63,11 @@ export default function OnboardingFeaturesPage() {
             <div className="flex items-center justify-between w-full">
                 <OnboardingProgressBar currentStep={4} />
 
-                <button
+                <PrimaryButton
                     onClick={handleContinue}
+                    label="Continuer"
                     className="px-6 py-3 text-base font-semibold text-white transition-opacity rounded-xl bg-primary-blue shadow-button hover:opacity-90"
-                >
-                    Continuer
-                </button>
+                />
             </div>
         </>
     );

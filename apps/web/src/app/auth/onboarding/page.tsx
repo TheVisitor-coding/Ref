@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import OnboardingProgressBar from '@/components/molecules/onboarding/OnboardingProgressBar';
+import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
+import useOnboardingStore from '@/store/OnboardingStore';
 
 export default function OnboardingNamePage() {
     const router = useRouter();
-    const [firstName, setFirstName] = useState('');
+    const { firstName, setFirstName } = useOnboardingStore();
 
     const handleContinue = () => {
         if (firstName.trim()) {
@@ -41,13 +42,12 @@ export default function OnboardingNamePage() {
             <div className="flex items-center justify-between w-full">
                 <OnboardingProgressBar currentStep={1} />
 
-                <button
+                <PrimaryButton
                     onClick={handleContinue}
                     disabled={!firstName.trim()}
+                    label="Continuer"
                     className="px-6 py-3 text-base font-semibold text-white transition-opacity rounded-xl bg-primary-blue shadow-button disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
-                >
-                    Continuer
-                </button>
+                />
             </div>
         </>
     );
