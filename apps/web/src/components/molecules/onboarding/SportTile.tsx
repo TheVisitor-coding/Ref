@@ -14,13 +14,13 @@ export default function SportTile({ sportId, selected, onToggle }: SportTileProp
         <button
             type="button"
             onClick={() => onToggle(sportId)}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors ${selected
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer border transition-colors ${selected
                 ? 'border-primary-blue bg-primary-blue-light'
                 : 'border-grey-button hover:border-secondary'
                 }`}
         >
             <Image src={sport.icon} alt="" width={24} height={24} />
-            <span className="text-base text-primary">{sport.label}</span>
+            <span className={`text-base ${selected ? 'text-primary-blue' : 'text-primary'}`}>{sport.label}</span>
         </button>
     );
 }

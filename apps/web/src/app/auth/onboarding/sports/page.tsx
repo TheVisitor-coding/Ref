@@ -26,7 +26,7 @@ export default function OnboardingSportsPage() {
             <div className="flex flex-col w-full gap-10">
                 <div className="flex flex-col gap-2">
                     <h1 className="text-[40px] font-semibold leading-tight font-poppins">
-                        <span className="text-primary-blue font-extrabold italic">Bienvenue {firstName},</span>
+                        <span className="text-primary-blue font-extrabold italic">Bienvenue {firstName}</span>
                         <br />
                         <span className="text-primary">sélectionnez votre spécialité(s)</span>
                     </h1>

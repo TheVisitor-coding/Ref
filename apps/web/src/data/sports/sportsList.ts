@@ -7,6 +7,8 @@ export const sportConfig = {
         shapeColor: 'bg-[#088D36]',
         textColor: 'text-[#00581a]',
         label: 'Course à pied',
+        tagBgColor: '#f2fbf5',
+        tagTextColor: '#0c6f2f',
     },
     cycling: {
         icon: '/sports/Bike.svg',
@@ -14,6 +16,8 @@ export const sportConfig = {
         shapeColor: 'bg-[#8E529E]',
         textColor: 'text-[#764782]',
         label: 'Cyclisme',
+        tagBgColor: '#f6eef9',
+        tagTextColor: '#764782',
     },
     swimming: {
         icon: '/sports/Swim.svg',
@@ -21,6 +25,8 @@ export const sportConfig = {
         shapeColor: 'bg-[#F59E0B]',
         textColor: 'text-[#935f07]',
         label: 'Natation',
+        tagBgColor: '#fef8eb',
+        tagTextColor: '#935f07',
     },
 } as const;
 
