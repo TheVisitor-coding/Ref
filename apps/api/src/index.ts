@@ -4,39 +4,25 @@ import {
   validateRegisterInput,
   sanitizeRegisterInput,
   type ValidationResult,
+  type OnboardingData,
 } from './utils/validation';
 import { createRegisterRateLimiter } from './middlewares/rate-limiter';
 
-// Initialize rate limiter for registration
 const registerRateLimiter = createRegisterRateLimiter();
 
 export default {
-  /**
-   * An asynchronous register function that runs before
-   * your application is initialized.
-   *
-   * This gives you an opportunity to extend code.
-   */
   register({ strapi }: { strapi: Core.Strapi }) {
-    // =========================================================================
-    // CUSTOM AUTH ROUTES
-    // =========================================================================
     strapi.server.routes([
       {
         method: 'POST',
         path: '/api/auth/register-coach',
         handler: async (ctx) => {
-          // Apply rate limiting
           await registerRateLimiter(ctx, async () => { });
 
-          // Check if rate limited (ctx.status would be 429)
           if (ctx.status === 429) {
             return;
           }
 
-          // =================================================================
-          // VALIDATION
-          // =================================================================
           const validation: ValidationResult = validateRegisterInput(ctx.request.body);
 
           if (!validation.valid) {
@@ -52,38 +38,30 @@ export default {
             return;
           }
 
-          // Sanitize input
-          const { username, email, password } = sanitizeRegisterInput(ctx.request.body);
+          const { email, password } = sanitizeRegisterInput(ctx.request.body);
+          const onboardingData = ctx.request.body.onboardingData as OnboardingData | undefined;
 
-          // =================================================================
-          // CHECK EXISTING USER
-          // =================================================================
           const existingUser = await strapi.query('plugin::users-permissions.user').findOne({
             where: {
-              $or: [
-                { email: email },
-                { username: username },
-              ],
+              email: email,
             },
           });
 
           if (existingUser) {
-            const field = existingUser.email === email ? 'email' : 'username';
-            ctx.status = 400;
-            ctx.body = {
-              error: {
-                status: 400,
-                name: 'ValidationError',
-                message: `This ${field} is already taken`,
-                details: { field },
-              },
-            };
-            return;
+            if (existingUser.email === email) {
+              ctx.status = 400;
+              ctx.body = {
+                error: {
+                  status: 400,
+                  name: 'ValidationError',
+                  message: 'This email is already taken',
+                  details: { field: 'email' },
+                },
+              };
+              return;
+            }
           }
 
-          // =================================================================
-          // GET COACH ROLE
-          // =================================================================
           const coachRole = await strapi.query('plugin::users-permissions.role').findOne({
             where: { type: 'coach' },
           });
@@ -101,25 +79,29 @@ export default {
             return;
           }
 
-          // =================================================================
-          // CREATE USER
-          // =================================================================
-          const salt = await bcrypt.genSalt(12); // Increased from 10 to 12 rounds
+          const salt = await bcrypt.genSalt(12);
           const passwordHash = await bcrypt.hash(password, salt);
 
           const user = await strapi.query('plugin::users-permissions.user').create({
             data: {
-              username,
               email,
               password: passwordHash,
               role: coachRole.id,
-              confirmed: false, // Will be true after email verification (future)
+              confirmed: false,
               statusUser: 'pending',
               provider: 'local',
+              ...(onboardingData && {
+                first_name: onboardingData.firstName,
+                coach_preferences: {
+                  sports: onboardingData.selectedSports,
+                  athletesCount: onboardingData.athletesCount,
+                  features: onboardingData.selectedFeatures,
+                },
+                onboarding_completed_at: new Date().toISOString(),
+              }),
             },
           });
 
-          // Fetch user with role and permissions for JWT
           const userWithRole = await strapi.query('plugin::users-permissions.user').findOne({
             where: { id: user.id },
             populate: {
@@ -127,19 +109,12 @@ export default {
             },
           });
 
-          // =================================================================
-          // GENERATE JWT
-          // =================================================================
           const jwt = strapi.plugin('users-permissions').service('jwt').issue({
             id: user.id,
             role: userWithRole?.role?.type || 'coach',
-            // Note: Permissions are stored but should be refreshed periodically
             permissions: userWithRole?.role?.permissions?.map((p: any) => p.action) || [],
           });
 
-          // =================================================================
-          // SANITIZE & RESPOND
-          // =================================================================
           const sanitizedUser = await strapi.contentAPI.sanitize.output(
             userWithRole,
             strapi.getModel('plugin::users-permissions.user')
@@ -160,12 +135,5 @@ export default {
     ]);
   },
 
-  /**
-   * An asynchronous bootstrap function that runs before
-   * your application gets started.
-   *
-   * This gives you an opportunity to set up your data model,
-   * run jobs, or perform some special logic.
-   */
   bootstrap(/* { strapi }: { strapi: Core.Strapi } */) { },
 };

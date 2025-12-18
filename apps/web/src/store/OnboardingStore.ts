@@ -5,11 +5,17 @@ import type { SportType } from '@/data/sports/sportsList';
 export type AthletesCountOption = 'less-than-5' | '5-to-20' | '20-to-50' | 'more-than-50';
 export type FeatureId = 'athletes-tracking' | 'session-analysis' | 'calendar' | 'messaging' | 'payments' | 'tasks';
 
-interface OnboardingState {
+export type OnboardingStep = 1 | 2 | 3 | 4;
+
+export interface OnboardingData {
     firstName: string;
     selectedSports: SportType[];
     athletesCount: AthletesCountOption | null;
     selectedFeatures: FeatureId[];
+}
+
+interface OnboardingState extends OnboardingData {
+    completedSteps: OnboardingStep[];
 }
 
 interface OnboardingActions {
@@ -19,8 +25,12 @@ interface OnboardingActions {
     setAthletesCount: (count: AthletesCountOption) => void;
     setSelectedFeatures: (features: FeatureId[]) => void;
     toggleFeature: (featureId: FeatureId) => void;
+    completeStep: (step: OnboardingStep) => void;
+    canAccessStep: (step: OnboardingStep) => boolean;
+    isStepCompleted: (step: OnboardingStep) => boolean;
+    isOnboardingComplete: () => boolean;
     reset: () => void;
-    getOnboardingData: () => OnboardingState;
+    getOnboardingData: () => OnboardingData;
 }
 
 const initialState: OnboardingState = {
@@ -28,6 +38,7 @@ const initialState: OnboardingState = {
     selectedSports: [],
     athletesCount: null,
     selectedFeatures: [],
+    completedSteps: [],
 };
 
 const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
@@ -56,6 +67,26 @@ const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
                         ? state.selectedFeatures.filter((id) => id !== featureId)
                         : [...state.selectedFeatures, featureId],
                 })),
+
+            completeStep: (step) =>
+                set((state) => ({
+                    completedSteps: state.completedSteps.includes(step)
+                        ? state.completedSteps
+                        : [...state.completedSteps, step].sort((a, b) => a - b),
+                })),
+
+            canAccessStep: (step) => {
+                const { completedSteps } = get();
+                if (step === 1) return true;
+                return completedSteps.includes((step - 1) as OnboardingStep);
+            },
+
+            isStepCompleted: (step) => get().completedSteps.includes(step),
+
+            isOnboardingComplete: () => {
+                const { completedSteps } = get();
+                return [1, 2, 3, 4].every((step) => completedSteps.includes(step as OnboardingStep));
+            },
 
             reset: () => set(initialState),
 

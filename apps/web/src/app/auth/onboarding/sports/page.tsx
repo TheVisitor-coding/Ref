@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import OnboardingProgressBar from '@/components/molecules/onboarding/OnboardingProgressBar';
+import OnboardingGuard from '@/components/molecules/onboarding/OnboardingGuard';
 import SportTile from '@/components/molecules/onboarding/SportTile';
 import { sportConfig, type SportType } from '@/data/sports/sportsList';
 import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
@@ -11,16 +12,17 @@ const sportIds = Object.keys(sportConfig) as SportType[];
 
 export default function OnboardingSportsPage() {
     const router = useRouter();
-    const { firstName, selectedSports, toggleSport } = useOnboardingStore();
+    const { firstName, selectedSports, toggleSport, completeStep } = useOnboardingStore();
 
     const handleContinue = () => {
         if (selectedSports.length > 0) {
+            completeStep(2);
             router.push('/auth/onboarding/athletes-count');
         }
     };
 
     return (
-        <>
+        <OnboardingGuard step={2}>
             <div className="flex flex-col w-full gap-10">
                 <div className="flex flex-col gap-2">
                     <h1 className="text-[40px] font-semibold leading-tight font-poppins">
@@ -55,6 +57,6 @@ export default function OnboardingSportsPage() {
                     className="px-6 py-3 text-base font-semibold text-white transition-opacity rounded-xl bg-primary-blue shadow-button disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
                 />
             </div>
-        </>
+        </OnboardingGuard>
     );
 }

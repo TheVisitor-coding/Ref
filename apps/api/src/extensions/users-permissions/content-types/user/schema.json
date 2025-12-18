@@ -17,8 +17,7 @@
       "type": "string",
       "minLength": 3,
       "unique": true,
-      "configurable": false,
-      "required": true
+      "configurable": false
     },
     "email": {
       "type": "email",
@@ -155,6 +154,12 @@
         "expert",
         "professional"
       ]
+    },
+    "coach_preferences": {
+      "type": "json"
+    },
+    "onboarding_completed_at": {
+      "type": "datetime"
     },
     "coached_athletes": {
       "type": "relation",

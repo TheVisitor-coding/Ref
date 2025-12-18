@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import OnboardingProgressBar from '@/components/molecules/onboarding/OnboardingProgressBar';
+import OnboardingGuard from '@/components/molecules/onboarding/OnboardingGuard';
 import SelectionTile from '@/components/molecules/onboarding/SelectionTile';
 import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
 import useOnboardingStore, { type AthletesCountOption } from '@/store/OnboardingStore';
@@ -15,16 +16,17 @@ const athletesCountOptions: { id: AthletesCountOption; label: string }[] = [
 
 export default function OnboardingAthletesCountPage() {
     const router = useRouter();
-    const { athletesCount, setAthletesCount } = useOnboardingStore();
+    const { athletesCount, setAthletesCount, completeStep } = useOnboardingStore();
 
     const handleContinue = () => {
         if (athletesCount) {
+            completeStep(3);
             router.push('/auth/onboarding/features');
         }
     };
 
     return (
-        <>
+        <OnboardingGuard step={3}>
             <div className="flex flex-col w-full gap-10">
                 <h1 className="text-[40px] font-semibold leading-tight text-primary font-poppins">
                     Combien de sportifs accompagnez-vous ?
@@ -53,6 +55,6 @@ export default function OnboardingAthletesCountPage() {
                     className="px-6 py-3 text-base font-semibold text-white transition-opacity rounded-xl bg-primary-blue shadow-button disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
                 />
             </div>
-        </>
+        </OnboardingGuard>
     );
 }

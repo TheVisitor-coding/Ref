@@ -7,10 +7,11 @@ import useOnboardingStore from '@/store/OnboardingStore';
 
 export default function OnboardingNamePage() {
     const router = useRouter();
-    const { firstName, setFirstName } = useOnboardingStore();
+    const { firstName, setFirstName, completeStep } = useOnboardingStore();
 
     const handleContinue = () => {
         if (firstName.trim()) {
+            completeStep(1);
             router.push('/auth/onboarding/sports');
         }
     };

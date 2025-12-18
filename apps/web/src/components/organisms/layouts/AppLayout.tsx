@@ -12,7 +12,12 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     const shouldShowSidebar = !pagesWithoutSidebar.some(page => pathname.startsWith(page));
 
     if (!shouldShowSidebar) {
-        return <>{children}</>;
+        return (
+            <>
+                {children}
+                <Toaster />
+            </>
+        );
     }
 
     return (

@@ -1,9 +1,10 @@
 import type { User } from '@/types/User';
+import type { OnboardingDataSchemaType } from '@/schema/AuthSchema';
 
 export interface RegisterRequest {
-    username: string;
     email: string;
     password: string;
+    onboardingData: OnboardingDataSchemaType;
 }
 
 export interface LoginRequest {

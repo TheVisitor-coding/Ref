@@ -1,9 +1,17 @@
+export interface OnboardingData {
+    firstName: string;
+    selectedSports: string[];
+    athletesCount: 'less-than-5' | '5-to-20' | '20-to-50' | 'more-than-50';
+    selectedFeatures: string[];
+}
+
 export interface RegisterCoachInput {
     username: string;
     email: string;
     password: string;
     first_name?: string;
     last_name?: string;
+    onboardingData?: OnboardingData;
 }
 
 export interface LoginInput {
@@ -160,6 +168,45 @@ export function validateIdentifier(identifier: string): ValidationError | null {
     return null;
 }
 
+const VALID_ATHLETES_COUNT = ['less-than-5', '5-to-20', '20-to-50', 'more-than-50'] as const;
+const VALID_FEATURES = ['athletes-tracking', 'session-analysis', 'calendar', 'messaging', 'payments', 'tasks'] as const;
+
+export function validateOnboardingData(onboardingData: unknown): ValidationError | null {
+    if (!onboardingData || typeof onboardingData !== 'object') {
+        return { field: 'onboardingData', message: 'Onboarding data is required', code: 'REQUIRED' };
+    }
+
+    const data = onboardingData as Record<string, unknown>;
+
+    if (!data.firstName || typeof data.firstName !== 'string' || data.firstName.trim().length === 0) {
+        return { field: 'onboardingData.firstName', message: 'First name is required', code: 'REQUIRED' };
+    }
+
+    if (data.firstName.length > 50) {
+        return { field: 'onboardingData.firstName', message: 'First name must not exceed 50 characters', code: 'TOO_LONG' };
+    }
+
+    if (!Array.isArray(data.selectedSports) || data.selectedSports.length === 0) {
+        return { field: 'onboardingData.selectedSports', message: 'At least one sport must be selected', code: 'REQUIRED' };
+    }
+
+    if (!data.athletesCount || !VALID_ATHLETES_COUNT.includes(data.athletesCount as typeof VALID_ATHLETES_COUNT[number])) {
+        return { field: 'onboardingData.athletesCount', message: 'Invalid athletes count selection', code: 'INVALID_VALUE' };
+    }
+
+    if (!Array.isArray(data.selectedFeatures)) {
+        return { field: 'onboardingData.selectedFeatures', message: 'Selected features must be an array', code: 'INVALID_TYPE' };
+    }
+
+    for (const feature of data.selectedFeatures) {
+        if (!VALID_FEATURES.includes(feature as typeof VALID_FEATURES[number])) {
+            return { field: 'onboardingData.selectedFeatures', message: `Invalid feature: ${feature}`, code: 'INVALID_VALUE' };
+        }
+    }
+
+    return null;
+}
+
 export function validateRegisterInput(input: unknown): ValidationResult {
     const errors: ValidationError[] = [];
 
@@ -172,15 +219,20 @@ export function validateRegisterInput(input: unknown): ValidationResult {
 
     const data = input as Record<string, unknown>;
 
-    // Validate required fields
-    const usernameError = validateUsername(data.username as string);
-    if (usernameError) errors.push(usernameError);
+    // Username commented out for now
+    // const usernameError = validateUsername(data.username as string);
+    // if (usernameError) errors.push(usernameError);
 
     const emailError = validateEmail(data.email as string);
     if (emailError) errors.push(emailError);
 
     const passwordError = validatePassword(data.password as string);
     if (passwordError) errors.push(passwordError);
+
+    if (data.onboardingData) {
+        const onboardingError = validateOnboardingData(data.onboardingData);
+        if (onboardingError) errors.push(onboardingError);
+    }
 
     return {
         valid: errors.length === 0,
@@ -203,7 +255,6 @@ export function validateLoginInput(input: unknown): ValidationResult {
     const identifierError = validateIdentifier(data.identifier as string);
     if (identifierError) errors.push(identifierError);
 
-    // For login, we only check password is present, not its strength
     if (!data.password || typeof data.password !== 'string') {
         errors.push({ field: 'password', message: 'Password is required', code: 'REQUIRED' });
     }

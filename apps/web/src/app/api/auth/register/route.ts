@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { signupSchema } from '@/schema/AuthSchema';
 
 interface StrapiErrorResponse {
     error?: {
@@ -25,12 +26,33 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
 
+        const validation = signupSchema.safeParse(body);
+        if (!validation.success) {
+            return NextResponse.json(
+                {
+                    error: {
+                        status: 400,
+                        name: 'ValidationError',
+                        message: 'Validation failed',
+                        details: validation.error.issues,
+                    },
+                },
+                { status: 400 }
+            );
+        }
+
+        const { email, password, onboardingData } = validation.data;
+
         const strapiResponse = await fetch(
             `${process.env.STRAPI_INTERNAL_URL}/api/auth/register-coach`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
+                body: JSON.stringify({
+                    email,
+                    password,
+                    onboardingData,
+                }),
                 cache: 'no-store',
             }
         );

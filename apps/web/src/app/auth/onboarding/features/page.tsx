@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import OnboardingProgressBar from '@/components/molecules/onboarding/OnboardingProgressBar';
+import OnboardingGuard from '@/components/molecules/onboarding/OnboardingGuard';
 import FeatureTile from '@/components/molecules/onboarding/FeatureTile';
 import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
 import useOnboardingStore, { type FeatureId } from '@/store/OnboardingStore';
@@ -23,14 +24,15 @@ const features: Feature[] = [
 
 export default function OnboardingFeaturesPage() {
     const router = useRouter();
-    const { selectedFeatures, toggleFeature } = useOnboardingStore();
+    const { selectedFeatures, toggleFeature, completeStep } = useOnboardingStore();
 
     const handleContinue = () => {
+        completeStep(4);
         router.push('/auth/sign-up');
     };
 
     return (
-        <>
+        <OnboardingGuard step={4}>
             <div className="flex flex-col w-full gap-10">
                 <div className="flex flex-col gap-2">
                     <h1 className="text-[40px] font-semibold leading-tight text-primary font-poppins">
@@ -69,6 +71,6 @@ export default function OnboardingFeaturesPage() {
                     className="px-6 py-3 text-base font-semibold text-white transition-opacity rounded-xl bg-primary-blue shadow-button hover:opacity-90"
                 />
             </div>
-        </>
+        </OnboardingGuard>
     );
 }

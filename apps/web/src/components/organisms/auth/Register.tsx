@@ -1,7 +1,7 @@
 'use client';
 
 import NavbarDivider from "@/components/atoms/divider/NavbarDivider";
-import FormEmailRegister from "@/components/molecules/auth/formEmailRegister";
+import SignUpForm from "@/components/molecules/auth/SignUpForm";
 import AuthList from "@/components/molecules/list/AuthList";
 import TestimonyCard from "@/components/molecules/testimony/testimonyCard";
 import Image from "next/image";
@@ -21,7 +21,7 @@ function Register() {
                         </span>
                     </div>
 
-                    <FormEmailRegister />
+                    <SignUpForm />
 
                     <NavbarDivider />
                 </div>
