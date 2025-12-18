@@ -5,22 +5,10 @@ import OnboardingProgressBar from '@/components/molecules/onboarding/OnboardingP
 import OnboardingGuard from '@/components/molecules/onboarding/OnboardingGuard';
 import FeatureTile from '@/components/molecules/onboarding/FeatureTile';
 import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
-import useOnboardingStore, { type FeatureId } from '@/store/OnboardingStore';
+import useOnboardingStore from '@/store/OnboardingStore';
+import { getOnboardingFeatures } from '@/data/featuresList';
 
-interface Feature {
-    id: FeatureId;
-    label: string;
-    icon: string;
-}
-
-const features: Feature[] = [
-    { id: 'athletes-tracking', label: 'Suivi des sportifs', icon: '/sports/Run.svg' },
-    { id: 'session-analysis', label: 'Analyse des séances', icon: '/icons/Panel.svg' },
-    { id: 'calendar', label: 'Agenda personnel', icon: '/icons/Calendar.svg' },
-    { id: 'messaging', label: 'Messagerie', icon: '/icons/Chat.svg' },
-    { id: 'payments', label: 'Gestion des paiement', icon: '/icons/Wallet.svg' },
-    { id: 'tasks', label: 'Gestion des tâches', icon: '/icons/Clipboard.svg' },
-];
+const features = getOnboardingFeatures();
 
 export default function OnboardingFeaturesPage() {
     const router = useRouter();

@@ -1,4 +1,5 @@
 import z from 'zod';
+import { FEATURE_IDS } from '@/data/featuresList';
 
 export const onboardingDataSchema = z.object({
     firstName: z.string().min(1, 'Le prénom est requis').max(50, 'Le prénom ne peut pas dépasser 50 caractères'),
@@ -6,14 +7,7 @@ export const onboardingDataSchema = z.object({
     athletesCount: z.enum(['less-than-5', '5-to-20', '20-to-50', 'more-than-50'], {
         message: 'Sélectionnez le nombre de sportifs',
     }),
-    selectedFeatures: z.array(z.enum([
-        'athletes-tracking',
-        'session-analysis',
-        'calendar',
-        'messaging',
-        'payments',
-        'tasks',
-    ])),
+    selectedFeatures: z.array(z.enum(FEATURE_IDS)),
 });
 
 export type OnboardingDataSchemaType = z.infer<typeof onboardingDataSchema>;

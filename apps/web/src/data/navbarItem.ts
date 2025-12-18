@@ -1,36 +1,21 @@
+import { featuresList } from './featuresList';
+
 export const navbarItems = [
+    ...featuresList.map((feature) => ({
+        title: feature.label,
+        icon: feature.icon,
+        href: feature.href,
+        featureId: feature.id,
+    })),
     {
-        title: "Planning",
-        icon: "/icons/Calendar.svg",
-        href: "/planning"
-    },
-    {
-        title: "Sportifs",
-        icon: "/icons/Account.svg",
-        href: "/athletes"
-    },
-    {
-        title: "Modèles",
-        icon: "/icons/Folder.svg",
-        href: "/models"
-    },
-    {
-        title: "Messagerie",
-        icon: "/icons/Chat.svg",
-        href: "/chat"
-    },
-    {
-        title: "Budget",
-        icon: "/icons/Wallet.svg",
-        href: "/budget"
-    },
-    {
-        title: "Tâches",
-        icon: "/icons/Clipboard.svg",
-        href: "/tasks"
+        title: 'Modèles',
+        icon: '/icons/Folder.svg',
+        href: '/models',
+        featureId: null,
     },
 ] as {
     title: string;
     icon: string;
     href: string;
+    featureId: string | null;
 }[];

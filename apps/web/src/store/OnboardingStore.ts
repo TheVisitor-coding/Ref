@@ -1,9 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { SportType } from '@/data/sports/sportsList';
+import type { FeatureId } from '@/data/featuresList';
 
 export type AthletesCountOption = 'less-than-5' | '5-to-20' | '20-to-50' | 'more-than-50';
-export type FeatureId = 'athletes-tracking' | 'session-analysis' | 'calendar' | 'messaging' | 'payments' | 'tasks';
+
+// Re-export FeatureId for backward compatibility
+export type { FeatureId } from '@/data/featuresList';
 
 export type OnboardingStep = 1 | 2 | 3 | 4;
 
