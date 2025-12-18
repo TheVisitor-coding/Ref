@@ -15,7 +15,7 @@ function NavLinkButton({
 }: {
     children: React.ReactNode;
     isOpen: boolean;
-    href: string;
+    href?: string;
     src: string;
     alt: string;
     hasSubLinks?: boolean;
@@ -29,9 +29,8 @@ function NavLinkButton({
         setIsFocused(false);
     }
 
-
-    return (
-        <Link href={href} className={`group w-full px-3 py-2 flex ${hasSubLinks ? 'justify-between' : 'gap-3'} items-center rounded-lg hover:bg-background-grey-light transition-colors ${isFocused ? 'bg-background-grey-light' : ''}`}>
+    const content = (
+        <>
             <div className="flex gap-3 items-center">
                 <Image src={src} alt={alt} width={18} height={18} />
                 <p className={`${isOpen ? 'block' : 'hidden'} ${isFocused ? 'text-primary font-medium' : 'text-secondary'} text-sm leading-4 group-hover:text-primary group-hover:font-medium`}>
@@ -41,7 +40,23 @@ function NavLinkButton({
             {hasSubLinks && isOpen && (
                 <Image src="/icons/chevron-right.svg" alt="chevron" width={18} height={18} />
             )}
-        </Link>
+        </>
+    );
+
+    const className = `group w-full px-3 py-2 flex ${hasSubLinks ? 'justify-between' : 'gap-3'} items-center rounded-lg hover:bg-background-grey-light transition-colors ${isFocused ? 'bg-background-grey-light' : ''}`;
+
+    if (href) {
+        return (
+            <Link href={href} className={className}>
+                {content}
+            </Link>
+        );
+    }
+
+    return (
+        <div className={className}>
+            {content}
+        </div>
     );
 }
 

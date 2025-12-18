@@ -38,7 +38,7 @@ export default function OnboardingSidebarPreview({ firstName, selectedSports = [
                         {features
                             .filter((feature) => feature.id !== 'athletes-tracking')
                             .map((feature) => (
-                                <NavLinkButton isOpen href={feature.href} src={feature.icon} alt={`${feature.label} Icon`} key={feature.id}>
+                                <NavLinkButton isOpen src={feature.icon} alt={`${feature.label} Icon`} key={feature.id}>
                                     {feature.label}
                                 </NavLinkButton>
                             ))}
