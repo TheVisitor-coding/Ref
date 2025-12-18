@@ -1,12 +1,9 @@
-'use client'
+import Login from "@/components/organisms/auth/Login";
+import Image from "next/image";
 
-import Register from "@/components/organisms/auth/Register"
-import Image from "next/image"
-
-export default function SignUp() {
-
+function SignIn() {
     return (
-        <main className="w-full h-auto mx-auto flex bg-white">
+        <main className="w-full h-screen p-20 flex bg-white">
             <Image
                 src="/ref_logo.svg"
                 alt="Ref Logo"
@@ -15,7 +12,9 @@ export default function SignUp() {
                 className="absolute top-8 left-8"
                 priority
             />
-            <Register />
+            <Login />
         </main>
     )
 }
+
+export default SignIn;

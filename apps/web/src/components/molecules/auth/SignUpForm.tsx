@@ -89,7 +89,7 @@ export default function SignUpForm() {
                 <PrimaryButton
                     type="submit"
                     disabled={isLoading}
-                    className="px-6 py-3 bg-primary-blue rounded-xl shadow-button text-white text-lg font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                    className="px-6 py-3 bg-primary-blue shadow-button text-white text-base"
                     label={isLoading ? 'Création en cours...' : 'Créer mon compte'}
                 />
 

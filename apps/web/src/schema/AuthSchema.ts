@@ -14,9 +14,8 @@ export type OnboardingDataSchemaType = z.infer<typeof onboardingDataSchema>;
 
 export const signupFormSchema = z.object({
     email: z
-        .string()
-        .min(1, "L'email est requis")
-        .email('Adresse e-mail invalide'),
+        .email('Adresse e-mail invalide')
+        .min(1, "L'email est requis"),
     password: z
         .string()
         .min(12, 'Le mot de passe doit contenir au moins 12 caractères')
@@ -37,7 +36,7 @@ export type SignupSchemaType = z.infer<typeof signupSchema>;
 export const loginSchema = z.object({
     identifier: z
         .string()
-        .min(1, "L'email ou le nom d'utilisateur est requis")
+        .min(1, "L'email est requis")
         .min(3, "L'identifiant doit contenir au moins 3 caractères"),
     password: z.string().min(1, 'Le mot de passe est requis'),
 });

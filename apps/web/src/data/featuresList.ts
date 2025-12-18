@@ -1,8 +1,3 @@
-/**
- * Centralized feature configuration
- * Single source of truth for all feature-related data across the app
- */
-
 export const FEATURE_IDS = [
     'athletes-tracking',
     'session-analysis',

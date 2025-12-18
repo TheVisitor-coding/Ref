@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
                     error: {
                         status: strapiResponse.status,
                         name: errorData.error?.name || 'LoginError',
-                        message: isAuthError ? 'Invalid email/username or password' : (errorData.error?.message || 'Login failed'),
+                        message: isAuthError ? 'Email ou mot de passe invalide' : (errorData.error?.message || 'Échec de la connexion'),
                         details: isAuthError ? undefined : errorData.error?.details,
                     },
                 },

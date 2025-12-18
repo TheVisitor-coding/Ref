@@ -4,7 +4,6 @@ import NavbarDivider from "@/components/atoms/divider/NavbarDivider";
 import SignUpForm from "@/components/molecules/auth/SignUpForm";
 import AuthList from "@/components/molecules/list/AuthList";
 import TestimonyCard from "@/components/molecules/testimony/testimonyCard";
-import Image from "next/image";
 
 function Register() {
     return (
@@ -12,7 +11,6 @@ function Register() {
             <div className="p-20 flex justify-center items-center w-1/2 h-screen">
                 <div className="flex flex-col gap-10 max-w-[28.125rem] w-full fixed">
                     <div className="flex flex-col gap-4">
-                        <Image src={'/ref_logo.svg'} alt="Ref Logo" width={150} height={50} className="-translate-x-4" />
                         <span className="flex flex-col gap-2">
                             <h1 className="text-black text-[40px] font-semibold leading-12">Sauvegardez votre espace de coaching</h1>
                             <p className="text-grey text-base">
