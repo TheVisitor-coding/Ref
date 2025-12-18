@@ -91,7 +91,7 @@ const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
                 return [1, 2, 3, 4].every((step) => completedSteps.includes(step as OnboardingStep));
             },
 
-            reset: () => set(initialState),
+            reset: async () => set(initialState),
 
             getOnboardingData: () => {
                 const { firstName, selectedSports, athletesCount, selectedFeatures } = get();

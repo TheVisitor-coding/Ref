@@ -82,8 +82,13 @@ export default {
           const salt = await bcrypt.genSalt(12);
           const passwordHash = await bcrypt.hash(password, salt);
 
+          const baseUsername = email.split('@')[0].replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 40);
+          const timestamp = Date.now().toString(36);
+          const username = `${baseUsername}_${timestamp}`;
+
           const user = await strapi.query('plugin::users-permissions.user').create({
             data: {
+              username,
               email,
               password: passwordHash,
               role: coachRole.id,

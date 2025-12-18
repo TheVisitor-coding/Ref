@@ -26,8 +26,8 @@ export default function SignUpForm() {
     });
 
     const { register, isLoading, error } = useRegister({
-        onSuccess: () => {
-            resetOnboarding();
+        onSuccess: async () => {
+            await resetOnboarding();
             // toast.success('Compte créé avec succès ! Création de votre espace en cours...');
             router.push('/');
         },

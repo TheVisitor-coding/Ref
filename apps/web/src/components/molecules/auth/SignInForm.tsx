@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
-import SignUpGuard from '@/components/molecules/onboarding/SignUpGuard';
 import { useLogin } from '@/hooks/useAuth';
 import { loginSchema, LoginSchemaType } from '@/schema/AuthSchema';
 import Link from 'next/link';
