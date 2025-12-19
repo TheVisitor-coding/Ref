@@ -8,9 +8,9 @@ export async function middleware(req: NextRequest) {
 
     if (isProtectedPage) {
         if (!token) {
-            return NextResponse.redirect(new URL('/auth/sign-up', req.url));
+            return NextResponse.redirect(new URL('/auth/sign-in', req.url));
         }
-       
+
         const payload = await verifyToken(token.value) as {
             id: number;
             role: 'coach' | 'athlete',
@@ -18,7 +18,7 @@ export async function middleware(req: NextRequest) {
         };
 
         if (!payload) {
-            const response = NextResponse.redirect(new URL('/auth/sign-up', req.url))
+            const response = NextResponse.redirect(new URL('/auth/sign-in', req.url))
             response.cookies.delete('auth-token')
             return response
         }
