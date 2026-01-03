@@ -1,10 +1,12 @@
 import { forwardRef, InputHTMLAttributes } from 'react';
-import { User, Calendar, Tag, Dumbbell } from 'lucide-react';
+import { User, Calendar, Tag, Dumbbell, Clock, MapPin, Zap, Clipboard, Palette } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getSportOptions, sportConfig, SportType } from '@/data/sports/sportsList';
 
+type IconType = 'user' | 'run' | 'calendar' | 'tag' | 'clock' | 'location' | 'zap' | 'clipboard' | 'palette';
+
 type BaseProps = {
-    icon: 'user' | 'run' | 'calendar' | 'tag';
+    icon?: IconType;
 };
 
 type InputFieldProps = BaseProps &
@@ -30,7 +32,12 @@ const iconMap = {
     user: User,
     run: Dumbbell,
     calendar: Calendar,
-    tag: Tag
+    tag: Tag,
+    clock: Clock,
+    location: MapPin,
+    zap: Zap,
+    clipboard: Clipboard,
+    palette: Palette,
 };
 
 const sportOptions = getSportOptions();
@@ -38,7 +45,7 @@ const sportOptions = getSportOptions();
 const ProgramField = forwardRef<HTMLInputElement, ProgramFieldProps>(
     (props, ref) => {
         const { icon, type = 'text' } = props;
-        const Icon = iconMap[icon];
+        const Icon = icon ? iconMap[icon] : null;
 
         if (type === 'select') {
             const { value, onChange, disabled, placeholder, options, selectVariant = 'default' } = props as SelectFieldProps;
@@ -53,7 +60,7 @@ const ProgramField = forwardRef<HTMLInputElement, ProgramFieldProps>(
 
             return (
                 <div className="flex gap-2 items-center select--noarrow">
-                    <Icon className="size-4 text-secondary flex-shrink-0" />
+                    {Icon && <Icon className="size-4 text-secondary flex-shrink-0" />}
                     <Select
                         value={effectiveValue}
                         onValueChange={onChange}
@@ -86,15 +93,16 @@ const ProgramField = forwardRef<HTMLInputElement, ProgramFieldProps>(
         }
 
         const { className, ...inputProps } = props as InputFieldProps;
+        const isDateInput = type === 'date';
 
         return (
             <div className="flex gap-2 items-center">
-                <Icon className="size-4 text-secondary flex-shrink-0" />
+                {Icon && <Icon className="size-4 text-secondary flex-shrink-0" />}
                 <input
                     ref={ref}
                     type={type}
                     {...inputProps}
-                    className={`h-fit px-2 py-1 text-base text-primary placeholder:text-disabled bg-transparent hover:bg-[#EBEBEB] focus:bg-white focus:ring-1 focus:ring-primary-blue border-none outline-none rounded-lg transition-colors min-w-[120px] ${className || ''}`}
+                    className={`h-fit px-2 py-1 text-base text-primary placeholder:text-disabled bg-transparent hover:bg-[#EBEBEB] focus:bg-white focus:ring-1 focus:ring-primary-blue border-none outline-none rounded-lg transition-colors min-w-[120px] ${isDateInput ? '[&::-webkit-calendar-picker-indicator]:hidden' : ''} ${className || ''}`}
                 />
             </div>
         );
