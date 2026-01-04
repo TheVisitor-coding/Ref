@@ -2,10 +2,11 @@
 
 import { useRef, useState, useCallback } from 'react';
 import FullCalendar from '@fullcalendar/react';
+import { useQueryClient } from '@tanstack/react-query';
 import Breadcrumbs from '@/components/atoms/breadcrumb/breadcrumbs';
 import SecondaryButton from '@/components/atoms/buttons/SecondaryButton';
 import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
-import FullCalendarWrapper, { CalendarView, CalendarEvent } from '@/components/molecules/calendar/FullCalendarWrapper';
+import FullCalendarWrapper, { CalendarView, CalendarEvent, EventChangeInfo } from '@/components/molecules/calendar/FullCalendarWrapper';
 import AgendaActions from '@/components/molecules/calendar/AgendaActions';
 import EventModal from '@/components/molecules/modal/EventModal';
 import { useCoachEvents } from '@/hooks/useCoachEvents';
@@ -46,6 +47,7 @@ function formatDayDate(date: Date): string {
 
 function AgendaClient() {
     const calendarRef = useRef<FullCalendar | null>(null);
+    const queryClient = useQueryClient();
     const [currentView, setCurrentView] = useState<CalendarView>('dayGridMonth');
     const [currentTitle, setCurrentTitle] = useState<string>('');
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
@@ -164,6 +166,47 @@ function AgendaClient() {
         }
     }, []);
 
+    const handleEventChange = useCallback(async (info: EventChangeInfo) => {
+        const formatTime = (date: Date): string => {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+        };
+
+        const formatDate = (date: Date): string => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        const dateChanged = info.oldStart && formatDate(info.start) !== formatDate(info.oldStart);
+
+        try {
+            const response = await fetch('/api/events', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    documentId: info.eventId,
+                    ...(dateChanged && { date: formatDate(info.start) }),
+                    startTime: formatTime(info.start),
+                    endTime: formatTime(info.end),
+                }),
+            });
+
+            if (!response.ok) {
+                info.revert();
+                console.error('Failed to update event');
+                return;
+            }
+
+            queryClient.invalidateQueries({ queryKey: ['coachEvents'] });
+        } catch (error) {
+            info.revert();
+            console.error('Error updating event:', error);
+        }
+    }, [queryClient]);
+
     const handleSettings = useCallback(() => {
         // TODO: Ouvrir les paramètres de l'agenda
         console.log('Settings clicked');
@@ -250,6 +293,7 @@ function AgendaClient() {
                     onDatesChange={handleDatesChange}
                     onEventClick={handleEventClick}
                     onEventDoubleClick={handleEventDoubleClick}
+                    onEventChange={handleEventChange}
                     className="flex-1"
                 />
             </div>

@@ -4,6 +4,7 @@ import { useRef, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin, { EventResizeDoneArg } from '@fullcalendar/interaction';
 import { EventInput, CalendarOptions } from '@fullcalendar/core';
 import frLocale from '@fullcalendar/core/locales/fr';
 
@@ -20,12 +21,22 @@ export interface CalendarEvent extends EventInput {
     textColor?: string;
 }
 
+export interface EventChangeInfo {
+    eventId: string;
+    start: Date;
+    end: Date;
+    oldStart?: Date;
+    oldEnd?: Date;
+    revert: () => void;
+}
+
 interface FullCalendarWrapperProps {
     events?: CalendarEvent[];
     view?: CalendarView;
     onDatesChange?: (date: Date, viewType: CalendarView) => void;
     onEventClick?: (event: CalendarEvent) => void;
     onEventDoubleClick?: (event: CalendarEvent) => void;
+    onEventChange?: (info: EventChangeInfo) => void;
     calendarRef?: React.RefObject<FullCalendar | null>;
     className?: string;
 }
@@ -36,6 +47,7 @@ function FullCalendarWrapper({
     onDatesChange,
     onEventClick,
     onEventDoubleClick,
+    onEventChange,
     calendarRef: externalRef,
     className = '',
 }: FullCalendarWrapperProps) {
@@ -52,7 +64,7 @@ function FullCalendarWrapper({
     }, [view, calendarRef]);
 
     const calendarOptions: CalendarOptions = {
-        plugins: [dayGridPlugin, timeGridPlugin],
+        plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
         initialView: view,
         locale: frLocale,
         headerToolbar: false,
@@ -62,6 +74,12 @@ function FullCalendarWrapper({
         fixedWeekCount: false,
         showNonCurrentDates: true,
         firstDay: 1,
+        editable: true,
+        eventStartEditable: true,
+        eventDurationEditable: true,
+        eventResizableFromStart: true,
+        snapDuration: '00:15:00',
+        dragRevertDuration: 300,
         // TimeGrid specific options
         slotMinTime: '08:00:00',
         slotMaxTime: '18:00:00',
@@ -110,6 +128,35 @@ function FullCalendarWrapper({
         },
         dayHeaderFormat: { weekday: 'long' },
         titleFormat: { year: 'numeric', month: 'long' },
+        eventResize: (info: EventResizeDoneArg) => {
+            if (onEventChange && info.event.start && info.event.end) {
+                onEventChange({
+                    eventId: info.event.id,
+                    start: info.event.start,
+                    end: info.event.end,
+                    oldStart: info.oldEvent.start || undefined,
+                    oldEnd: info.oldEvent.end || undefined,
+                    revert: info.revert,
+                });
+            }
+        },
+        eventDrop: (info) => {
+            if (onEventChange && info.event.start) {
+                const duration = info.oldEvent.end && info.oldEvent.start
+                    ? info.oldEvent.end.getTime() - info.oldEvent.start.getTime()
+                    : 60 * 60 * 1000;
+                const newEnd = new Date(info.event.start.getTime() + duration);
+
+                onEventChange({
+                    eventId: info.event.id,
+                    start: info.event.start,
+                    end: info.event.end || newEnd,
+                    oldStart: info.oldEvent.start || undefined,
+                    oldEnd: info.oldEvent.end || undefined,
+                    revert: info.revert,
+                });
+            }
+        },
     };
 
     return (
