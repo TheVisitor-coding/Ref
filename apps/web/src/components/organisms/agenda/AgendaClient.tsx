@@ -9,6 +9,7 @@ import FullCalendarWrapper, { CalendarView, CalendarEvent } from '@/components/m
 import AgendaActions from '@/components/molecules/calendar/AgendaActions';
 import EventModal from '@/components/molecules/modal/EventModal';
 import { useCoachEvents } from '@/hooks/useCoachEvents';
+import { EventFormInput } from '@/schema/EventSchema';
 import Image from 'next/image';
 import { Settings, Loader2 } from 'lucide-react';
 
@@ -54,23 +55,18 @@ function AgendaClient() {
     // État de la modal d'événement
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
     const [selectedDateForEvent, setSelectedDateForEvent] = useState<Date | undefined>(undefined);
+    const [eventModalMode, setEventModalMode] = useState<'create' | 'edit'>('create');
+    const [editEventData, setEditEventData] = useState<Partial<EventFormInput> | undefined>(undefined);
 
     const handleViewChange = useCallback((view: CalendarView) => {
-        setCurrentView(view);
         if (calendarRef.current) {
-            calendarRef.current.getApi().changeView(view);
+            const calendarApi = calendarRef.current.getApi();
+            if (view === 'timeGridDay') {
+                calendarApi.today();
+            }
+            calendarApi.changeView(view);
         }
-        // Recalculer le titre selon la vue
-        if (view === 'timeGridDay') {
-            setCurrentTitle(formatDayDate(currentDate));
-        } else if (view === 'timeGridWeek') {
-            setCurrentTitle(formatWeekRange(currentDate));
-        } else {
-            const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long' };
-            const formatter = new Intl.DateTimeFormat('fr-FR', options);
-            setCurrentTitle(formatter.format(currentDate));
-        }
-    }, [currentDate]);
+    }, []);
 
     const handleTodayClick = useCallback(() => {
         if (calendarRef.current) {
@@ -90,34 +86,81 @@ function AgendaClient() {
         }
     }, []);
 
-    const handleDateChange = useCallback((date: Date) => {
+    const handleDatesChange = useCallback((date: Date, viewType: CalendarView) => {
         setCurrentDate(date);
-        // Mettre à jour le titre selon la vue
-        if (currentView === 'timeGridDay') {
+        setCurrentView(viewType);
+        if (viewType === 'timeGridDay') {
             setCurrentTitle(formatDayDate(date));
-        } else if (currentView === 'timeGridWeek') {
+        } else if (viewType === 'timeGridWeek') {
             setCurrentTitle(formatWeekRange(date));
         } else {
             const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long' };
             const formatter = new Intl.DateTimeFormat('fr-FR', options);
             setCurrentTitle(formatter.format(date));
         }
-    }, [currentView]);
+    }, []);
 
     const handleEventClick = useCallback((event: CalendarEvent) => {
-        // TODO: Ouvrir le détail de l'événement
         console.log('Event clicked:', event);
     }, []);
 
-    const handleAddEvent = useCallback(() => {
-        setSelectedDateForEvent(currentDate);
+    const handleEventDoubleClick = useCallback((event: CalendarEvent) => {
+        const props = event.extendedProps || {};
+
+        const formatLocalDate = (d: Date): string => {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        const startTime = typeof event.start === 'string'
+            ? event.start.split('T')[1]?.substring(0, 5)
+            : event.start instanceof Date
+                ? event.start.toTimeString().substring(0, 5)
+                : '10:00';
+        const endTime = typeof event.end === 'string'
+            ? event.end.split('T')[1]?.substring(0, 5)
+            : event.end instanceof Date
+                ? event.end.toTimeString().substring(0, 5)
+                : '11:00';
+        const eventDate = typeof event.start === 'string'
+            ? event.start.split('T')[0]
+            : event.start instanceof Date
+                ? formatLocalDate(event.start)
+                : formatLocalDate(new Date());
+
+        setEditEventData({
+            documentId: event.id,
+            title: event.title,
+            date: eventDate,
+            startTime: props.isAllDay ? '10:00' : startTime,
+            endTime: props.isAllDay ? '11:00' : endTime,
+            isAllDay: props.isAllDay || false,
+            location: props.location || '',
+            eventType: props.eventType || 'meeting',
+            color: props.color || 'blue',
+            recurrence: props.recurrence?.type || 'none',
+            description: props.description || '',
+        });
+        setEventModalMode('edit');
         setIsEventModalOpen(true);
-    }, [currentDate]);
+    }, []);
+
+    const handleAddEvent = useCallback(() => {
+        setEditEventData(undefined);
+        setEventModalMode('create');
+        const dateForEvent = currentView === 'timeGridDay' ? currentDate : new Date();
+        setSelectedDateForEvent(dateForEvent);
+        setIsEventModalOpen(true);
+    }, [currentDate, currentView]);
 
     const handleEventModalClose = useCallback((open: boolean) => {
         setIsEventModalOpen(open);
         if (!open) {
             setSelectedDateForEvent(undefined);
+            setEditEventData(undefined);
+            setEventModalMode('create');
         }
     }, []);
 
@@ -204,8 +247,9 @@ function AgendaClient() {
                     calendarRef={calendarRef}
                     events={calendarEvents}
                     view={currentView}
-                    onDateChange={handleDateChange}
+                    onDatesChange={handleDatesChange}
                     onEventClick={handleEventClick}
+                    onEventDoubleClick={handleEventDoubleClick}
                     className="flex-1"
                 />
             </div>
@@ -214,7 +258,8 @@ function AgendaClient() {
             <EventModal
                 open={isEventModalOpen}
                 onOpenChange={handleEventModalClose}
-                mode="create"
+                mode={eventModalMode}
+                initialData={editEventData}
                 selectedDate={selectedDateForEvent}
             />
         </div>

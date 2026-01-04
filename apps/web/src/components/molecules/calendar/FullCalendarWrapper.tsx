@@ -23,8 +23,9 @@ export interface CalendarEvent extends EventInput {
 interface FullCalendarWrapperProps {
     events?: CalendarEvent[];
     view?: CalendarView;
-    onDateChange?: (date: Date) => void;
+    onDatesChange?: (date: Date, viewType: CalendarView) => void;
     onEventClick?: (event: CalendarEvent) => void;
+    onEventDoubleClick?: (event: CalendarEvent) => void;
     calendarRef?: React.RefObject<FullCalendar | null>;
     className?: string;
 }
@@ -32,8 +33,9 @@ interface FullCalendarWrapperProps {
 function FullCalendarWrapper({
     events = [],
     view = 'dayGridMonth',
-    onDateChange,
+    onDatesChange,
     onEventClick,
+    onEventDoubleClick,
     calendarRef: externalRef,
     className = '',
 }: FullCalendarWrapperProps) {
@@ -73,22 +75,27 @@ function FullCalendarWrapper({
         allDaySlot: false,
         nowIndicator: true,
         eventClick: (info) => {
-            if (onEventClick) {
-                const event: CalendarEvent = {
-                    id: info.event.id,
-                    title: info.event.title,
-                    start: info.event.start || new Date(),
-                    end: info.event.end || undefined,
-                    backgroundColor: info.event.backgroundColor,
-                    borderColor: info.event.borderColor,
-                    textColor: info.event.textColor,
-                };
+            const event: CalendarEvent = {
+                id: info.event.id,
+                title: info.event.title,
+                start: info.event.start || new Date(),
+                end: info.event.end || undefined,
+                allDay: info.event.allDay,
+                backgroundColor: info.event.backgroundColor,
+                borderColor: info.event.borderColor,
+                textColor: info.event.textColor,
+                extendedProps: info.event.extendedProps,
+            };
+
+            if (info.jsEvent.detail === 2 && onEventDoubleClick) {
+                onEventDoubleClick(event);
+            } else if (onEventClick) {
                 onEventClick(event);
             }
         },
         datesSet: (dateInfo) => {
-            if (onDateChange) {
-                onDateChange(dateInfo.start);
+            if (onDatesChange) {
+                onDatesChange(dateInfo.view.currentStart, dateInfo.view.type as CalendarView);
             }
         },
         dayCellClassNames: (arg) => {

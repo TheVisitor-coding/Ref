@@ -21,20 +21,33 @@ const eventColorMap: Record<EventColor, { backgroundColor: string; borderColor: 
 function transformToCalendarEvent(event: CoachEvent): CalendarEvent {
     const colors = eventColorMap[event.color] || eventColorMap.blue;
 
+    const getNextDay = (dateStr: string): string => {
+        const date = new Date(dateStr + 'T12:00:00');
+        date.setDate(date.getDate() + 1);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
     const startDateTime = event.isAllDay
-        ? event.date
+        ? `${event.date}T08:00:00`
         : `${event.date}T${event.startTime}`;
 
     const endDateTime = event.isAllDay
-        ? event.date
+        ? `${event.date}T18:00:00`
         : `${event.date}T${event.endTime}`;
+
+    const endDateForMonth = event.isAllDay ? getNextDay(event.date) : undefined;
 
     return {
         id: event.documentId,
         title: event.title,
         start: startDateTime,
         end: endDateTime,
-        allDay: event.isAllDay,
+        allDay: false,
+        display: event.isAllDay ? 'block' : 'auto',
+        ...(event.isAllDay && { endForMonth: endDateForMonth }),
         backgroundColor: colors.backgroundColor,
         borderColor: colors.borderColor,
         textColor: colors.textColor,
@@ -46,6 +59,7 @@ function transformToCalendarEvent(event: CoachEvent): CalendarEvent {
             description: event.description,
             isRecurring: event.is_recurring,
             recurrence: event.recurrence,
+            isAllDay: event.isAllDay,
         },
     };
 }

@@ -73,8 +73,11 @@ export function transformEventFormToPayload(form: EventForm): EventPayload {
 }
 
 export const formatDateForInput = (date?: Date): string => {
-    if (!date) return new Date().toISOString().split('T')[0];
-    return date.toISOString().split('T')[0];
+    const d = date ?? new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 };
 
 export const formatTimeForInput = (date?: Date): string => {
