@@ -1,14 +1,13 @@
 import z from 'zod';
 import { FEATURE_IDS } from '@/data/featuresList';
-
-const FIRSTNAME_REGEX = /^[a-zA-Z\u00C0-\u017F\s'-]+$/;
+import { FIRSTNAME_REGEX, FIRSTNAME_ERROR_MESSAGE, FIRSTNAME_MAX_LENGTH } from '@/utils/validation';
 
 export const onboardingDataSchema = z.object({
     firstName: z
         .string()
         .min(1, 'Le prénom est requis')
-        .max(50, 'Le prénom ne peut pas dépasser 50 caractères')
-        .regex(FIRSTNAME_REGEX, 'Le prénom ne peut contenir que des lettres, espaces, tirets et apostrophes'),
+        .max(FIRSTNAME_MAX_LENGTH, `Le prénom ne peut pas dépasser ${FIRSTNAME_MAX_LENGTH} caractères`)
+        .regex(FIRSTNAME_REGEX, FIRSTNAME_ERROR_MESSAGE),
     selectedSports: z.array(z.string()).min(1, 'Sélectionnez au moins un sport'),
     athletesCount: z
         .number()

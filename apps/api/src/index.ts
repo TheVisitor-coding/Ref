@@ -7,6 +7,7 @@ import {
   type ValidationResult,
   type OnboardingData,
 } from './utils/validation';
+import { sanitizeFirstName, sanitizeStringArray } from './utils/sanitize';
 import { createRegisterRateLimiter } from './middlewares/rate-limiter';
 
 const registerRateLimiter = createRegisterRateLimiter();
@@ -100,11 +101,11 @@ export default {
               statusUser: 'pending',
               provider: 'local',
               ...(onboardingData && {
-                first_name: onboardingData.firstName,
+                first_name: sanitizeFirstName(onboardingData.firstName),
                 coach_preferences: {
-                  sports: onboardingData.selectedSports,
+                  sports: sanitizeStringArray(onboardingData.selectedSports),
                   athletesCount: onboardingData.athletesCount,
-                  features: onboardingData.selectedFeatures,
+                  features: sanitizeStringArray(onboardingData.selectedFeatures),
                 },
                 onboarding_completed_at: new Date().toISOString(),
               }),

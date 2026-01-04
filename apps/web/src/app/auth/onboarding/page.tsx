@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import OnboardingProgressBar from '@/components/molecules/onboarding/OnboardingProgressBar';
 import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
 import useOnboardingStore from '@/store/OnboardingStore';
-
-const FIRSTNAME_REGEX = /^[a-zA-Z\u00C0-\u017F\s'-]*$/;
+import { canTypeInFirstName, isValidFirstName, FIRSTNAME_ERROR_MESSAGE } from '@/utils/validation';
 
 export default function OnboardingNamePage() {
     const router = useRouter();
@@ -16,28 +15,28 @@ export default function OnboardingNamePage() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
 
-        if (value === '' || FIRSTNAME_REGEX.test(value)) {
+        if (canTypeInFirstName(value)) {
             setFirstName(value);
             setError(null);
         } else {
-            setError('Le prénom ne peut contenir que des lettres');
+            setError(FIRSTNAME_ERROR_MESSAGE);
         }
     };
 
     const handleContinue = () => {
-        if (firstName.trim() && FIRSTNAME_REGEX.test(firstName)) {
+        if (isValidFirstName(firstName)) {
             completeStep(1);
             router.push('/auth/onboarding/sports');
         }
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && firstName.trim()) {
+        if (e.key === 'Enter' && isValidFirstName(firstName)) {
             handleContinue();
         }
     };
 
-    const isValidFirstName = firstName.trim().length > 0 && FIRSTNAME_REGEX.test(firstName);
+    const canContinue = isValidFirstName(firstName);
 
     return (
         <>
@@ -69,7 +68,7 @@ export default function OnboardingNamePage() {
 
                 <PrimaryButton
                     onClick={handleContinue}
-                    disabled={!isValidFirstName}
+                    disabled={!canContinue}
                     label="Continuer"
                     className="px-6 py-3 text-base font-semibold text-white transition-opacity rounded-xl bg-primary-blue shadow-button disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
                 />
