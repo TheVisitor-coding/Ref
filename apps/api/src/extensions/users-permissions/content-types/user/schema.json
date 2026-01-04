@@ -238,6 +238,12 @@
       "relation": "oneToMany",
       "target": "api::audit-log.audit-log",
       "mappedBy": "affected_user"
+    },
+    "coach_events": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::coach-event.coach-event",
+      "mappedBy": "user"
     }
   }
 }

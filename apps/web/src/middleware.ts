@@ -4,7 +4,17 @@ import { verifyToken } from "./utils/auth";
 export async function middleware(req: NextRequest) {
     const token = req.cookies.get('auth-token');
     const isAuthPage = req.nextUrl.pathname.startsWith('/auth');
-    const isProtectedPage = !isAuthPage
+    const isProtectedPage = !isAuthPage;
+
+    if (isAuthPage && token) {
+        const payload = await verifyToken(token.value);
+        if (payload) {
+            return NextResponse.redirect(new URL('/', req.url));
+        }
+        const response = NextResponse.next();
+        response.cookies.delete('auth-token');
+        return response;
+    }
 
     if (isProtectedPage) {
         if (!token) {

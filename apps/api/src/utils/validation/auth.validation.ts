@@ -1,7 +1,7 @@
 export interface OnboardingData {
     firstName: string;
     selectedSports: string[];
-    athletesCount: 'less-than-5' | '5-to-20' | '20-to-50' | 'more-than-50';
+    athletesCount: number;
     selectedFeatures: string[];
 }
 
@@ -168,7 +168,6 @@ export function validateIdentifier(identifier: string): ValidationError | null {
     return null;
 }
 
-const VALID_ATHLETES_COUNT = ['less-than-5', '5-to-20', '20-to-50', 'more-than-50'] as const;
 const VALID_FEATURES = ['athletes-tracking', 'session-analysis', 'calendar', 'messaging', 'payments', 'tasks'] as const;
 
 export function validateOnboardingData(onboardingData: unknown): ValidationError | null {
@@ -190,8 +189,8 @@ export function validateOnboardingData(onboardingData: unknown): ValidationError
         return { field: 'onboardingData.selectedSports', message: 'At least one sport must be selected', code: 'REQUIRED' };
     }
 
-    if (!data.athletesCount || !VALID_ATHLETES_COUNT.includes(data.athletesCount as typeof VALID_ATHLETES_COUNT[number])) {
-        return { field: 'onboardingData.athletesCount', message: 'Invalid athletes count selection', code: 'INVALID_VALUE' };
+    if (typeof data.athletesCount !== 'number' || data.athletesCount < 1 || data.athletesCount > 40) {
+        return { field: 'onboardingData.athletesCount', message: 'Athletes count must be a number between 1 and 40', code: 'INVALID_VALUE' };
     }
 
     if (!Array.isArray(data.selectedFeatures)) {

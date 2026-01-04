@@ -38,7 +38,7 @@ export const featureConfig: Record<FeatureId, FeatureConfig> = {
         id: 'calendar',
         label: 'Planning',
         icon: '/icons/Calendar.svg',
-        href: '/planning',
+        href: '/agenda',
         showInSidebar: true,
     },
     messaging: {

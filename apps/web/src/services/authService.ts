@@ -37,32 +37,105 @@ export class AuthError extends Error {
         message: string,
         public code: string,
         public status: number,
-        public details?: unknown
+        public details?: unknown,
+        public isRetryable: boolean = false
     ) {
         super(message);
         this.name = 'AuthError';
     }
 }
 
+function isRetryableError(error: unknown): boolean {
+    if (error instanceof AuthError) {
+        return error.status >= 500 || error.code === 'NETWORK_ERROR';
+    }
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+        return true;
+    }
+    return false;
+}
+
+function getRetryDelay(attempt: number): number {
+    const baseDelay = 1000;
+    const maxDelay = 10000;
+    const exponentialDelay = baseDelay * Math.pow(2, attempt);
+    const jitter = Math.random() * 500;
+    return Math.min(exponentialDelay + jitter, maxDelay);
+}
+
+async function withRetry<T>(
+    fn: () => Promise<T>,
+    options: { maxRetries?: number; onRetry?: (attempt: number, error: unknown) => void } = {}
+): Promise<T> {
+    const { maxRetries = 3, onRetry } = options;
+    let lastError: unknown;
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+            return await fn();
+        } catch (error) {
+            lastError = error;
+
+            if (!isRetryableError(error) || attempt === maxRetries) {
+                throw error;
+            }
+
+            onRetry?.(attempt + 1, error);
+            await new Promise((resolve) => setTimeout(resolve, getRetryDelay(attempt)));
+        }
+    }
+
+    throw lastError;
+}
+
 async function handleApiError(response: Response): Promise<never> {
     const errorData: ApiErrorResponse = await response.json().catch(() => ({}));
+    const isRetryable = response.status >= 500;
     throw new AuthError(
         errorData.error?.message || 'An error occurred',
         errorData.error?.name || 'UNKNOWN_ERROR',
         response.status,
-        errorData.error?.details
+        errorData.error?.details,
+        isRetryable
     );
 }
 
-export async function registerCoach(data: RegisterRequest): Promise<AuthResponse> {
-    const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+async function fetchCsrfToken(): Promise<string> {
+    const response = await fetch('/api/auth/csrf-token', {
+        method: 'GET',
         credentials: 'include',
     });
-    if (!response.ok) await handleApiError(response);
-    return response.json();
+    if (!response.ok) {
+        throw new AuthError('Failed to fetch CSRF token', 'CSRF_ERROR', response.status);
+    }
+    const data = await response.json();
+    return data.csrfToken;
+}
+
+export async function registerCoach(data: RegisterRequest): Promise<AuthResponse> {
+    return withRetry(
+        async () => {
+            const csrfToken = await fetchCsrfToken();
+
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken,
+                },
+                body: JSON.stringify(data),
+                credentials: 'include',
+            });
+            if (!response.ok) await handleApiError(response);
+            return response.json();
+        },
+        {
+            maxRetries: 2,
+            onRetry: (attempt) => {
+                console.warn(`Registration attempt ${attempt} failed, retrying...`);
+            },
+        }
+    );
 }
 
 export async function loginUser(credentials: LoginRequest): Promise<AuthResponse> {

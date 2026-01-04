@@ -1,12 +1,18 @@
 import z from 'zod';
 import { FEATURE_IDS } from '@/data/featuresList';
+import { FIRSTNAME_REGEX, FIRSTNAME_ERROR_MESSAGE, FIRSTNAME_MAX_LENGTH } from '@/utils/validation';
 
 export const onboardingDataSchema = z.object({
-    firstName: z.string().min(1, 'Le prénom est requis').max(50, 'Le prénom ne peut pas dépasser 50 caractères'),
+    firstName: z
+        .string()
+        .min(1, 'Le prénom est requis')
+        .max(FIRSTNAME_MAX_LENGTH, `Le prénom ne peut pas dépasser ${FIRSTNAME_MAX_LENGTH} caractères`)
+        .regex(FIRSTNAME_REGEX, FIRSTNAME_ERROR_MESSAGE),
     selectedSports: z.array(z.string()).min(1, 'Sélectionnez au moins un sport'),
-    athletesCount: z.enum(['less-than-5', '5-to-20', '20-to-50', 'more-than-50'], {
-        message: 'Sélectionnez le nombre de sportifs',
-    }),
+    athletesCount: z
+        .number()
+        .min(1, 'Le nombre de sportifs doit être au moins 1')
+        .max(40, 'Le nombre de sportifs ne peut pas dépasser 40'),
     selectedFeatures: z.array(z.enum(FEATURE_IDS)),
 });
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { signupSchema } from '@/schema/AuthSchema';
+import { verifyCsrfToken, invalidateCsrfToken } from '@/utils/csrf';
 
 interface StrapiErrorResponse {
     error?: {
@@ -24,6 +25,21 @@ interface StrapiSuccessResponse {
 
 export async function POST(request: NextRequest) {
     try {
+        // Vérification CSRF
+        const isValidCsrf = await verifyCsrfToken(request);
+        if (!isValidCsrf) {
+            return NextResponse.json(
+                {
+                    error: {
+                        status: 403,
+                        name: 'ForbiddenError',
+                        message: 'Invalid or missing CSRF token',
+                    },
+                },
+                { status: 403 }
+            );
+        }
+
         const body = await request.json();
 
         const validation = signupSchema.safeParse(body);
@@ -84,6 +100,9 @@ export async function POST(request: NextRequest) {
             maxAge: 7 * 24 * 60 * 60,
             path: '/',
         });
+
+        // Invalider le token CSRF après succès
+        await invalidateCsrfToken();
 
         return NextResponse.json({ user: successData.user, message: 'Registration successful' }, { status: 201 });
     } catch (error) {

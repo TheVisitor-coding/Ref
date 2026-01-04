@@ -3,6 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useOnboardingStore, { type OnboardingStep } from '@/store/OnboardingStore';
+import {
+    OnboardingStepSkeleton,
+    OnboardingSliderSkeleton,
+    OnboardingFeaturesSkeleton,
+} from './OnboardingSkeleton';
 
 interface OnboardingGuardProps {
     step: OnboardingStep;
@@ -15,6 +20,19 @@ const stepRoutes: Record<OnboardingStep, string> = {
     3: '/auth/onboarding/athletes-count',
     4: '/auth/onboarding/features',
 };
+
+function SkeletonForStep({ step }: { step: OnboardingStep }) {
+    switch (step) {
+        case 2:
+            return <OnboardingStepSkeleton />;
+        case 3:
+            return <OnboardingSliderSkeleton />;
+        case 4:
+            return <OnboardingFeaturesSkeleton />;
+        default:
+            return <OnboardingStepSkeleton />;
+    }
+}
 
 export default function OnboardingGuard({ step, children }: OnboardingGuardProps) {
     const router = useRouter();
@@ -42,7 +60,7 @@ export default function OnboardingGuard({ step, children }: OnboardingGuardProps
     }, [isHydrated, step, canAccessStep, completedSteps, router]);
 
     if (!isHydrated || !hasAccess) {
-        return null;
+        return <SkeletonForStep step={step} />;
     }
 
     return <>{children}</>;
