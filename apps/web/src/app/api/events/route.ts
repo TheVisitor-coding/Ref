@@ -1,5 +1,6 @@
 import { EventFormSchema, transformEventFormToPayload } from "@/schema/EventSchema";
 import { createCoachEvent, fetchCoachEvents, updateCoachEvent, patchCoachEvent } from "@/services/eventService";
+import { formatTimeForStrapi } from "@/utils/date";
 import { NextResponse } from "next/server";
 import z from "zod";
 
@@ -93,14 +94,9 @@ export async function PATCH(request: Request) {
 
         const { documentId, startTime, endTime, date } = parsed.data;
 
-        const formatTime = (time: string): string => {
-            const [hours, minutes] = time.split(':');
-            return `${hours}:${minutes}:00.000`;
-        };
-
         const partialData: Record<string, string> = {};
-        if (startTime) partialData.startTime = formatTime(startTime);
-        if (endTime) partialData.endTime = formatTime(endTime);
+        if (startTime) partialData.startTime = formatTimeForStrapi(startTime);
+        if (endTime) partialData.endTime = formatTimeForStrapi(endTime);
         if (date) partialData.date = date;
 
         const event = await patchCoachEvent(documentId, partialData);

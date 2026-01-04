@@ -1,5 +1,6 @@
 import z from "zod";
 import type { EventColor, EventType, RecurrenceType } from "@/types/CoachEvent";
+import { formatDateToISO, formatTimeForStrapi } from "@/utils/date";
 
 export const EventFormSchema = z.object({
     documentId: z.string().optional(),
@@ -48,11 +49,6 @@ export type EventForm = z.infer<typeof EventFormSchema>;
 export type EventPayload = z.infer<typeof EventPayloadSchema>;
 
 export function transformEventFormToPayload(form: EventForm): EventPayload {
-    const formatTime = (time: string): string => {
-        const [hours, minutes] = time.split(':');
-        return `${hours}:${minutes}:00.000`;
-    };
-
     const recurrenceData = form.recurrence !== 'none'
         ? { type: form.recurrence }
         : null;
@@ -61,8 +57,8 @@ export function transformEventFormToPayload(form: EventForm): EventPayload {
         title: form.title,
         description: form.description || null,
         date: form.date,
-        startTime: formatTime(form.startTime),
-        endTime: formatTime(form.endTime),
+        startTime: formatTimeForStrapi(form.startTime),
+        endTime: formatTimeForStrapi(form.endTime),
         isAllDay: form.isAllDay,
         location: form.location || null,
         eventType: form.eventType,
@@ -71,14 +67,6 @@ export function transformEventFormToPayload(form: EventForm): EventPayload {
         recurrence: recurrenceData as EventPayload['recurrence'],
     };
 }
-
-export const formatDateForInput = (date?: Date): string => {
-    const d = date ?? new Date();
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-};
 
 export const formatTimeForInput = (date?: Date): string => {
     if (!date) return '10:00';
@@ -91,7 +79,7 @@ export const getEventDefaultValues = (
 ): EventFormInput => ({
     documentId: initialData?.documentId,
     title: initialData?.title ?? '',
-    date: initialData?.date ?? formatDateForInput(selectedDate),
+    date: initialData?.date ?? formatDateToISO(selectedDate),
     startTime: initialData?.startTime ?? '10:00',
     endTime: initialData?.endTime ?? '11:00',
     isAllDay: initialData?.isAllDay ?? false,

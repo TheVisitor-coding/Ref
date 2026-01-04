@@ -6,11 +6,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import Breadcrumbs from '@/components/atoms/breadcrumb/breadcrumbs';
 import SecondaryButton from '@/components/atoms/buttons/SecondaryButton';
 import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
-import FullCalendarWrapper, { CalendarView, CalendarEvent, EventChangeInfo } from '@/components/molecules/calendar/FullCalendarWrapper';
+import FullCalendarWrapper, { CalendarView, CalendarEvent, EventChangeInfo, DateRangeSelection } from '@/components/molecules/calendar/FullCalendarWrapper';
 import AgendaActions from '@/components/molecules/calendar/AgendaActions';
 import EventModal from '@/components/molecules/modal/EventModal';
 import { useCoachEvents } from '@/hooks/useCoachEvents';
 import { EventFormInput } from '@/schema/EventSchema';
+import { formatDateToISO, formatTimeToHHMM } from '@/utils/date';
 import Image from 'next/image';
 import { Settings, Loader2 } from 'lucide-react';
 
@@ -109,28 +110,21 @@ function AgendaClient() {
     const handleEventDoubleClick = useCallback((event: CalendarEvent) => {
         const props = event.extendedProps || {};
 
-        const formatLocalDate = (d: Date): string => {
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
-
         const startTime = typeof event.start === 'string'
             ? event.start.split('T')[1]?.substring(0, 5)
             : event.start instanceof Date
-                ? event.start.toTimeString().substring(0, 5)
+                ? formatTimeToHHMM(event.start)
                 : '10:00';
         const endTime = typeof event.end === 'string'
             ? event.end.split('T')[1]?.substring(0, 5)
             : event.end instanceof Date
-                ? event.end.toTimeString().substring(0, 5)
+                ? formatTimeToHHMM(event.end)
                 : '11:00';
         const eventDate = typeof event.start === 'string'
             ? event.start.split('T')[0]
             : event.start instanceof Date
-                ? formatLocalDate(event.start)
-                : formatLocalDate(new Date());
+                ? formatDateToISO(event.start)
+                : formatDateToISO(new Date());
 
         setEditEventData({
             documentId: event.id,
@@ -157,6 +151,17 @@ function AgendaClient() {
         setIsEventModalOpen(true);
     }, [currentDate, currentView]);
 
+    const handleDateSelect = useCallback((selection: DateRangeSelection) => {
+        setEditEventData({
+            date: formatDateToISO(selection.start),
+            startTime: selection.allDay ? '10:00' : formatTimeToHHMM(selection.start),
+            endTime: selection.allDay ? '11:00' : formatTimeToHHMM(selection.end),
+            isAllDay: selection.allDay,
+        });
+        setEventModalMode('create');
+        setIsEventModalOpen(true);
+    }, []);
+
     const handleEventModalClose = useCallback((open: boolean) => {
         setIsEventModalOpen(open);
         if (!open) {
@@ -167,20 +172,7 @@ function AgendaClient() {
     }, []);
 
     const handleEventChange = useCallback(async (info: EventChangeInfo) => {
-        const formatTime = (date: Date): string => {
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            return `${hours}:${minutes}`;
-        };
-
-        const formatDate = (date: Date): string => {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
-
-        const dateChanged = info.oldStart && formatDate(info.start) !== formatDate(info.oldStart);
+        const dateChanged = info.oldStart && formatDateToISO(info.start) !== formatDateToISO(info.oldStart);
 
         try {
             const response = await fetch('/api/events', {
@@ -188,9 +180,9 @@ function AgendaClient() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     documentId: info.eventId,
-                    ...(dateChanged && { date: formatDate(info.start) }),
-                    startTime: formatTime(info.start),
-                    endTime: formatTime(info.end),
+                    ...(dateChanged && { date: formatDateToISO(info.start) }),
+                    startTime: formatTimeToHHMM(info.start),
+                    endTime: formatTimeToHHMM(info.end),
                 }),
             });
 
@@ -294,6 +286,7 @@ function AgendaClient() {
                     onEventClick={handleEventClick}
                     onEventDoubleClick={handleEventDoubleClick}
                     onEventChange={handleEventChange}
+                    onDateSelect={handleDateSelect}
                     className="flex-1"
                 />
             </div>

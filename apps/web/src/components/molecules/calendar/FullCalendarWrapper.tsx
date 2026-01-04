@@ -30,6 +30,12 @@ export interface EventChangeInfo {
     revert: () => void;
 }
 
+export interface DateRangeSelection {
+    start: Date;
+    end: Date;
+    allDay: boolean;
+}
+
 interface FullCalendarWrapperProps {
     events?: CalendarEvent[];
     view?: CalendarView;
@@ -37,6 +43,7 @@ interface FullCalendarWrapperProps {
     onEventClick?: (event: CalendarEvent) => void;
     onEventDoubleClick?: (event: CalendarEvent) => void;
     onEventChange?: (info: EventChangeInfo) => void;
+    onDateSelect?: (selection: DateRangeSelection) => void;
     calendarRef?: React.RefObject<FullCalendar | null>;
     className?: string;
 }
@@ -48,6 +55,7 @@ function FullCalendarWrapper({
     onEventClick,
     onEventDoubleClick,
     onEventChange,
+    onDateSelect,
     calendarRef: externalRef,
     className = '',
 }: FullCalendarWrapperProps) {
@@ -80,6 +88,9 @@ function FullCalendarWrapper({
         eventResizableFromStart: true,
         snapDuration: '00:15:00',
         dragRevertDuration: 300,
+        selectable: true,
+        selectMirror: true,
+        unselectAuto: true,
         // TimeGrid specific options
         slotMinTime: '08:00:00',
         slotMaxTime: '18:00:00',
@@ -154,6 +165,15 @@ function FullCalendarWrapper({
                     oldStart: info.oldEvent.start || undefined,
                     oldEnd: info.oldEvent.end || undefined,
                     revert: info.revert,
+                });
+            }
+        },
+        select: (info) => {
+            if (onDateSelect) {
+                onDateSelect({
+                    start: info.start,
+                    end: info.end,
+                    allDay: info.allDay,
                 });
             }
         },
