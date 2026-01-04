@@ -12,7 +12,7 @@ export interface EventParticipant {
 
 export interface RecurrenceRule {
     type: RecurrenceType;
-    interval?: number; // Every X days/weeks/months
+    interval?: number;
     endDate?: string;
     count?: number;
 }
@@ -21,23 +21,24 @@ export interface CoachEvent {
     id: number;
     documentId: string;
 
-    coach: { id: number } | number;
+    user: { id: number } | number;
 
     title: string;
     description: string | null;
 
-    start_datetime: string;
-    end_datetime: string | null;
-    is_all_day: boolean;
+    date: string;
+    startTime: string;
+    endTime: string;
+    isAllDay: boolean;
 
     location: string | null;
-    event_type: EventType;
+    eventType: EventType;
     color: EventColor;
 
-    participants: EventParticipant[] | null;
+    participants: { id: number }[] | null;
 
     is_recurring: boolean;
-    recurrence_rule: RecurrenceRule | null;
+    recurrence: RecurrenceRule | null;
 
     createdAt: string;
     updatedAt: string;

@@ -27,23 +27,15 @@ export const EventFormSchema = z.object({
 export const EventPayloadSchema = z.object({
     title: z.string().min(1).max(255),
     description: z.string().nullable(),
-
-    start_datetime: z.string(),
-    end_datetime: z.string().nullable(),
-    is_all_day: z.boolean(),
-
+    date: z.string(),
+    startTime: z.string(),
+    endTime: z.string(),
+    isAllDay: z.boolean(),
     location: z.string().nullable(),
-    event_type: z.enum(['meeting', 'absence', 'personal', 'reminder', 'other'] as const),
+    eventType: z.enum(['meeting', 'absence', 'personal', 'reminder', 'other'] as const),
     color: z.enum(['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'gray'] as const),
-
-    participants: z.array(z.object({
-        id: z.number(),
-        name: z.string(),
-        avatar: z.string().optional(),
-    })).nullable(),
-
     is_recurring: z.boolean(),
-    recurrence_rule: z.object({
+    recurrence: z.object({
         type: z.enum(['none', 'daily', 'weekly', 'monthly', 'yearly'] as const),
         interval: z.number().optional(),
         endDate: z.string().optional(),
@@ -56,37 +48,27 @@ export type EventForm = z.infer<typeof EventFormSchema>;
 export type EventPayload = z.infer<typeof EventPayloadSchema>;
 
 export function transformEventFormToPayload(form: EventForm): EventPayload {
-    const buildDatetime = (date: string, time: string): string => {
-        const [year, month, day] = date.split('-').map(Number);
-        const [hours, minutes] = time.split(':').map(Number);
-        const dateObj = new Date(year, month - 1, day, hours, minutes);
-        return dateObj.toISOString();
+    const formatTime = (time: string): string => {
+        const [hours, minutes] = time.split(':');
+        return `${hours}:${minutes}:00.000`;
     };
 
-    const startDatetime = form.isAllDay
-        ? new Date(`${form.date}T00:00:00`).toISOString()
-        : buildDatetime(form.date, form.startTime);
-
-    const endDatetime = form.isAllDay
-        ? new Date(`${form.date}T23:59:59`).toISOString()
-        : buildDatetime(form.date, form.endTime);
-
-    const recurrenceRule = form.recurrence !== 'none'
+    const recurrenceData = form.recurrence !== 'none'
         ? { type: form.recurrence }
         : null;
 
     return {
         title: form.title,
         description: form.description || null,
-        start_datetime: startDatetime,
-        end_datetime: endDatetime,
-        is_all_day: form.isAllDay,
+        date: form.date,
+        startTime: formatTime(form.startTime),
+        endTime: formatTime(form.endTime),
+        isAllDay: form.isAllDay,
         location: form.location || null,
-        event_type: form.eventType as EventType,
-        color: form.color as EventColor,
-        participants: form.participants.length > 0 ? form.participants : null,
+        eventType: form.eventType,
+        color: form.color,
         is_recurring: form.recurrence !== 'none',
-        recurrence_rule: recurrenceRule as EventPayload['recurrence_rule'],
+        recurrence: recurrenceData as EventPayload['recurrence'],
     };
 }
 

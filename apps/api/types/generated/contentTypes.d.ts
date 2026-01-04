@@ -591,6 +591,56 @@ export interface ApiCoachAthleteCoachAthlete
   };
 }
 
+export interface ApiCoachEventCoachEvent extends Struct.CollectionTypeSchema {
+  collectionName: 'coach_events';
+  info: {
+    displayName: 'Event';
+    pluralName: 'coach-events';
+    singularName: 'coach-event';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    color: Schema.Attribute.Enumeration<
+      ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'gray']
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    description: Schema.Attribute.Text;
+    endTime: Schema.Attribute.Time;
+    eventType: Schema.Attribute.Enumeration<
+      ['meeting', 'absence', 'personal', 'reminder', 'other']
+    >;
+    is_recurring: Schema.Attribute.Boolean;
+    isAllDay: Schema.Attribute.Boolean;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::coach-event.coach-event'
+    > &
+      Schema.Attribute.Private;
+    location: Schema.Attribute.String;
+    participants: Schema.Attribute.Relation<
+      'oneToMany',
+      'plugin::users-permissions.user'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    recurrence: Schema.Attribute.JSON;
+    startTime: Schema.Attribute.Time;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiConversationParticipantConversationParticipant
   extends Struct.CollectionTypeSchema {
   collectionName: 'conversation_participants';
@@ -1695,6 +1745,10 @@ export interface PluginUsersPermissionsUser
     avatar: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     birth_date: Schema.Attribute.String;
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    coach_events: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::coach-event.coach-event'
+    >;
     coach_preferences: Schema.Attribute.JSON;
     coached_athletes: Schema.Attribute.Relation<
       'oneToMany',
@@ -1819,6 +1873,7 @@ declare module '@strapi/strapi' {
       'api::athlete-subscription.athlete-subscription': ApiAthleteSubscriptionAthleteSubscription;
       'api::audit-log.audit-log': ApiAuditLogAuditLog;
       'api::coach-athlete.coach-athlete': ApiCoachAthleteCoachAthlete;
+      'api::coach-event.coach-event': ApiCoachEventCoachEvent;
       'api::conversation-participant.conversation-participant': ApiConversationParticipantConversationParticipant;
       'api::conversation.conversation': ApiConversationConversation;
       'api::message.message': ApiMessageMessage;
