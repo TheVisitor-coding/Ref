@@ -3,23 +3,16 @@
 import { useRouter } from 'next/navigation';
 import OnboardingProgressBar from '@/components/molecules/onboarding/OnboardingProgressBar';
 import OnboardingGuard from '@/components/molecules/onboarding/OnboardingGuard';
-import SelectionTile from '@/components/molecules/onboarding/SelectionTile';
+import AthletesCountSlider from '@/components/molecules/onboarding/AthletesCountSlider';
 import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
-import useOnboardingStore, { type AthletesCountOption } from '@/store/OnboardingStore';
-
-const athletesCountOptions: { id: AthletesCountOption; label: string }[] = [
-    { id: 'less-than-5', label: 'Moins de 5' },
-    { id: '5-to-20', label: 'Entre 5 et 20' },
-    { id: '20-to-50', label: 'Entre 20 et 50' },
-    { id: 'more-than-50', label: 'Plus de 50' },
-];
+import useOnboardingStore from '@/store/OnboardingStore';
 
 export default function OnboardingAthletesCountPage() {
     const router = useRouter();
     const { athletesCount, setAthletesCount, completeStep } = useOnboardingStore();
 
     const handleContinue = () => {
-        if (athletesCount) {
+        if (athletesCount !== null) {
             completeStep(3);
             router.push('/auth/onboarding/features');
         }
@@ -32,17 +25,10 @@ export default function OnboardingAthletesCountPage() {
                     Combien de sportifs accompagnez-vous ?
                 </h1>
 
-                <div className="flex flex-col gap-4">
-                    {athletesCountOptions.map((option) => (
-                        <SelectionTile
-                            key={option.id}
-                            icon="/sports/Run.svg"
-                            label={option.label}
-                            selected={athletesCount === option.id}
-                            onClick={() => setAthletesCount(option.id)}
-                        />
-                    ))}
-                </div>
+                <AthletesCountSlider
+                    value={athletesCount ?? 1}
+                    onChange={setAthletesCount}
+                />
             </div>
 
             <div className="flex items-center justify-between w-full">
@@ -50,7 +36,7 @@ export default function OnboardingAthletesCountPage() {
 
                 <PrimaryButton
                     onClick={handleContinue}
-                    disabled={!athletesCount}
+                    disabled={athletesCount === null}
                     label="Continuer"
                     className="px-6 py-3 text-base font-semibold text-white transition-opacity rounded-xl bg-primary-blue shadow-button disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
                 />
