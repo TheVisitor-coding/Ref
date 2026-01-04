@@ -8,14 +8,10 @@ import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
 import FullCalendarWrapper, { CalendarView, CalendarEvent } from '@/components/molecules/calendar/FullCalendarWrapper';
 import AgendaActions from '@/components/molecules/calendar/AgendaActions';
 import EventModal from '@/components/molecules/modal/EventModal';
+import { useCoachEvents } from '@/hooks/useCoachEvents';
 import Image from 'next/image';
-import { Settings } from 'lucide-react';
+import { Settings, Loader2 } from 'lucide-react';
 
-interface AgendaClientProps {
-    initialEvents?: CalendarEvent[];
-}
-
-// Helper pour formater la plage de dates de la semaine
 function formatWeekRange(startDate: Date): string {
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + 6);
@@ -47,11 +43,13 @@ function formatDayDate(date: Date): string {
     return formatter.format(date);
 }
 
-function AgendaClient({ initialEvents = [] }: AgendaClientProps) {
+function AgendaClient() {
     const calendarRef = useRef<FullCalendar | null>(null);
     const [currentView, setCurrentView] = useState<CalendarView>('dayGridMonth');
     const [currentTitle, setCurrentTitle] = useState<string>('');
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
+
+    const { calendarEvents, isLoading, isError } = useCoachEvents();
 
     // État de la modal d'événement
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
@@ -137,6 +135,22 @@ function AgendaClient({ initialEvents = [] }: AgendaClientProps) {
     const displayTitle = currentTitle || getInitialTitle();
     const formattedTitle = displayTitle.charAt(0).toUpperCase() + displayTitle.slice(1);
 
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-full min-h-[400px]">
+                <Loader2 className="w-8 h-8 animate-spin text-primary-blue" />
+            </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div className="flex items-center justify-center h-full min-h-[400px]">
+                <p className="text-red-500">Erreur lors du chargement des événements</p>
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col gap-6 h-full">
             {/* Header avec breadcrumb et actions */}
@@ -188,7 +202,7 @@ function AgendaClient({ initialEvents = [] }: AgendaClientProps) {
                 {/* Calendrier FullCalendar */}
                 <FullCalendarWrapper
                     calendarRef={calendarRef}
-                    events={initialEvents}
+                    events={calendarEvents}
                     view={currentView}
                     onDateChange={handleDateChange}
                     onEventClick={handleEventClick}
