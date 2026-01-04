@@ -11,40 +11,9 @@ import AgendaActions from '@/components/molecules/calendar/AgendaActions';
 import EventModal from '@/components/molecules/modal/EventModal';
 import { useCoachEvents } from '@/hooks/useCoachEvents';
 import { EventFormInput } from '@/schema/EventSchema';
-import { formatDateToISO, formatTimeToHHMM } from '@/utils/date';
+import { formatDateToISO, formatTimeToHHMM, formatWeekRange, formatDayDate } from '@/utils/date';
 import Image from 'next/image';
 import { Settings, Loader2 } from 'lucide-react';
-
-function formatWeekRange(startDate: Date): string {
-    const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + 6);
-
-    const startDay = startDate.getDate();
-    const endDay = endDate.getDate();
-
-    const monthFormatter = new Intl.DateTimeFormat('fr-FR', { month: 'short' });
-    const yearFormatter = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' });
-
-    const startMonth = monthFormatter.format(startDate);
-    const endMonth = monthFormatter.format(endDate);
-    const year = yearFormatter.format(endDate);
-
-    if (startDate.getMonth() === endDate.getMonth()) {
-        return `Du ${startDay} → ${endDay} ${startMonth} ${year}`;
-    }
-
-    return `Du ${startDay} ${startMonth} → ${endDay} ${endMonth} ${year}`;
-}
-
-// Helper pour formater la date du jour
-function formatDayDate(date: Date): string {
-    const formatter = new Intl.DateTimeFormat('fr-FR', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-    });
-    return formatter.format(date);
-}
 
 function AgendaClient() {
     const calendarRef = useRef<FullCalendar | null>(null);

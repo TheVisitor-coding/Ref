@@ -1,4 +1,4 @@
-import { EventFormSchema, transformEventFormToPayload } from "@/schema/EventSchema";
+import { EventFormSchema, PatchEventSchema, transformEventFormToPayload } from "@/schema/EventSchema";
 import { createCoachEvent, fetchCoachEvents, updateCoachEvent, patchCoachEvent } from "@/services/eventService";
 import { formatTimeForStrapi } from "@/utils/date";
 import { NextResponse } from "next/server";
@@ -72,13 +72,6 @@ export async function PUT(request: Request) {
         return NextResponse.json({ error: msg }, { status: 500 });
     }
 }
-
-const PatchEventSchema = z.object({
-    documentId: z.string().min(1, 'documentId is required'),
-    startTime: z.string().optional(),
-    endTime: z.string().optional(),
-    date: z.string().optional(),
-});
 
 export async function PATCH(request: Request) {
     try {

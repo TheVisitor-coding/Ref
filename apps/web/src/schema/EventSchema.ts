@@ -44,6 +44,13 @@ export const EventPayloadSchema = z.object({
     }).nullable(),
 });
 
+export const PatchEventSchema = z.object({
+    documentId: z.string().min(1, 'documentId is required'),
+    startTime: z.string().optional(),
+    endTime: z.string().optional(),
+    date: z.string().optional(),
+});
+
 export type EventFormInput = z.input<typeof EventFormSchema>;
 export type EventForm = z.infer<typeof EventFormSchema>;
 export type EventPayload = z.infer<typeof EventPayloadSchema>;

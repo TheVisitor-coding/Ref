@@ -87,6 +87,42 @@ function getNextDay(dateStr: string): string {
   return formatDateToISO(date);
 }
 
+/**
+ * Format a week range for display (e.g., "Du 1 → 7 janv 2026").
+ */
+function formatWeekRange(startDate: Date): string {
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + 6);
+
+  const startDay = startDate.getDate();
+  const endDay = endDate.getDate();
+
+  const monthFormatter = new Intl.DateTimeFormat('fr-FR', { month: 'short' });
+  const yearFormatter = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' });
+
+  const startMonth = monthFormatter.format(startDate);
+  const endMonth = monthFormatter.format(endDate);
+  const year = yearFormatter.format(endDate);
+
+  if (startDate.getMonth() === endDate.getMonth()) {
+    return `Du ${startDay} → ${endDay} ${startMonth} ${year}`;
+  }
+
+  return `Du ${startDay} ${startMonth} → ${endDay} ${endMonth} ${year}`;
+}
+
+/**
+ * Format a day date for display (e.g., "4 janv. 2026").
+ */
+function formatDayDate(date: Date): string {
+  const formatter = new Intl.DateTimeFormat('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+  return formatter.format(date);
+}
+
 export {
   isToday,
   getStartOfToday,
@@ -96,4 +132,6 @@ export {
   formatTimeToHHMM,
   formatTimeForStrapi,
   getNextDay,
+  formatWeekRange,
+  formatDayDate,
 }
