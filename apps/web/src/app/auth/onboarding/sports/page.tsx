@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import OnboardingProgressBar from '@/components/molecules/onboarding/OnboardingProgressBar';
 import OnboardingGuard from '@/components/molecules/onboarding/OnboardingGuard';
@@ -13,13 +14,21 @@ const sportIds = Object.keys(sportConfig) as SportType[];
 export default function OnboardingSportsPage() {
     const router = useRouter();
     const { firstName, selectedSports, toggleSport, completeStep } = useOnboardingStore();
+    const [isNavigating, setIsNavigating] = useState(false);
+
+    useEffect(() => {
+        router.prefetch('/auth/onboarding/athletes-count');
+    }, [router]);
 
     const handleContinue = () => {
         if (selectedSports.length > 0) {
+            setIsNavigating(true);
             completeStep(2);
             router.push('/auth/onboarding/athletes-count');
         }
     };
+
+    const canContinue = selectedSports.length > 0 && !isNavigating;
 
     return (
         <OnboardingGuard step={2}>
@@ -52,7 +61,8 @@ export default function OnboardingSportsPage() {
 
                 <PrimaryButton
                     onClick={handleContinue}
-                    disabled={selectedSports.length === 0}
+                    disabled={!canContinue}
+                    isLoading={isNavigating}
                     label="Continuer"
                     className="px-6 py-3 text-base font-semibold text-white transition-opacity rounded-xl bg-primary-blue shadow-button disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
                 />

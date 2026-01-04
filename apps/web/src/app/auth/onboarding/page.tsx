@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import OnboardingProgressBar from '@/components/molecules/onboarding/OnboardingProgressBar';
 import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
@@ -11,6 +11,11 @@ export default function OnboardingNamePage() {
     const router = useRouter();
     const { firstName, setFirstName, completeStep } = useOnboardingStore();
     const [error, setError] = useState<string | null>(null);
+    const [isNavigating, setIsNavigating] = useState(false);
+
+    useEffect(() => {
+        router.prefetch('/auth/onboarding/sports');
+    }, [router]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -25,6 +30,7 @@ export default function OnboardingNamePage() {
 
     const handleContinue = () => {
         if (isValidFirstName(firstName)) {
+            setIsNavigating(true);
             completeStep(1);
             router.push('/auth/onboarding/sports');
         }
@@ -36,7 +42,7 @@ export default function OnboardingNamePage() {
         }
     };
 
-    const canContinue = isValidFirstName(firstName);
+    const canContinue = isValidFirstName(firstName) && !isNavigating;
 
     return (
         <>
@@ -69,6 +75,7 @@ export default function OnboardingNamePage() {
                 <PrimaryButton
                     onClick={handleContinue}
                     disabled={!canContinue}
+                    isLoading={isNavigating}
                     label="Continuer"
                     className="px-6 py-3 text-base font-semibold text-white transition-opacity rounded-xl bg-primary-blue shadow-button disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
                 />
