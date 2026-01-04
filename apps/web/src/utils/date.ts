@@ -123,6 +123,44 @@ function formatDayDate(date: Date): string {
   return formatter.format(date);
 }
 
+/**
+ * Check if two dates are the same day (local timezone).
+ */
+function isSameDay(date1: Date, date2: Date): boolean {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
+}
+
+/**
+ * Check if a date is within a range (inclusive).
+ */
+function isDateInRange(date: Date, start: Date, end: Date): boolean {
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const s = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const e = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+  return d >= s && d <= e;
+}
+
+/**
+ * Get the end of a week from a start date.
+ */
+function getWeekEnd(startDate: Date): Date {
+  const end = new Date(startDate);
+  end.setDate(startDate.getDate() + 6);
+  return end;
+}
+
+/**
+ * Format time from HH:mm:ss.000 or HH:mm to display format (e.g., "8h00").
+ */
+function formatTimeDisplay(time: string): string {
+  const [hours, minutes] = time.split(':');
+  return `${parseInt(hours, 10)}h${minutes.padStart(2, '0')}`;
+}
+
 export {
   isToday,
   getStartOfToday,
@@ -134,4 +172,8 @@ export {
   getNextDay,
   formatWeekRange,
   formatDayDate,
+  isSameDay,
+  isDateInRange,
+  getWeekEnd,
+  formatTimeDisplay,
 }

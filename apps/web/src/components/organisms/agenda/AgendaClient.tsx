@@ -9,11 +9,12 @@ import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
 import FullCalendarWrapper, { CalendarView, CalendarEvent, EventChangeInfo, DateRangeSelection } from '@/components/molecules/calendar/FullCalendarWrapper';
 import AgendaActions from '@/components/molecules/calendar/AgendaActions';
 import EventModal from '@/components/molecules/modal/EventModal';
+import { AgendaSkeleton } from '@/components/molecules/skeleton/AgendaSkeleton';
 import { useCoachEvents } from '@/hooks/useCoachEvents';
 import { EventFormInput } from '@/schema/EventSchema';
 import { formatDateToISO, formatTimeToHHMM, formatWeekRange, formatDayDate } from '@/utils/date';
 import Image from 'next/image';
-import { Settings, Loader2 } from 'lucide-react';
+import { Settings } from 'lucide-react';
 
 function AgendaClient() {
     const calendarRef = useRef<FullCalendar | null>(null);
@@ -183,11 +184,7 @@ function AgendaClient() {
     const formattedTitle = displayTitle.charAt(0).toUpperCase() + displayTitle.slice(1);
 
     if (isLoading) {
-        return (
-            <div className="flex items-center justify-center h-full min-h-[400px]">
-                <Loader2 className="w-8 h-8 animate-spin text-primary-blue" />
-            </div>
-        );
+        return <AgendaSkeleton />;
     }
 
     if (isError) {
