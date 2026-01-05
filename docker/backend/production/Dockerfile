@@ -50,7 +50,7 @@ COPY apps/api/package*.json ./
 RUN npm ci --only=production && npm cache clean --force
 
 # Copy built application from builder stage
-COPY --from=builder --chown=strapi:nodejs /app ./app
+COPY --from=builder --chown=strapi:nodejs /app ./
 WORKDIR /app
 
 # COPY --from=builder --chown=strapi:nodejs /app/dist ./dist
