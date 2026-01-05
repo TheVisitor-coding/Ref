@@ -38,7 +38,7 @@ function AgendaActions({
                 value={currentView}
                 onValueChange={(value) => onViewChange(value as CalendarView)}
             >
-                <SelectTrigger className="w-[130px] border-grey-button border-b-2 bg-white">
+                <SelectTrigger className="w-[130px] border-grey-button border-b-2 bg-white !bg-white">
                     <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

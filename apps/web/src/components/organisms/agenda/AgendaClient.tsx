@@ -9,6 +9,7 @@ import PrimaryButton from '@/components/atoms/buttons/PrimaryButton';
 import FullCalendarWrapper, { CalendarView, CalendarEvent, EventChangeInfo, DateRangeSelection } from '@/components/molecules/calendar/FullCalendarWrapper';
 import AgendaActions from '@/components/molecules/calendar/AgendaActions';
 import EventModal from '@/components/molecules/modal/EventModal';
+import AvailabilityModal from '@/components/molecules/modal/AvailabilityModal';
 import { AgendaSkeleton } from '@/components/molecules/skeleton/AgendaSkeleton';
 import { useCoachEvents } from '@/hooks/useCoachEvents';
 import { EventFormInput } from '@/schema/EventSchema';
@@ -25,11 +26,12 @@ function AgendaClient() {
 
     const { calendarEvents, isLoading, isError } = useCoachEvents();
 
-    // État de la modal d'événement
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
     const [selectedDateForEvent, setSelectedDateForEvent] = useState<Date | undefined>(undefined);
     const [eventModalMode, setEventModalMode] = useState<'create' | 'edit'>('create');
     const [editEventData, setEditEventData] = useState<Partial<EventFormInput> | undefined>(undefined);
+
+    const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
 
     const handleViewChange = useCallback((view: CalendarView) => {
         if (calendarRef.current) {
@@ -170,8 +172,7 @@ function AgendaClient() {
     }, [queryClient]);
 
     const handleSettings = useCallback(() => {
-        // TODO: Ouvrir les paramètres de l'agenda
-        console.log('Settings clicked');
+        setIsAvailabilityModalOpen(true);
     }, []);
 
     const getInitialTitle = () => {
@@ -196,76 +197,78 @@ function AgendaClient() {
     }
 
     return (
-        <div className="flex flex-col gap-6 h-full">
-            {/* Header avec breadcrumb et actions */}
-            <div className="flex items-center justify-between gap-6">
-                <Breadcrumbs
-                    items={[
-                        {
-                            label: 'Agenda',
-                            href: '/agenda',
-                            icon: <Image src="/icons/Calendar.svg" alt="Calendar Icon" width={16} height={16} />,
-                        },
-                    ]}
-                />
-
-                <div className="flex items-center gap-4">
-                    <SecondaryButton
-                        onClick={handleSettings}
-                        label={
-                            <span className="flex items-center gap-2">
-                                <Settings className="size-5" />
-                                Paramètres
-                            </span>
-                        }
+        <>
+            <div className="flex flex-col gap-6 h-full">
+                <div className="flex items-center justify-between gap-6">
+                    <Breadcrumbs
+                        items={[
+                            {
+                                label: 'Agenda',
+                                href: '/agenda',
+                                icon: <Image src="/icons/Calendar.svg" alt="Calendar Icon" width={16} height={16} />,
+                            },
+                        ]}
                     />
-                    <PrimaryButton
-                        onClick={handleAddEvent}
-                        label="Ajouter un évènement"
-                    />
-                </div>
-            </div>
 
-            {/* Contenu du calendrier */}
-            <div className="flex flex-col gap-4 flex-1">
-                {/* Barre d'actions du calendrier */}
-                <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-primary">
-                        {formattedTitle}
-                    </h2>
-
-                    <AgendaActions
-                        currentView={currentView}
-                        onViewChange={handleViewChange}
-                        onTodayClick={handleTodayClick}
-                        onNavigatePrev={handleNavigatePrev}
-                        onNavigateNext={handleNavigateNext}
-                    />
+                    <div className="flex items-center gap-4">
+                        <SecondaryButton
+                            onClick={handleSettings}
+                            label={
+                                <span className="flex items-center gap-2">
+                                    <Settings className="size-5" />
+                                    Paramètres
+                                </span>
+                            }
+                        />
+                        <PrimaryButton
+                            onClick={handleAddEvent}
+                            label="Ajouter un évènement"
+                        />
+                    </div>
                 </div>
 
-                {/* Calendrier FullCalendar */}
-                <FullCalendarWrapper
-                    calendarRef={calendarRef}
-                    events={calendarEvents}
-                    view={currentView}
-                    onDatesChange={handleDatesChange}
-                    onEventClick={handleEventClick}
-                    onEventDoubleClick={handleEventDoubleClick}
-                    onEventChange={handleEventChange}
-                    onDateSelect={handleDateSelect}
-                    className="flex-1"
+                <div className="flex flex-col gap-4 flex-1">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-lg font-semibold text-primary">
+                            {formattedTitle}
+                        </h2>
+
+                        <AgendaActions
+                            currentView={currentView}
+                            onViewChange={handleViewChange}
+                            onTodayClick={handleTodayClick}
+                            onNavigatePrev={handleNavigatePrev}
+                            onNavigateNext={handleNavigateNext}
+                        />
+                    </div>
+
+                    <FullCalendarWrapper
+                        calendarRef={calendarRef}
+                        events={calendarEvents}
+                        view={currentView}
+                        onDatesChange={handleDatesChange}
+                        onEventClick={handleEventClick}
+                        onEventDoubleClick={handleEventDoubleClick}
+                        onEventChange={handleEventChange}
+                        onDateSelect={handleDateSelect}
+                        className="flex-1"
+                    />
+                </div>
+
+                <EventModal
+                    open={isEventModalOpen}
+                    onOpenChange={handleEventModalClose}
+                    mode={eventModalMode}
+                    initialData={editEventData}
+                    selectedDate={selectedDateForEvent}
                 />
             </div>
 
-            {/* Modal de création d'événement */}
-            <EventModal
-                open={isEventModalOpen}
-                onOpenChange={handleEventModalClose}
-                mode={eventModalMode}
-                initialData={editEventData}
-                selectedDate={selectedDateForEvent}
+            <AvailabilityModal
+                open={isAvailabilityModalOpen}
+                onOpenChange={setIsAvailabilityModalOpen}
             />
-        </div>
+        </>
     );
 }
 
