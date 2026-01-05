@@ -1,0 +1,76 @@
+{
+  "kind": "collectionType",
+  "collectionName": "coach_events",
+  "info": {
+    "singularName": "coach-event",
+    "pluralName": "coach-events",
+    "displayName": "Event"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "date": {
+      "type": "date"
+    },
+    "startTime": {
+      "type": "time"
+    },
+    "endTime": {
+      "type": "time"
+    },
+    "isAllDay": {
+      "type": "boolean"
+    },
+    "location": {
+      "type": "string"
+    },
+    "eventType": {
+      "type": "enumeration",
+      "enum": [
+        "meeting",
+        "absence",
+        "personal",
+        "reminder",
+        "other"
+      ]
+    },
+    "color": {
+      "type": "enumeration",
+      "enum": [
+        "red",
+        "orange",
+        "yellow",
+        "green",
+        "blue",
+        "purple",
+        "gray"
+      ]
+    },
+    "is_recurring": {
+      "type": "boolean"
+    },
+    "recurrence": {
+      "type": "json"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "coach_events"
+    },
+    "participants": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

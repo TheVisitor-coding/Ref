@@ -19,7 +19,7 @@ function AgendaEventCard({
     className = ''
 }: AgendaEventCardProps) {
     return (
-        <div className={`flex flex-col gap-4 min-w-fit rounded-xl bg-background-light p-6 ${className}`}>
+        <div className={`flex flex-col gap-4 min-w-72 rounded-xl bg-background-light p-6 ${className}`}>
             <h3 className="text-primary text-base font-semibold">{title}</h3>
 
             <div className="flex flex-col gap-2">

@@ -187,3 +187,296 @@
     font-size: 1rem;
   }
 }
+
+.fullcalendar-wrapper {
+  --fc-border-color: #d6d6d6;
+  --fc-today-bg-color: transparent;
+  --fc-page-bg-color: #fff;
+  --fc-neutral-bg-color: #f9f7f6;
+  --fc-event-border-color: transparent;
+}
+
+.fullcalendar-wrapper .fc {
+  font-family: inherit;
+}
+
+/* Header des jours de la semaine */
+.fullcalendar-wrapper .fc-col-header {
+  border-bottom: 1px solid var(--fc-border-color);
+}
+
+.fullcalendar-wrapper .fc-col-header-cell {
+  padding: 16px 12px;
+  font-weight: 400;
+  font-size: 14px;
+  color: #333;
+  text-transform: capitalize;
+  border: none;
+}
+
+.fullcalendar-wrapper .fc-col-header-cell-cushion {
+  padding: 0;
+}
+
+/* Cellules du calendrier */
+.fullcalendar-wrapper .fc-daygrid-day {
+  border: 1px solid var(--fc-border-color);
+  min-height: 120px;
+}
+
+.fullcalendar-wrapper .fc-daygrid-day-frame {
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* Numéro du jour */
+.fullcalendar-wrapper .fc-daygrid-day-top {
+  flex-direction: row;
+  padding: 4px;
+}
+
+.fullcalendar-wrapper .fc-daygrid-day-number {
+  font-size: 10px;
+  font-weight: 400;
+  color: #333;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Jour actuel (aujourd'hui) */
+.fullcalendar-wrapper .fc-day-today .fc-daygrid-day-number {
+  background-color: #0655ff;
+  color: #fff;
+  border-radius: 8px;
+}
+
+/* Jours du mois précédent/suivant */
+.fullcalendar-wrapper .fc-day-other {
+  background-color: var(--fc-neutral-bg-color);
+}
+
+.fullcalendar-wrapper .fc-day-other .fc-daygrid-day-number {
+  color: #999;
+}
+
+/* Jours passés */
+.fullcalendar-wrapper .fc-day-past:not(.fc-day-today) {
+  background-color: var(--fc-neutral-bg-color);
+}
+
+/* Zone des événements */
+.fullcalendar-wrapper .fc-daygrid-day-events {
+  flex: 1;
+  margin-top: 4px;
+}
+
+/* Style des événements */
+.fullcalendar-wrapper .fc-daygrid-event {
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  border-left-width: 4px;
+  border-left-style: solid;
+  margin: 2px 0;
+}
+
+.fullcalendar-wrapper .fc-daygrid-event:hover {
+  cursor: pointer;
+}
+
+.fullcalendar-wrapper .fc-event-title {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Événement par défaut (rouge) */
+.fullcalendar-wrapper .fc-event {
+  background-color: #fdecea;
+  border-color: #e74c3c;
+  color: #333;
+}
+
+/* Bouton "more" pour les événements supplémentaires */
+.fullcalendar-wrapper .fc-daygrid-more-link {
+  font-size: 12px;
+  color: #666;
+  padding: 4px;
+}
+
+/* Supprime les bordures par défaut de FullCalendar */
+.fullcalendar-wrapper .fc-scrollgrid {
+  border: none;
+}
+
+.fullcalendar-wrapper .fc-scrollgrid-section > td {
+  border: none;
+}
+
+/* Vue semaine dayGrid */
+.fullcalendar-wrapper .fc-dayGridWeek-view .fc-daygrid-day {
+  min-height: 200px;
+}
+
+/* Header des jours */
+.fullcalendar-wrapper .fc-timegrid .fc-col-header-cell {
+  padding: 12px 8px;
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: capitalize;
+  border-bottom: 1px solid var(--fc-border-color);
+}
+
+.fullcalendar-wrapper .fc-timegrid .fc-col-header-cell-cushion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Colonne des heures */
+.fullcalendar-wrapper .fc-timegrid-axis {
+  width: 60px;
+  padding: 0;
+}
+
+.fullcalendar-wrapper .fc-timegrid-slot-label {
+  font-size: 12px;
+  font-weight: 400;
+  color: #666;
+  vertical-align: top;
+  padding-top: 4px;
+  border: none;
+}
+
+.fullcalendar-wrapper .fc-timegrid-slot-label-cushion {
+  padding: 4px 12px;
+}
+
+/* Slots horaires */
+.fullcalendar-wrapper .fc-timegrid-slot {
+  height: 60px;
+  border-bottom: 1px solid var(--fc-border-color);
+}
+
+.fullcalendar-wrapper .fc-timegrid-slot-minor {
+  border-bottom: 1px dashed #e5e5e5;
+}
+
+/* Colonnes des jours */
+.fullcalendar-wrapper .fc-timegrid-col {
+  border-right: 1px solid var(--fc-border-color);
+}
+
+.fullcalendar-wrapper .fc-timegrid-col:last-child {
+  border-right: none;
+}
+
+/* Indicateur du temps actuel (ligne rouge) */
+.fullcalendar-wrapper .fc-timegrid-now-indicator-line {
+  border-color: #EC5849;
+  border-width: 2px;
+}
+
+.fullcalendar-wrapper .fc-timegrid-now-indicator-arrow {
+  border-color: #EC5849;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+}
+
+/* Événements dans timeGrid */
+.fullcalendar-wrapper .fc-timegrid-event {
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  border: none;
+  border-left: 4px solid #EC5849;
+  background-color: #fdecea;
+  color: #333;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.fullcalendar-wrapper .fc-timegrid-event:hover {
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.fullcalendar-wrapper .fc-timegrid-event .fc-event-main {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fullcalendar-wrapper .fc-timegrid-event .fc-event-title {
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.fullcalendar-wrapper .fc-timegrid-event .fc-event-time {
+  font-weight: 400;
+  font-size: 11px;
+  color: #666;
+  opacity: 1;
+}
+
+/* Jour actuel dans timeGrid */
+.fullcalendar-wrapper .fc-timegrid .fc-day-today {
+  background-color: rgba(6, 85, 255, 0.03);
+}
+
+/* Supprimer le trait de séparation de la colonne d'axe */
+.fullcalendar-wrapper .fc-timegrid-axis-frame {
+  border: none;
+}
+
+/* Améliorer la grille */
+.fullcalendar-wrapper .fc-timegrid-body {
+  border-top: 1px solid var(--fc-border-color);
+}
+
+.fullcalendar-wrapper .fc-timegrid-cols {
+  border-left: 1px solid var(--fc-border-color);
+}
+
+/* ====================================
+   Vue TimeGrid Jour (timeGridDay)
+   ==================================== */
+
+/* Masquer le header des jours pour la vue jour (pas besoin d'afficher le jour) */
+.fullcalendar-wrapper .fc-timeGridDay-view .fc-col-header {
+  display: none;
+}
+
+/* Ajustements spécifiques pour la vue jour */
+.fullcalendar-wrapper .fc-timeGridDay-view .fc-timegrid-col {
+  border-right: none;
+}
+
+/* Slots plus grands pour la vue jour */
+.fullcalendar-wrapper .fc-timeGridDay-view .fc-timegrid-slot {
+  height: 70px;
+}
+
+/* Événements dans la vue jour */
+.fullcalendar-wrapper .fc-timeGridDay-view .fc-timegrid-event {
+  border-radius: 4px;
+  padding: 4px 12px;
+}
+
+.fullcalendar-wrapper .fc-timeGridDay-view .fc-timegrid-event .fc-event-title {
+  font-size: 14px;
+}
+
+.fullcalendar-wrapper .fc-timeGridDay-view .fc-timegrid-event .fc-event-time {
+  font-size: 10px;
+}

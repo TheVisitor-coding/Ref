@@ -36,7 +36,7 @@ export default function SignUpForm() {
     const onSubmit = (data: SignupFormSchemaType) => {
         const onboardingData = getOnboardingData();
 
-        if (!onboardingData.firstName || !onboardingData.athletesCount) {
+        if (!onboardingData.firstName || onboardingData.athletesCount === null) {
             router.push('/auth/onboarding');
             return;
         }

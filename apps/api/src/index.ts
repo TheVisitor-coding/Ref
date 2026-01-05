@@ -1,14 +1,21 @@
 import type { Core } from '@strapi/strapi';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import {
   validateRegisterInput,
   sanitizeRegisterInput,
   type ValidationResult,
   type OnboardingData,
 } from './utils/validation';
+import { sanitizeFirstName, sanitizeStringArray } from './utils/sanitize';
 import { createRegisterRateLimiter } from './middlewares/rate-limiter';
 
 const registerRateLimiter = createRegisterRateLimiter();
+
+function generateSecureUsername(): string {
+  const randomPart = crypto.randomBytes(8).toString('hex');
+  return `user_${randomPart}`;
+}
 
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
@@ -82,9 +89,7 @@ export default {
           const salt = await bcrypt.genSalt(12);
           const passwordHash = await bcrypt.hash(password, salt);
 
-          const baseUsername = email.split('@')[0].replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 40);
-          const timestamp = Date.now().toString(36);
-          const username = `${baseUsername}_${timestamp}`;
+          const username = generateSecureUsername();
 
           const user = await strapi.query('plugin::users-permissions.user').create({
             data: {
@@ -96,11 +101,11 @@ export default {
               statusUser: 'pending',
               provider: 'local',
               ...(onboardingData && {
-                first_name: onboardingData.firstName,
+                first_name: sanitizeFirstName(onboardingData.firstName),
                 coach_preferences: {
-                  sports: onboardingData.selectedSports,
+                  sports: sanitizeStringArray(onboardingData.selectedSports),
                   athletesCount: onboardingData.athletesCount,
-                  features: onboardingData.selectedFeatures,
+                  features: sanitizeStringArray(onboardingData.selectedFeatures),
                 },
                 onboarding_completed_at: new Date().toISOString(),
               }),

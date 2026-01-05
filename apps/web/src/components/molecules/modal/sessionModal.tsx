@@ -12,6 +12,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Session } from "@/types/Session";
 import { toast } from "sonner";
 import { SessionFormInput, SessionFormSchema } from "@/schema/SessionSchema";
+import { formatDateToISO } from "@/utils/date";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 
@@ -27,11 +28,6 @@ interface SessionModalProps {
     selectedDate?: Date;
 }
 
-const formatDateForInput = (date?: Date): string => {
-    if (!date) return new Date().toISOString().split('T')[0];
-    return date.toISOString().split('T')[0];
-};
-
 const getDefaultValues = (
     initialData?: Partial<SessionFormInput>,
     selectedDate?: Date
@@ -39,7 +35,7 @@ const getDefaultValues = (
     documentId: initialData?.documentId,
     title: initialData?.title ?? '',
     sport: initialData?.sport ?? '',
-    date: initialData?.date ?? formatDateForInput(selectedDate),
+    date: initialData?.date ?? formatDateToISO(selectedDate),
     tags: initialData?.tags ?? '',
     presenceRequired: initialData?.presenceRequired ?? false,
     duration: initialData?.duration ?? '',
