@@ -3,12 +3,19 @@
 import { getTokenFromCookie } from '@/actions/auth-actions';
 import { AthleteInvoice } from '@/types/Invoice';
 import { InvoicePayload } from '@/schema/InvoiceSchema';
+import { getMeId } from '@/services/userService';
 
 const STRAPI_URL = process.env.STRAPI_INTERNAL_URL || process.env.NEXT_PUBLIC_STRAPI_URL;
 
-export async function fetchCoachInvoices(): Promise<AthleteInvoice[]> {
+type FetchCoachInvoicesOptions = {
+    athleteId?: number;
+};
+
+export async function fetchCoachInvoices(options: FetchCoachInvoicesOptions = {}): Promise<AthleteInvoice[]> {
     const token = await getTokenFromCookie();
     if (!token) throw new Error('Non authentifié');
+
+    const coachId = await getMeId(token);
 
     const params = new URLSearchParams();
     params.set('populate[athlete][fields][0]', 'id');
@@ -22,6 +29,11 @@ export async function fetchCoachInvoices(): Promise<AthleteInvoice[]> {
     params.set('populate[coach][fields][3]', 'first_name');
     params.set('populate[coach][fields][4]', 'last_name');
     params.set('sort[0]', 'createdAt:desc');
+    params.set('filters[coach][id][$eq]', coachId.toString());
+
+    if (typeof options.athleteId === 'number') {
+        params.set('filters[athlete][id][$eq]', options.athleteId.toString());
+    }
 
     const response = await fetch(`${STRAPI_URL}/api/athlete-invoices?${params.toString()}`, {
         method: 'GET',

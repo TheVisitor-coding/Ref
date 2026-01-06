@@ -5,9 +5,21 @@ import { fetchCoachAthleteById } from '@/services/athleteService';
 import { getUserInfo } from '@/services/userService';
 import { getTokenFromCookie } from '@/actions/auth-actions';
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
-        const invoices = await fetchCoachInvoices();
+        const { searchParams } = new URL(request.url);
+        const athleteIdParam = searchParams.get('athleteId');
+        let athleteId: number | undefined;
+
+        if (athleteIdParam !== null) {
+            const parsed = Number(athleteIdParam);
+            if (!Number.isFinite(parsed)) {
+                return NextResponse.json({ error: 'Paramètre athleteId invalide' }, { status: 400 });
+            }
+            athleteId = parsed;
+        }
+
+        const invoices = await fetchCoachInvoices({ athleteId });
         return NextResponse.json({ data: invoices }, { status: 200 });
     } catch (e: unknown) {
         console.error('Error fetching invoices:', e);
