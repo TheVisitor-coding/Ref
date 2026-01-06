@@ -1,4 +1,5 @@
 import z from "zod";
+import { formatDateToISO } from "@/utils/date";
 
 export const InvoiceLineSchema = z.object({
     id: z.string(),
@@ -31,6 +32,7 @@ export const InvoiceFormSchema = z.object({
 
 export const InvoicePayloadSchema = z.object({
     athlete: z.number(),
+    coach: z.number(),
 
     invoice_type: z.enum(['invoice', 'estimate', 'credit_note']).default('invoice'),
 
@@ -94,7 +96,8 @@ export function transformInvoiceFormToPayload(
         city?: string;
         email?: string;
     },
-    isDraft: boolean
+    isDraft: boolean,
+    coachId: number
 ): InvoicePayload {
     const totalHT = form.lines.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0);
     const taxAmount = totalHT * form.taxRate;
@@ -102,6 +105,7 @@ export function transformInvoiceFormToPayload(
 
     return {
         athlete: form.athleteId,
+        coach: coachId,
         invoice_type: 'invoice',
         invoice_number: invoiceNumber,
         amount_ht: totalHT,
@@ -110,8 +114,8 @@ export function transformInvoiceFormToPayload(
         tax_amount: taxAmount,
         currency: 'EUR',
         statusInvoice: isDraft ? 'draft' : 'sent',
-        due_date: form.dueDate.toISOString().split('T')[0],
-        issued_date: form.issueDate.toISOString().split('T')[0],
+        due_date: formatDateToISO(form.dueDate),
+        issued_date: formatDateToISO(form.issueDate),
         lines: form.lines,
         description: form.description,
         client_name: athleteData.name,

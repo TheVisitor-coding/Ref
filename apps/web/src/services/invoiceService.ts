@@ -45,7 +45,19 @@ export async function fetchInvoiceByDocumentId(documentId: string): Promise<Athl
     const token = await getTokenFromCookie();
     if (!token) throw new Error('Non authentifié');
 
-    const response = await fetch(`${STRAPI_URL}/api/athlete-invoices/${documentId}?populate=athlete,coach`, {
+    const params = new URLSearchParams();
+    params.set('populate[athlete][fields][0]', 'id');
+    params.set('populate[athlete][fields][1]', 'username');
+    params.set('populate[athlete][fields][2]', 'email');
+    params.set('populate[athlete][fields][3]', 'first_name');
+    params.set('populate[athlete][fields][4]', 'last_name');
+    params.set('populate[coach][fields][0]', 'id');
+    params.set('populate[coach][fields][1]', 'username');
+    params.set('populate[coach][fields][2]', 'email');
+    params.set('populate[coach][fields][3]', 'first_name');
+    params.set('populate[coach][fields][4]', 'last_name');
+
+    const response = await fetch(`${STRAPI_URL}/api/athlete-invoices/${documentId}?${params.toString()}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

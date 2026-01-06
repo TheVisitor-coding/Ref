@@ -4,9 +4,10 @@ import TableSortBtn from '@/components/atoms/buttons/TableSortBtn';
 import InvoiceStatusBadge from '@/components/atoms/badges/InvoiceStatusBadge';
 import { AthleteInvoice } from '@/types/Invoice';
 import { ColumnDef } from '@tanstack/react-table';
-import { SquarePen, Trash2, Download, Send } from 'lucide-react';
+import { Download, Send } from 'lucide-react';
 import { InvoiceStatus } from '@/data/invoiceStatuses';
 import { Checkbox } from '@/components/ui/checkbox';
+import InvoiceActionsCell from './InvoiceActionsCell';
 
 export const invoicesColumns: ColumnDef<AthleteInvoice>[] = [
     {
@@ -63,16 +64,7 @@ export const invoicesColumns: ColumnDef<AthleteInvoice>[] = [
             const status = row.getValue('statusInvoice') as InvoiceStatus;
 
             if (status === 'draft') {
-                return (
-                    <div className="flex items-center justify-end gap-2">
-                        <button className="p-2 hover:bg-grey-light rounded-lg transition-colors">
-                            <SquarePen className="size-5 text-primary" />
-                        </button>
-                        <button className="p-2 hover:bg-grey-light rounded-lg transition-colors">
-                            <Trash2 className="size-5 text-primary" />
-                        </button>
-                    </div>
-                );
+                return <InvoiceActionsCell invoice={row.original} />;
             }
 
             if (status === 'overdue') {

@@ -4,7 +4,6 @@ import { createInvoice, fetchCoachInvoices, generateInvoiceNumber } from '@/serv
 import { fetchCoachAthleteById } from '@/services/athleteService';
 import { getUserInfo } from '@/services/userService';
 import { getTokenFromCookie } from '@/actions/auth-actions';
-import z from 'zod';
 
 export async function GET() {
     try {
@@ -79,7 +78,8 @@ export async function POST(request: Request) {
             invoiceNumber,
             athleteData,
             coachData,
-            isDraft === true
+            isDraft === true,
+            coach.id
         );
 
         const invoice = await createInvoice(payload);

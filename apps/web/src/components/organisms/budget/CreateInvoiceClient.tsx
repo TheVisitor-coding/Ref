@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,9 +14,17 @@ import InvoicePreview from '@/components/molecules/invoice/InvoicePreview';
 import AthleteSelect from '@/components/molecules/inputs/AthleteSelect';
 import { InvoiceFormSchema, type InvoiceFormData } from '@/schema/InvoiceSchema';
 import { Athlete } from '@/types/User';
+import type { AthleteInvoice } from '@/types/Invoice';
 import { toast } from 'sonner';
 
-export default function CreateInvoiceClient() {
+type InvoiceFormMode = 'create' | 'edit';
+
+interface CreateInvoiceClientProps {
+    mode?: InvoiceFormMode;
+    initialInvoice?: AthleteInvoice | null;
+}
+
+export default function CreateInvoiceClient({ mode = 'create', initialInvoice = null }: CreateInvoiceClientProps) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);
@@ -26,10 +34,49 @@ export default function CreateInvoiceClient() {
         city: string;
         email: string;
     } | null>(null);
+    const isEditMode = mode === 'edit' && Boolean(initialInvoice);
+    const invoiceDocumentId = initialInvoice?.documentId;
+    const defaultPaymentInstructions = 'Merci de régler cette facture par virement bancaire.';
 
-    const form = useForm<InvoiceFormData>({
-        resolver: zodResolver(InvoiceFormSchema) as any,
-        defaultValues: {
+    const initialFormValues = useMemo<Partial<InvoiceFormData>>(() => {
+        if (isEditMode && initialInvoice) {
+            const issueDate = initialInvoice.issued_date
+                ? new Date(`${initialInvoice.issued_date}T00:00:00`)
+                : new Date();
+            const dueDate = initialInvoice.due_date
+                ? new Date(`${initialInvoice.due_date}T00:00:00`)
+                : undefined;
+
+            const existingLines = initialInvoice.lines && initialInvoice.lines.length > 0
+                ? initialInvoice.lines
+                : [
+                    {
+                        id: '1',
+                        description: '',
+                        quantity: 1,
+                        unitPrice: 0,
+                    },
+                ];
+
+            const normalizedLines = existingLines.map((line, index) => ({
+                id: line.id || String(index + 1),
+                description: line.description || '',
+                quantity: line.quantity ?? 1,
+                unitPrice: line.unitPrice ?? 0,
+            }));
+
+            return {
+                athleteId: initialInvoice.athlete?.id,
+                issueDate,
+                dueDate,
+                lines: normalizedLines,
+                description: initialInvoice.description || '',
+                taxRate: typeof initialInvoice.tax_rate === 'number' ? initialInvoice.tax_rate : 0.2,
+                paymentInstructions: initialInvoice.payment_instructions || defaultPaymentInstructions,
+            };
+        }
+
+        return {
             athleteId: undefined,
             issueDate: new Date(),
             dueDate: undefined,
@@ -43,12 +90,54 @@ export default function CreateInvoiceClient() {
             ],
             description: '',
             taxRate: 0.2,
-            paymentInstructions: 'Merci de régler cette facture par virement bancaire.',
-        },
+            paymentInstructions: defaultPaymentInstructions,
+        };
+    }, [isEditMode, initialInvoice, defaultPaymentInstructions]);
+
+    const form = useForm<InvoiceFormData>({
+        resolver: zodResolver(InvoiceFormSchema) as any,
+        defaultValues: initialFormValues,
     });
 
+    useEffect(() => {
+        form.reset(initialFormValues);
+    }, [form, initialFormValues]);
+
     const athleteId = form.watch('athleteId');
-    const lines = form.watch('lines');
+    const lines = form.watch('lines') || [];
+
+    const athleteDisplayName = selectedAthlete
+        ? `${selectedAthlete.first_name || ''} ${selectedAthlete.last_name || ''}`.trim() || selectedAthlete.username
+        : '';
+
+    const resolvedClientName = athleteDisplayName || initialInvoice?.client_name || 'Sélectionnez un athlète';
+    const resolvedClientEmail = selectedAthlete?.email || initialInvoice?.client_email || '';
+    const resolvedClientAddress = initialInvoice?.client_address || '';
+    const resolvedClientCity = initialInvoice?.client_city || '';
+    const previewInvoiceNumber = isEditMode && initialInvoice?.invoice_number ? initialInvoice.invoice_number : 'À générer';
+
+    const draftButtonLabel = isSubmitting
+        ? 'Enregistrement...'
+        : isEditMode
+            ? 'Mettre à jour le brouillon'
+            : 'Enregistrer en brouillon';
+
+    const sendButtonLabel = isSubmitting
+        ? (isEditMode ? 'Mise à jour...' : 'Envoi...')
+        : isEditMode
+            ? 'Envoyer la facture'
+            : 'Envoyer';
+
+    useEffect(() => {
+        if (isEditMode && initialInvoice) {
+            setCoachData({
+                name: initialInvoice.coach_name || '',
+                address: initialInvoice.coach_address || '',
+                city: initialInvoice.coach_city || '',
+                email: initialInvoice.coach_email || '',
+            });
+        }
+    }, [isEditMode, initialInvoice]);
 
     useEffect(() => {
         const fetchCoachData = async () => {
@@ -98,7 +187,7 @@ export default function CreateInvoiceClient() {
     }, [athleteId]);
 
     const handleLineChange = (id: string, field: keyof InvoiceLine, value: string | number) => {
-        const currentLines = form.getValues('lines');
+        const currentLines = form.getValues('lines') || [];
         const updatedLines = currentLines.map((line) =>
             line.id === id ? { ...line, [field]: value } : line
         );
@@ -106,8 +195,13 @@ export default function CreateInvoiceClient() {
     };
 
     const handleAddLine = () => {
-        const currentLines = form.getValues('lines');
-        const newId = (Math.max(...currentLines.map((l) => parseInt(l.id))) + 1).toString();
+        const currentLines = form.getValues('lines') || [];
+        const numericIds = currentLines
+            .map((line) => Number.parseInt(line.id, 10))
+            .filter((value) => Number.isFinite(value));
+        const nextNumericId = numericIds.length > 0 ? Math.max(...numericIds) + 1 : currentLines.length + 1;
+        const newId = nextNumericId.toString();
+
         form.setValue('lines', [
             ...currentLines,
             {
@@ -137,10 +231,17 @@ export default function CreateInvoiceClient() {
             return;
         }
 
+        if (isEditMode && !invoiceDocumentId) {
+            toast.error('Impossible de modifier cette facture');
+            return;
+        }
+
         setIsSubmitting(true);
         try {
-            const response = await fetch('/api/invoices', {
-                method: 'POST',
+            const endpoint = isEditMode ? `/api/invoices/${invoiceDocumentId}` : '/api/invoices';
+            const method = isEditMode ? 'PUT' : 'POST';
+            const response = await fetch(endpoint, {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -152,17 +253,20 @@ export default function CreateInvoiceClient() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error('Error creating invoice:', errorData);
-                toast.error(errorData.error || 'Erreur lors de la création de la facture');
+                console.error('Error saving invoice:', errorData);
+                toast.error(errorData.error || 'Erreur lors de l\'enregistrement de la facture');
                 return;
             }
 
-            const result = await response.json();
-            toast.success(isDraft ? 'Brouillon enregistré avec succès' : 'Facture envoyée avec succès');
+            await response.json();
+            const draftMessage = isEditMode ? 'Brouillon mis à jour avec succès' : 'Brouillon enregistré avec succès';
+            const sendMessage = isEditMode ? 'Facture mise à jour et envoyée avec succès' : 'Facture envoyée avec succès';
+            toast.success(isDraft ? draftMessage : sendMessage);
             router.push('/budget');
+            router.refresh();
         } catch (error) {
             console.error('Error submitting invoice:', error);
-            toast.error('Erreur lors de la création de la facture');
+            toast.error('Erreur lors de l\'enregistrement de la facture');
         } finally {
             setIsSubmitting(false);
         }
@@ -191,14 +295,14 @@ export default function CreateInvoiceClient() {
                         label={
                             <div className="flex items-center gap-2">
                                 <Folder className="size-5" />
-                                <span>{isSubmitting ? 'Enregistrement...' : 'Enregister en brouillon'}</span>
+                                <span>{draftButtonLabel}</span>
                             </div>
                         }
                     />
                     <PrimaryButton
                         onClick={handleSend}
                         disabled={isSubmitting}
-                        label={isSubmitting ? 'Envoi...' : 'Envoyer'}
+                        label={sendButtonLabel}
                     />
                 </div>
             </div>
@@ -289,16 +393,11 @@ export default function CreateInvoiceClient() {
                     <LayoutCard title="Aperçu">
                         <div className="p-2">
                             <InvoicePreview
-                                invoiceNumber="À générer"
-                                clientName={
-                                    selectedAthlete
-                                        ? `${selectedAthlete.first_name || ''} ${selectedAthlete.last_name || ''}`.trim() ||
-                                        selectedAthlete.username
-                                        : 'Sélectionnez un athlète'
-                                }
-                                clientAddress=''
-                                clientCity=''
-                                clientEmail={selectedAthlete?.email || ''}
+                                invoiceNumber={previewInvoiceNumber}
+                                clientName={resolvedClientName}
+                                clientAddress={resolvedClientAddress}
+                                clientCity={resolvedClientCity}
+                                clientEmail={resolvedClientEmail}
                                 issueDate={form.watch('issueDate')}
                                 dueDate={form.watch('dueDate')}
                                 lines={lines}
@@ -307,7 +406,7 @@ export default function CreateInvoiceClient() {
                                 coachCity={coachData?.city || ''}
                                 coachEmail={coachData?.email || ''}
                                 paymentInstructions={form.watch('paymentInstructions') || ''}
-                                tvaRate={form.watch('taxRate') * 100}
+                                tvaRate={(form.watch('taxRate') ?? 0) * 100}
                             />
                         </div>
                     </LayoutCard>
