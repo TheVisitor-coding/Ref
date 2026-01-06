@@ -67,7 +67,7 @@ export default function InvoicePreview({
 
                 <div className="flex items-end justify-between w-full">
                     <div className="flex flex-col gap-2">
-                        <p className="text-xs text-secondary leading-[1.25] text-right">Facturé à :</p>
+                        <p className="text-xs text-secondary leading-[1.25]">Facturé à :</p>
                         <div className="flex flex-col gap-2 text-primary">
                             <p className="text-sm font-semibold leading-[1.25]">{clientName || 'Nom du client'}</p>
                             <div className="text-xs leading-[1.25]">
@@ -97,11 +97,11 @@ export default function InvoicePreview({
                 {/* Head table */}
                 <div className="flex items-center justify-between px-6 pt-6 pb-0">
                     <p className="text-sm font-semibold text-primary leading-[1.25] w-[200px]">Description</p>
-                    <div className="flex gap-3 items-center text-xxs text-secondary leading-[1.25] text-right">
-                        <p className="w-[74.75px]">Quantité</p>
-                        <p className="w-[74.75px]">Prix unitaire HT</p>
-                        <p className="w-[74.75px]">TVA</p>
-                        <p className="w-[74.75px]">Total HT</p>
+                    <div className="flex gap-3 items-center text-[10px] text-secondary leading-[1.25] text-right">
+                        <p className='w-[74.75px]'>Quantité</p>
+                        <p className='w-[74.75px]'>Prix unitaire HT</p>
+                        <p className='w-[74.75px]'>TVA</p>
+                        <p className='w-[74.75px]'>Total HT</p>
                     </div>
                 </div>
 
@@ -118,7 +118,7 @@ export default function InvoicePreview({
                                     <p className="text-xs text-primary leading-[1.25] w-[200px]">
                                         {line.description || `Élément ${index + 1}`}
                                     </p>
-                                    <div className="flex gap-3 items-center text-xs leading-[1.25] text-right">
+                                    <div className="flex gap-3 items-center text-xs text-right leading-[1.25]">
                                         <p className="text-secondary w-[74.75px]">{line.quantity}</p>
                                         <p className="text-secondary w-[74.75px]">{formatPrice(line.unitPrice)}</p>
                                         <p className="text-secondary w-[74.75px]">
@@ -142,15 +142,15 @@ export default function InvoicePreview({
             <div className="flex flex-col gap-0 items-end px-6 py-3">
                 <div className="flex flex-col gap-2 items-end w-[121px]">
                     <div className="flex gap-4 items-start justify-end leading-[1.25] text-primary w-full">
-                        <p className="text-xxs font-bold flex-1 text-left">Total HT</p>
-                        <p className="text-xxs font-normal">{formatPrice(totalHT)}</p>
+                        <p className="text-[10px] font-bold flex-1 text-left">Total HT</p>
+                        <p className="text-[10px] font-normal">{formatPrice(totalHT)}</p>
                     </div>
                     <div className="flex gap-4 items-start justify-end leading-[1.25] text-primary w-full">
-                        <p className="text-xxs font-bold flex-1 text-left">TVA</p>
-                        <p className="text-xxs font-normal">{formatPrice(totalTVA)}</p>
+                        <p className="text-[10px] font-bold flex-1 text-left">TVA</p>
+                        <p className="text-[10px] font-normal">{formatPrice(totalTVA)}</p>
                     </div>
                     <div className="h-[1px] bg-grey-button w-full" />
-                    <div className="flex gap-4 items-start justify-end leading-[1.25] text-primary w-full font-bold text-xxs">
+                    <div className="flex gap-4 items-start justify-end leading-[1.25] text-primary w-full font-bold text-[10px]">
                         <p className="flex-1 text-left">Total TTC</p>
                         <p>{formatPrice(totalTTC)}</p>
                     </div>
@@ -161,17 +161,17 @@ export default function InvoicePreview({
             <div className="flex gap-2 items-start px-6 py-0">
                 <div className="flex-1 flex flex-col gap-2 leading-[1.25]">
                     <p className="text-base font-semibold text-primary">{coachName || 'Nom du coach'}</p>
-                    <div className="text-xxs text-primary">
+                    <div className="text-[10px] text-primary">
                         <p>{coachAddress || 'Adresse'}</p>
                         <p>{coachCity || 'Ville'}</p>
                         <p>France</p>
                     </div>
-                    <p className="text-xxs text-brand">{coachEmail || 'email@company.com'}</p>
+                    <p className="text-[10px] text-primary-blue text-brand">{coachEmail || 'email@company.com'}</p>
                 </div>
 
                 <div className="flex-1 flex flex-col gap-2">
-                    <p className="text-xxs font-bold text-primary leading-[1.25]">Instruction de paiement</p>
-                    <div className="text-xxs text-secondary leading-[1.25]">
+                    <p className="text-[10px] font-bold text-primary leading-[1.25]">Instruction de paiement</p>
+                    <div className="text-[10px] text-secondary leading-[1.25]">
                         <p>{paymentInstructions || 'Merci de régler cette facture par virement bancaire.'}</p>
                     </div>
                 </div>
