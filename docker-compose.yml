@@ -65,6 +65,7 @@ services:
       STRAPI_HOST: ${STRAPI_HOST:-0.0.0.0}
       STRAPI_PORT: ${STRAPI_PORT:-1337}
       STRAPI_URL: ${STRAPI_URL:-http://localhost:1337}
+      ENABLE_DEMO_ATHLETE_SEEDING: ${ENABLE_DEMO_ATHLETE_SEEDING:-true}
 
       # Strapi Security
       ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}

@@ -11,6 +11,60 @@ import { sanitizeFirstName, sanitizeStringArray } from './utils/sanitize';
 import { createRegisterRateLimiter } from './middlewares/rate-limiter';
 
 const registerRateLimiter = createRegisterRateLimiter();
+const shouldSeedDemoAthlete = (process.env.ENABLE_DEMO_ATHLETE_SEEDING || '').toLowerCase() === 'true';
+
+type MinimalUser = {
+  id: number;
+  email: string;
+};
+
+async function attachDemoAthleteToCoach(strapi: Core.Strapi, coach: MinimalUser) {
+  strapi.log.info(`Attaching demo athlete to coach: ${coach.email}`);
+  const athleteRole = await strapi.query('plugin::users-permissions.role').findOne({
+    where: { type: 'athlete' },
+  });
+
+  if (!athleteRole) {
+    strapi.log.warn('Unable to seed demo athlete: athlete role missing');
+    return;
+  }
+
+  const randomHex = crypto.randomBytes(6).toString('hex');
+  const fakeEmail = `demo-athlete+${coach.id}-${Date.now()}@example.test`;
+  const fakeUsername = `demo_athlete_${randomHex}`;
+  const fakePasswordSalt = await bcrypt.genSalt(10);
+  const fakePasswordHash = await bcrypt.hash(crypto.randomBytes(12).toString('hex'), fakePasswordSalt);
+  const now = new Date().toISOString();
+
+  const athlete = await strapi.query('plugin::users-permissions.user').create({
+    data: {
+      username: fakeUsername,
+      email: fakeEmail,
+      password: fakePasswordHash,
+      role: athleteRole.id,
+      confirmed: true,
+      statusUser: 'active',
+      provider: 'local',
+      first_name: 'Athlète',
+      last_name: 'Démo',
+    },
+  });
+
+  await strapi.documents('api::coach-athlete.coach-athlete').create({
+    data: {
+      coach: coach.id,
+      athlete: athlete.id,
+      status_relation: 'active',
+      invitation_email: fakeEmail,
+      invited_at: now,
+      joined_at: now,
+      notes: 'Athlète démo généré automatiquement',
+    },
+    status: 'published',
+  });
+
+  strapi.log.info(`Demo athlete ${fakeEmail} attached to coach ${coach.email}`);
+}
 
 function generateSecureUsername(): string {
   const randomPart = crypto.randomBytes(8).toString('hex');
@@ -118,6 +172,14 @@ export default {
               role: { populate: { permissions: true } },
             },
           });
+
+          if (shouldSeedDemoAthlete) {
+            try {
+              await attachDemoAthleteToCoach(strapi, { id: user.id, email });
+            } catch (error) {
+              strapi.log.error('Failed to attach demo athlete to new coach', error);
+            }
+          }
 
           const jwt = strapi.plugin('users-permissions').service('jwt').issue({
             id: user.id,

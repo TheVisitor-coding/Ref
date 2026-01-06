@@ -17,13 +17,24 @@
       "target": "api::athlete-subscription.athlete-subscription",
       "inversedBy": "athlete_invoices"
     },
+    "athlete": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "coach": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
     "invoice_type": {
       "type": "enumeration",
       "enum": [
         "invoice",
         "estimate",
         "credit_note"
-      ]
+      ],
+      "default": "invoice"
     },
     "invoice_number": {
       "type": "string",
@@ -31,8 +42,12 @@
       "required": true,
       "unique": true
     },
-    "amount": {
-      "type": "biginteger",
+    "amount_ht": {
+      "type": "decimal",
+      "required": true
+    },
+    "amount_ttc": {
+      "type": "decimal",
       "required": true
     },
     "currency": {
@@ -48,7 +63,8 @@
         "paid",
         "overdue",
         "cancelled"
-      ]
+      ],
+      "default": "draft"
     },
     "due_date": {
       "type": "date",
@@ -68,8 +84,38 @@
       "default": 0.2
     },
     "tax_amount": {
-      "type": "biginteger",
-      "default": "0"
+      "type": "decimal"
+    },
+    "lines": {
+      "type": "json",
+      "required": true
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "client_address": {
+      "type": "string"
+    },
+    "client_city": {
+      "type": "string"
+    },
+    "client_email": {
+      "type": "string"
+    },
+    "coach_name": {
+      "type": "string"
+    },
+    "coach_address": {
+      "type": "string"
+    },
+    "coach_city": {
+      "type": "string"
+    },
+    "coach_email": {
+      "type": "string"
+    },
+    "payment_instructions": {
+      "type": "text"
     },
     "metadata": {
       "type": "json"

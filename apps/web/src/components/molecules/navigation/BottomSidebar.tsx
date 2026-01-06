@@ -1,17 +1,22 @@
-'use client'
+'use client';
 
-import NavLinkButton from "@/components/atoms/buttons/NavLinkBtn";
+import NavLinkButton from '@/components/atoms/buttons/NavLinkBtn';
+import { bottomNavLinks } from '@/data/navbarGroups';
 
 function BottomSidebar({ isOpen }: { isOpen: boolean }) {
     return (
         <div className="mt-auto flex flex-col gap-2">
-            <NavLinkButton isOpen={isOpen} href={"/account"} src='/icons/Account.svg' alt="Account Icon">
-                Compte
-            </NavLinkButton>
-
-            <NavLinkButton isOpen={isOpen} href={"/settings"} src='/icons/Settings.svg' alt="Settings Icon">
-                Paramètres
-            </NavLinkButton>
+            {bottomNavLinks.map((link) => (
+                <NavLinkButton
+                    key={link.href}
+                    isOpen={isOpen}
+                    href={link.href}
+                    src={link.icon}
+                    alt={`${link.title} Icon`}
+                >
+                    {link.title}
+                </NavLinkButton>
+            ))}
         </div>
     );
 }
