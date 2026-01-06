@@ -23,12 +23,23 @@ export const invoicesColumns: ColumnDef<AthleteInvoice>[] = [
     {
         accessorKey: 'athlete',
         header: ({ column }) => <TableSortBtn column={column} label="Sportif" />,
-        cell: () => <span className="text-sm text-primary">Alex Sanchez</span>,
+        cell: ({ row }) => {
+            const athlete = row.original.athlete;
+            const athleteName = athlete
+                ? `${athlete.first_name || ''} ${athlete.last_name || ''}`.trim() || athlete.username
+                : '-';
+            return <span className="text-sm text-primary">{athleteName}</span>;
+        },
     },
     {
         accessorKey: 'issued_date',
         header: ({ column }) => <TableSortBtn column={column} label="Date" />,
-        cell: ({ row }) => <span className="text-sm text-primary">{row.getValue('issued_date')}</span>,
+        cell: ({ row }) => {
+            const date = row.getValue('issued_date') as string;
+            if (!date) return <span className="text-sm text-primary">-</span>;
+            const formatted = new Date(date).toLocaleDateString('fr-FR');
+            return <span className="text-sm text-primary">{formatted}</span>;
+        },
     },
     {
         accessorKey: 'statusInvoice',
@@ -38,11 +49,11 @@ export const invoicesColumns: ColumnDef<AthleteInvoice>[] = [
         ),
     },
     {
-        accessorKey: 'amount',
+        accessorKey: 'amount_ttc',
         header: ({ column }) => <TableSortBtn column={column} label="Montant" />,
         cell: ({ row }) => {
-            const amount = row.getValue('amount') as number;
-            return <span className="text-sm text-primary">{amount.toFixed(2)} €</span>;
+            const amount = row.getValue('amount_ttc') as number;
+            return <span className="text-sm text-primary">{amount?.toFixed(2) || '0.00'} €</span>;
         },
     },
     {

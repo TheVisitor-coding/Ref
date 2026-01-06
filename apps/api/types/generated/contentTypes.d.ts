@@ -385,11 +385,28 @@ export interface ApiAthleteInvoiceAthleteInvoice
     draftAndPublish: true;
   };
   attributes: {
-    amount: Schema.Attribute.BigInteger & Schema.Attribute.Required;
+    amount_ht: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    amount_ttc: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    athlete: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
     athlete_subscription: Schema.Attribute.Relation<
       'manyToOne',
       'api::athlete-subscription.athlete-subscription'
     >;
+    client_address: Schema.Attribute.String;
+    client_city: Schema.Attribute.String;
+    client_email: Schema.Attribute.String;
+    client_name: Schema.Attribute.String;
+    coach: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    coach_address: Schema.Attribute.String;
+    coach_city: Schema.Attribute.String;
+    coach_email: Schema.Attribute.String;
+    coach_name: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -408,8 +425,10 @@ export interface ApiAthleteInvoiceAthleteInvoice
       }>;
     invoice_type: Schema.Attribute.Enumeration<
       ['invoice', 'estimate', 'credit_note']
-    >;
+    > &
+      Schema.Attribute.DefaultTo<'invoice'>;
     issued_date: Schema.Attribute.Date;
+    lines: Schema.Attribute.JSON & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -418,11 +437,13 @@ export interface ApiAthleteInvoiceAthleteInvoice
       Schema.Attribute.Private;
     metadata: Schema.Attribute.JSON;
     paid_date: Schema.Attribute.Date;
+    payment_instructions: Schema.Attribute.Text;
     publishedAt: Schema.Attribute.DateTime;
     statusInvoice: Schema.Attribute.Enumeration<
       ['draft', 'sent', 'paid', 'overdue', 'cancelled']
-    >;
-    tax_amount: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<'0'>;
+    > &
+      Schema.Attribute.DefaultTo<'draft'>;
+    tax_amount: Schema.Attribute.Decimal;
     tax_rate: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0.2>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
