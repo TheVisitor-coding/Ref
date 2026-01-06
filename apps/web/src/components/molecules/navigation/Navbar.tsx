@@ -1,37 +1,27 @@
-'use client'
+'use client';
 
-import NavlinkButton from "@/components/atoms/buttons/NavLinkBtn";
-import NavbarDivider from "@/components/atoms/divider/NavbarDivider";
-import { navbarItems } from "@/data/navbarItem";
-import ToggleSidebarBtn from "@/components/atoms/buttons/toggleBtn";
+import ToggleSidebarBtn from '@/components/atoms/buttons/toggleBtn';
+import NavbarDivider from '@/components/atoms/divider/NavbarDivider';
+import SidebarGroup from '@/components/molecules/navigation/SidebarGroup';
+import AthletesQuickAccess from '@/components/molecules/navigation/AthletesQuickAccess';
+import { navbarGroups } from '@/data/navbarGroups';
 
 function Navbar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
     return (
         <nav className="flex flex-col gap-4">
             <ToggleSidebarBtn isOpen={isOpen} setIsOpen={setIsOpen} />
 
-            <div className="w-full flex flex-col gap-2">
-                <NavlinkButton isOpen={isOpen} href={""} src='/icons/Search.svg' alt="Search Icon">
-                    Recherche
-                </NavlinkButton>
-                <NavlinkButton isOpen={isOpen} href={""} src='/icons/Notification.svg' alt="Notification Icon">
-                    Notifications
-                </NavlinkButton>
-                <NavlinkButton isOpen={isOpen} href={"/"} src='/icons/Home.svg' alt="Home Icon">
-                    Accueil
-                </NavlinkButton>
-            </div>
+            {navbarGroups.map((group, index) => (
+                <div key={group.id} className="flex flex-col gap-4">
+                    <SidebarGroup group={group} isOpen={isOpen} />
 
-            <NavbarDivider />
+                    {group.id === 'athletes' && (
+                        <AthletesQuickAccess isOpen={isOpen} />
+                    )}
 
-            {navbarItems.map((item) => (
-                <NavlinkButton isOpen={isOpen} href={item.href} src={item.icon} alt={`${item.title} Icon`} key={item.title}>
-                    {item.title}
-                </NavlinkButton>
+                    {index < navbarGroups.length - 1 && <NavbarDivider />}
+                </div>
             ))}
-
-            <NavbarDivider />
-
         </nav>
     );
 }

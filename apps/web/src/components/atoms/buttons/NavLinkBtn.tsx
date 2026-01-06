@@ -11,7 +11,8 @@ function NavLinkButton({
     href,
     src,
     alt,
-    hasSubLinks = false
+    hasSubLinks = false,
+    badge
 }: {
     children: React.ReactNode;
     isOpen: boolean;
@@ -19,6 +20,7 @@ function NavLinkButton({
     src: string;
     alt: string;
     hasSubLinks?: boolean;
+    badge?: string;
 }) {
     const [isFocused, setIsFocused] = useState(false);
     const pathname = usePathname()
@@ -31,19 +33,24 @@ function NavLinkButton({
 
     const content = (
         <>
-            <div className="flex gap-3 items-center">
+            <div className="flex gap-3 items-center flex-1 min-w-0">
                 <Image src={src} alt={alt} width={18} height={18} />
                 <p className={`${isOpen ? 'block' : 'hidden'} ${isFocused ? 'text-primary font-medium' : 'text-secondary'} text-sm leading-4 group-hover:text-primary group-hover:font-medium`}>
                     {children}
                 </p>
             </div>
+            {badge && isOpen && (
+                <div className="bg-background-grey-light flex items-center justify-center px-2 py-1 rounded shrink-0">
+                    <p className="text-secondary text-sm leading-[1.25] whitespace-nowrap">{badge}</p>
+                </div>
+            )}
             {hasSubLinks && isOpen && (
-                <Image src="/icons/chevron-right.svg" alt="chevron" width={18} height={18} />
+                <Image src="/icons/chevron-right.svg" alt="chevron" width={18} height={18} className="shrink-0" />
             )}
         </>
     );
 
-    const className = `group w-full px-3 py-2 flex ${hasSubLinks ? 'justify-between' : 'gap-3'} items-center rounded-lg hover:bg-background-grey-light transition-colors ${isFocused ? 'bg-background-grey-light' : ''}`;
+    const className = `group w-full px-3 py-2 flex items-center gap-3 rounded-lg hover:bg-background-grey-light transition-colors ${isFocused ? 'bg-background-grey-light' : ''}`;
 
     if (href) {
         return (
