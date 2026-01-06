@@ -9,13 +9,14 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     onRowClick?: (row: TData) => void;
+    maxItemPerPage?: number;
 }
 
-function DataTable<TData, TValue>({ columns, data, onRowClick }: DataTableProps<TData, TValue>) {
+function DataTable<TData, TValue>({ columns, data, onRowClick, maxItemPerPage }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [pagination, setPagination] = useState({
         pageIndex: 0,
-        pageSize: 8,
+        pageSize: maxItemPerPage || 8,
     })
 
     const table = useReactTable({
