@@ -76,10 +76,14 @@ export default function CreateInvoiceClient({ mode = 'create', initialInvoice = 
             };
         }
 
+        const today = new Date();
+        const nextDay = new Date(today);
+        nextDay.setDate(today.getDate() + 1);
+
         return {
             athleteId: undefined,
-            issueDate: new Date(),
-            dueDate: undefined,
+            issueDate: today,
+            dueDate: nextDay,
             lines: [
                 {
                     id: '1',
@@ -238,6 +242,7 @@ export default function CreateInvoiceClient({ mode = 'create', initialInvoice = 
 
         setIsSubmitting(true);
         try {
+            const formValues = form.getValues();
             const endpoint = isEditMode ? `/api/invoices/${invoiceDocumentId}` : '/api/invoices';
             const method = isEditMode ? 'PUT' : 'POST';
             const response = await fetch(endpoint, {
@@ -246,7 +251,9 @@ export default function CreateInvoiceClient({ mode = 'create', initialInvoice = 
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    ...form.getValues(),
+                    ...formValues,
+                    issueDate: formValues.issueDate instanceof Date ? formValues.issueDate.toISOString().split('T')[0] : formValues.issueDate,
+                    dueDate: formValues.dueDate instanceof Date ? formValues.dueDate.toISOString().split('T')[0] : formValues.dueDate,
                     isDraft,
                 }),
             });

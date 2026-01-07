@@ -13,11 +13,11 @@ export const InvoiceFormSchema = z.object({
         message: "Vous devez sélectionner un athlète",
     }).min(1, "Vous devez sélectionner un athlète"),
 
-    issueDate: z.date({
+    issueDate: z.coerce.date({
         message: "La date d'émission est requise",
     }),
 
-    dueDate: z.date({
+    dueDate: z.coerce.date({
         message: "La date d'échéance est requise",
     }),
 
