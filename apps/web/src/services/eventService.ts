@@ -3,6 +3,7 @@
 import { getTokenFromCookie } from '@/actions/auth-actions';
 import { CoachEvent } from '@/types/CoachEvent';
 import { EventPayload } from '@/schema/EventSchema';
+import { getMeId } from '@/services/userService';
 
 const STRAPI_URL = process.env.STRAPI_INTERNAL_URL || process.env.NEXT_PUBLIC_STRAPI_URL;
 
@@ -10,7 +11,21 @@ export async function fetchCoachEvents(): Promise<CoachEvent[]> {
     const token = await getTokenFromCookie();
     if (!token) throw new Error('Non authentifié');
 
-    const response = await fetch(`${STRAPI_URL}/api/coach-events?populate=*`, {
+    const coachId = await getMeId(token);
+
+    const params = new URLSearchParams();
+    params.set('populate[user][fields][0]', 'id');
+    params.set('populate[user][fields][1]', 'username');
+    params.set('populate[user][fields][2]', 'first_name');
+    params.set('populate[user][fields][3]', 'last_name');
+    params.set('populate[participants][fields][0]', 'id');
+    params.set('populate[participants][fields][1]', 'username');
+    params.set('populate[participants][fields][2]', 'first_name');
+    params.set('populate[participants][fields][3]', 'last_name');
+    params.set('sort[0]', 'date:desc');
+    params.set('filters[user][id][$eq]', coachId.toString());
+
+    const response = await fetch(`${STRAPI_URL}/api/coach-events?${params.toString()}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -32,13 +47,20 @@ export async function createCoachEvent(payload: EventPayload): Promise<CoachEven
     const token = await getTokenFromCookie();
     if (!token) throw new Error('Non authentifié');
 
+    const coachId = await getMeId(token);
+
+    const payloadWithUser = {
+        ...payload,
+        user: coachId,
+    };
+
     const response = await fetch(`${STRAPI_URL}/api/coach-events`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ data: payload }),
+        body: JSON.stringify({ data: payloadWithUser }),
     });
 
     if (!response.ok) {
