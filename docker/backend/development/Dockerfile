@@ -2,8 +2,8 @@
 # STRAPI BACKEND - DEVELOPMENT DOCKERFILE
 # =============================================================================
 
-# Use Node.js 18 Alpine for smaller image size
-FROM node:18-alpine AS base
+# Use Node.js 20 Alpine for smaller image size
+FROM node:20-alpine AS base
 
 # Set working directory
 WORKDIR /app

@@ -76,6 +76,13 @@ services:
       TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
       STRAPI_CORS_ORIGIN: ${STRAPI_CORS_ORIGIN:-http://localhost:3000,http://localhost:1337}
 
+      # Email Configuration
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_DEFAULT_FROM: ${SMTP_DEFAULT_FROM:-no-reply@ref.local}
+      SMTP_DEFAULT_REPLY_TO: ${SMTP_DEFAULT_REPLY_TO:-support@ref.local}
+
       # Timezone
       TZ: ${TIMEZONE:-UTC}
     depends_on:
@@ -230,6 +237,16 @@ services:
       - app-network
     profiles:
       - backup
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025" # UI web
+      - "1025:1025" # SMTP
+    container_name: ${PROJECT_SLUG}_mailpit
+    restart: unless-stopped
+    networks:
+      - app-network
 
 # =============================================================================
 # VOLUMES
