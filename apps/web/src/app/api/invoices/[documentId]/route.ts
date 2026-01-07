@@ -5,19 +5,16 @@ import { fetchCoachAthleteById } from '@/services/athleteService';
 import { getTokenFromCookie } from '@/actions/auth-actions';
 import { getUserInfo } from '@/services/userService';
 
-type RouteContext = {
-    params: {
-        documentId: string;
-    };
-};
-
 function missingDocumentResponse() {
     return NextResponse.json({ error: 'Identifiant de facture manquant' }, { status: 400 });
 }
 
-export async function PUT(request: Request, context: RouteContext) {
+export async function PUT(
+    request: Request,
+    { params }: { params: Promise<{ documentId: string }> }
+) {
     try {
-        const documentId = context.params?.documentId;
+        const { documentId } = await params;
         if (!documentId) {
             return missingDocumentResponse();
         }
@@ -96,9 +93,12 @@ export async function PUT(request: Request, context: RouteContext) {
     }
 }
 
-export async function DELETE(_: Request, context: RouteContext) {
+export async function DELETE(
+    _: Request,
+    { params }: { params: Promise<{ documentId: string }> }
+) {
     try {
-        const documentId = context.params?.documentId;
+        const { documentId } = await params;
         if (!documentId) {
             return missingDocumentResponse();
         }

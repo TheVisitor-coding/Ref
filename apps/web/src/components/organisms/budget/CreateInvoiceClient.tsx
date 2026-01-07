@@ -94,8 +94,8 @@ export default function CreateInvoiceClient({ mode = 'create', initialInvoice = 
         };
     }, [isEditMode, initialInvoice, defaultPaymentInstructions]);
 
-    const form = useForm<InvoiceFormData>({
-        resolver: zodResolver(InvoiceFormSchema) as any,
+    const form = useForm({
+        resolver: zodResolver(InvoiceFormSchema) as never,
         defaultValues: initialFormValues,
     });
 
@@ -372,7 +372,7 @@ export default function CreateInvoiceClient({ mode = 'create', initialInvoice = 
                             </div>
 
                             {/* Lignes de facture */}
-                            {lines.map((line, index) => (
+                            {lines.map((line) => (
                                 <InvoiceLineItem
                                     key={line.id}
                                     line={line}

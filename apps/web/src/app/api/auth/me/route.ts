@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/utils/auth';
 
@@ -17,7 +17,7 @@ interface StrapiUserResponse {
     lastPredashboardSeenAt: string | null;
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     try {
         const cookieStore = await cookies();
         const token = cookieStore.get('auth-token')?.value;

@@ -89,7 +89,7 @@ export default function SportTagsAnimation({ selectedSports }: SportTagsAnimatio
                 }
             });
         }
-    }, []);
+    }, [selectedSports]);
 
     const setTagRef = (sport: SportType) => (el: HTMLDivElement | null) => {
         if (el) {

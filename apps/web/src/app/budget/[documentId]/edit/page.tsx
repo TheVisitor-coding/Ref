@@ -4,13 +4,14 @@ import CreateInvoiceClient from '@/components/organisms/budget/CreateInvoiceClie
 import { fetchInvoiceByDocumentId } from '@/services/invoiceService';
 
 interface EditInvoicePageProps {
-    params: {
+    params: Promise<{
         documentId: string;
-    };
+    }>;
 }
 
 export default async function EditInvoicePage({ params }: EditInvoicePageProps) {
-    const invoice = await fetchInvoiceByDocumentId(params.documentId);
+    const { documentId } = await params;
+    const invoice = await fetchInvoiceByDocumentId(documentId);
 
     if (!invoice) {
         notFound();

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import SecondaryButton from "@/components/atoms/buttons/SecondaryButton";
 import PrimaryButton from "@/components/atoms/buttons/PrimaryButton";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { EventFormInput, EventFormSchema, getEventDefaultValues } from "@/schema/EventSchema";
