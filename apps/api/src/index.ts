@@ -144,6 +144,10 @@ export default {
           const passwordHash = await bcrypt.hash(password, salt);
 
           const username = generateSecureUsername();
+          
+          // Generate secure confirmation token using crypto
+          const crypto = require('crypto');
+          const confirmationToken = crypto.randomBytes(32).toString('hex');
 
           const user = await strapi.query('plugin::users-permissions.user').create({
             data: {
@@ -152,6 +156,7 @@ export default {
               password: passwordHash,
               role: coachRole.id,
               confirmed: false,
+              confirmationToken,
               statusUser: 'pending',
               provider: 'local',
               ...(onboardingData && {
@@ -181,24 +186,35 @@ export default {
             }
           }
 
-          const jwt = strapi.plugin('users-permissions').service('jwt').issue({
-            id: user.id,
-            role: userWithRole?.role?.type || 'coach',
-            permissions: userWithRole?.role?.permissions?.map((p: any) => p.action) || [],
-          });
+          // Send confirmation email instead of generating JWT immediately
+          try {
+            const emailService = strapi.service('api::auth.email-confirmation');
+            await emailService.sendConfirmationEmail(user);
 
-          const sanitizedUser = await strapi.contentAPI.sanitize.output(
-            userWithRole,
-            strapi.getModel('plugin::users-permissions.user')
-          );
+            strapi.log.info(`New coach registered: ${email} - Confirmation email sent`);
 
-          strapi.log.info(`New coach registered: ${email}`);
-
-          ctx.status = 201;
-          ctx.body = {
-            jwt,
-            user: sanitizedUser,
-          };
+            ctx.status = 201;
+            ctx.body = {
+              message: 'Registration successful. Please check your email to confirm your account.',
+              user: {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+              },
+            };
+          } catch (emailError) {
+            strapi.log.error('Failed to send confirmation email:', emailError);
+            // Still return success but with a different message
+            ctx.status = 201;
+            ctx.body = {
+              message: 'Registration successful but failed to send confirmation email. Please contact support.',
+              user: {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+              },
+            };
+          }
         },
         config: {
           auth: false,

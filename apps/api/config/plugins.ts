@@ -4,6 +4,16 @@ export default ({ env }) => ({
       jwt: {
         expiresIn: '7d',
       },
+      register: {
+        allowedFields: ['username', 'email', 'password', 'statusUser'],
+      },
+      email: {
+        enabled: true,
+        confirmation: {
+          enabled: true,
+          redirectUrl: env('EMAIL_CONFIRMATION_URL', 'http://localhost:3000/auth/email-confirmation'),
+        },
+      },
     },
   },
   email: {

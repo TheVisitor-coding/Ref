@@ -13,6 +13,7 @@ export interface OnboardingData {
     selectedSports: SportType[];
     athletesCount: number | null;
     selectedFeatures: FeatureId[];
+    email?: string; // Store email for check-email page
 }
 
 interface OnboardingState extends OnboardingData {
@@ -40,6 +41,7 @@ const initialState: OnboardingState = {
     athletesCount: null,
     selectedFeatures: [],
     completedSteps: [],
+    email: undefined,
 };
 
 const useOnboardingStore = create<OnboardingState & OnboardingActions>()(

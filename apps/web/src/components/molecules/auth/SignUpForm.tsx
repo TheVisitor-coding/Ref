@@ -26,10 +26,11 @@ export default function SignUpForm() {
     });
 
     const { register, isLoading, error } = useRegister({
-        onSuccess: async () => {
+        onSuccess: async (response) => {
+            // Get email from response or form data
+            const email = response?.user?.email;
             await resetOnboarding();
-            // toast.success('Compte créé avec succès ! Création de votre espace en cours...');
-            router.push('/');
+            router.push(`/auth/check-email?email=${encodeURIComponent(email || '')}`);
         },
     });
 

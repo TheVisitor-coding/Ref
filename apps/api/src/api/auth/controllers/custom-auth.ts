@@ -72,10 +72,20 @@ module.exports = {
       throw new ApplicationError('Your account has been blocked by an administrator');
     }
 
-    // TODO: Verify email confirmation logic
-    // if (user.confirmed === false) {
-    //   throw new ApplicationError('Your account email is not confirmed');
-    // }
+    if (user.confirmed === false) {
+      ctx.status = 403;
+      ctx.body = {
+        error: {
+          status: 403,
+          name: 'EmailNotConfirmed',
+          message: 'Your email address has not been confirmed. Please check your email for the confirmation link.',
+          details: {
+            email: user.email,
+          },
+        },
+      };
+      return;
+    }
 
     await strapi.query('plugin::users-permissions.user').update({
       where: { id: user.id },

@@ -3,10 +3,14 @@ import { verifyToken } from "./utils/auth";
 
 export async function middleware(req: NextRequest) {
     const token = req.cookies.get('auth-token');
-    const isAuthPage = req.nextUrl.pathname.startsWith('/auth');
+    const pathname = req.nextUrl.pathname;
+    const isAuthPage = pathname.startsWith('/auth');
     const isProtectedPage = !isAuthPage;
 
-    if (isAuthPage && token) {
+    // Allow access to email confirmation pages even with token
+    const isEmailConfirmationPage = pathname === '/auth/email-confirmation' || pathname === '/auth/check-email';
+
+    if (isAuthPage && token && !isEmailConfirmationPage) {
         const payload = await verifyToken(token.value);
         if (payload) {
             return NextResponse.redirect(new URL('/', req.url));

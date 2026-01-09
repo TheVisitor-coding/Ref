@@ -43,6 +43,18 @@ export const REGISTER_RATE_LIMIT_CONFIG: RateLimitConfig = {
     message: 'Too many registration attempts. Please try again later.',
 };
 
+export const EMAIL_CONFIRMATION_RATE_LIMIT_CONFIG: RateLimitConfig = {
+    windowMs: 15 * 60 * 1000,
+    max: 3,
+    message: 'Too many confirmation attempts. Please try again later.',
+};
+
+export const RESEND_CONFIRMATION_RATE_LIMIT_CONFIG: RateLimitConfig = {
+    windowMs: 60 * 60 * 1000,
+    max: 3,
+    message: 'Too many email resend attempts. Please try again in an hour.',
+};
+
 export function createRateLimiter(config: RateLimitConfig) {
     const {
         windowMs,
@@ -137,10 +149,35 @@ export function createRegisterRateLimiter() {
     });
 }
 
+export function createEmailConfirmationRateLimiter() {
+    return createRateLimiter({
+        ...EMAIL_CONFIRMATION_RATE_LIMIT_CONFIG,
+        keyGenerator: (ctx) => {
+            const ip = getClientIP(ctx);
+            return `email-confirm:${ip}`;
+        },
+    });
+}
+
+export function createResendConfirmationRateLimiter() {
+    return createRateLimiter({
+        ...RESEND_CONFIRMATION_RATE_LIMIT_CONFIG,
+        keyGenerator: (ctx) => {
+            const ip = getClientIP(ctx);
+            const email = ctx.request.body?.email || '';
+            return `resend-confirm:${ip}:${email.toLowerCase()}`;
+        },
+    });
+}
+
 export default {
     createRateLimiter,
     createLoginRateLimiter,
     createRegisterRateLimiter,
+    createEmailConfirmationRateLimiter,
+    createResendConfirmationRateLimiter,
     AUTH_RATE_LIMIT_CONFIG,
     REGISTER_RATE_LIMIT_CONFIG,
+    EMAIL_CONFIRMATION_RATE_LIMIT_CONFIG,
+    RESEND_CONFIRMATION_RATE_LIMIT_CONFIG,
 };

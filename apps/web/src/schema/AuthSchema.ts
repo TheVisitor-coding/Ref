@@ -48,3 +48,18 @@ export const loginSchema = z.object({
 });
 
 export type LoginSchemaType = z.infer<typeof loginSchema>;
+
+export const emailConfirmationSchema = z.object({
+    confirmation: z.string().min(1, 'Token de confirmation invalide'),
+});
+
+export type EmailConfirmationSchemaType = z.infer<typeof emailConfirmationSchema>;
+
+export const resendConfirmationSchema = z.object({
+    email: z
+        .string()
+        .min(1, "L'email est requis")
+        .email('Adresse e-mail invalide'),
+});
+
+export type ResendConfirmationSchemaType = z.infer<typeof resendConfirmationSchema>;

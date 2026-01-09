@@ -12,6 +12,7 @@ import {
     logoutUser,
     type RegisterRequest,
     type LoginRequest,
+    type AuthResponse,
     AuthError,
 } from '@/services/authService';
 
@@ -45,7 +46,7 @@ export function useAuth() {
 }
 
 interface UseRegisterOptions {
-    onSuccess?: () => void;
+    onSuccess?: (data: AuthResponse) => void;
     onError?: (error: AuthError) => void;
 }
 
@@ -56,9 +57,10 @@ export function useRegister(options?: UseRegisterOptions) {
     const mutation = useMutation({
         mutationFn: registerCoach,
         onSuccess: (data) => {
-            syncFromApi({ authenticated: true, user: data.user });
+            // Don't sync auth state since user is not confirmed yet
+            // syncFromApi({ authenticated: true, user: data.user });
             queryClient.invalidateQueries({ queryKey: authKeys.me() });
-            options?.onSuccess?.();
+            options?.onSuccess?.(data);
         },
         onError: (error: AuthError) => options?.onError?.(error),
     });
@@ -150,6 +152,94 @@ export function useLogout(options?: UseLogoutOptions) {
             if (options?.redirectTo) router.push(options.redirectTo);
         }
     }, [clearStore, queryClient, router, options]);
+}
+
+interface UseEmailConfirmationOptions {
+    onSuccess?: () => void;
+    onError?: (error: string) => void;
+}
+
+export function useEmailConfirmation(token: string, options?: UseEmailConfirmationOptions) {
+    const queryClient = useQueryClient();
+    const { syncFromApi } = useAuthStore();
+    const router = useRouter();
+
+    const mutation = useMutation({
+        mutationFn: async () => {
+            const response = await fetch(`/api/auth/email-confirmation?confirmation=${token}`, {
+                method: 'GET',
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Erreur lors de la confirmation');
+            }
+
+            return data;
+        },
+        onSuccess: (data) => {
+            syncFromApi({ authenticated: true, user: data.user });
+            queryClient.invalidateQueries({ queryKey: authKeys.me() });
+            options?.onSuccess?.();
+            router.push('/');
+        },
+        onError: (error: Error) => {
+            options?.onError?.(error.message);
+        },
+    });
+
+    return {
+        confirm: mutation.mutate,
+        isLoading: mutation.isPending,
+        error: mutation.error?.message ?? null,
+        isSuccess: mutation.isSuccess,
+    };
+}
+
+interface UseResendConfirmationOptions {
+    onSuccess?: () => void;
+    onError?: (error: string) => void;
+}
+
+export function useResendConfirmation(options?: UseResendConfirmationOptions) {
+    const mutation = useMutation({
+        mutationFn: async (email: string) => {
+            // Validate email format before sending
+            if (!email || !email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                throw new Error('Adresse email invalide');
+            }
+
+            const response = await fetch('/api/auth/resend-confirmation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email.trim().toLowerCase() }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Erreur lors du renvoi');
+            }
+
+            return data;
+        },
+        onSuccess: () => {
+            options?.onSuccess?.();
+        },
+        onError: (error: Error) => {
+            options?.onError?.(error.message);
+        },
+    });
+
+    return {
+        resend: mutation.mutate,
+        isLoading: mutation.isPending,
+        error: mutation.error?.message ?? null,
+        isSuccess: mutation.isSuccess,
+    };
 }
 
 export type { RegisterRequest, LoginRequest };
