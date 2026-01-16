@@ -3,18 +3,18 @@
 # =============================================================================
 
 # Use Node.js 20 Alpine for smaller image size
-FROM node:20-alpine AS base
+FROM node:lts-alpine3.23@sha256:931d7d57f8c1fd0e2179dbff7cc7da4c9dd100998bc2b32afc85142d8efbc213 AS base
 
 # Set working directory
 WORKDIR /app
 
 # Install system dependencies
-RUN apk add --no-cache \
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add --no-cache \
     python3 \
     make \
     g++ \
-    git \
-    && rm -rf /var/cache/apk/*
+    git
 
 # Development stage
 FROM base AS development
