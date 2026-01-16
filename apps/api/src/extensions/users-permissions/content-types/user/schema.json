@@ -48,6 +48,11 @@
       "private": true,
       "searchable": false
     },
+    "confirmationTokenExpiresAt": {
+      "type": "datetime",
+      "configurable": false,
+      "private": true
+    },
     "confirmed": {
       "type": "boolean",
       "default": false,

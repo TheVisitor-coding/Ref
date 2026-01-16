@@ -41,7 +41,10 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                                 Ou copiez ce lien dans votre navigateur :<br>
                                 <a href="${confirmationLink}" style="color: #2563eb;">${confirmationLink}</a>
                             </p>
-                            <p style="color: #666; font-size: 14px; margin-top: 30px;">
+                            <p style="color: #666; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                                <strong>Note importante :</strong> Ce lien est valable pendant 24 heures. Passé ce délai, vous devrez demander un nouveau lien de confirmation.
+                            </p>
+                            <p style="color: #666; font-size: 14px;">
                                 Si vous n'avez pas créé de compte, ignorez cet email.
                             </p>
                         </div>
@@ -82,12 +85,21 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                 };
             }
 
+            // Check if token has expired
+            if (user.confirmationTokenExpiresAt && new Date(user.confirmationTokenExpiresAt) < new Date()) {
+                return {
+                    success: false,
+                    error: 'Confirmation token has expired. Please request a new confirmation email.',
+                };
+            }
+
             // Update user
             const updatedUser = await strapi.query('plugin::users-permissions.user').update({
                 where: { id: user.id },
                 data: {
                     confirmed: true,
                     confirmationToken: null,
+                    confirmationTokenExpiresAt: null,
                 },
             });
 
@@ -120,13 +132,19 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
      * Resend confirmation email
      */
     async resendConfirmationEmail(email: string) {
+        const startTime = Date.now();
+        
         try {
             const user = await strapi.query('plugin::users-permissions.user').findOne({
                 where: { email: email.toLowerCase() },
             });
 
             if (!user) {
-                // Don't reveal if user exists
+                // Don't reveal if user exists - add artificial delay to prevent timing attack
+                const elapsed = Date.now() - startTime;
+                if (elapsed < 300) {
+                    await new Promise(resolve => setTimeout(resolve, 300 - elapsed));
+                }
                 return {
                     success: true,
                     message: 'If your email exists in our system, you will receive a confirmation email',
@@ -134,14 +152,39 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
             }
 
             if (user.confirmed) {
+                // Add artificial delay for confirmed users too
+                const elapsed = Date.now() - startTime;
+                if (elapsed < 300) {
+                    await new Promise(resolve => setTimeout(resolve, 300 - elapsed));
+                }
                 return {
                     success: false,
                     error: 'Email already confirmed',
                 };
             }
 
-            // Send confirmation email
-            await this.sendConfirmationEmail(user);
+            // Generate new token with new expiration
+            const crypto = require('node:crypto');
+            const newToken = crypto.randomBytes(32).toString('hex');
+            const tokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+            // Update user with new token
+            const updatedUser = await strapi.query('plugin::users-permissions.user').update({
+                where: { id: user.id },
+                data: {
+                    confirmationToken: newToken,
+                    confirmationTokenExpiresAt: tokenExpiresAt.toISOString(),
+                },
+            });
+
+            // Send confirmation email with new token
+            await this.sendConfirmationEmail(updatedUser);
+
+            // Ensure minimum response time to prevent timing attack
+            const elapsed = Date.now() - startTime;
+            if (elapsed < 300) {
+                await new Promise(resolve => setTimeout(resolve, 300 - elapsed));
+            }
 
             return {
                 success: true,

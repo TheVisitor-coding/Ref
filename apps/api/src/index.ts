@@ -148,6 +148,9 @@ export default {
           // Generate secure confirmation token using crypto
           const crypto = require('crypto');
           const confirmationToken = crypto.randomBytes(32).toString('hex');
+          
+          // Set token expiration to 24 hours from now
+          const tokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
           const user = await strapi.query('plugin::users-permissions.user').create({
             data: {
@@ -157,6 +160,7 @@ export default {
               role: coachRole.id,
               confirmed: false,
               confirmationToken,
+              confirmationTokenExpiresAt: tokenExpiresAt.toISOString(),
               statusUser: 'pending',
               provider: 'local',
               ...(onboardingData && {

@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
         res.cookies.set('auth-token', data.jwt, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            sameSite: 'strict',
             maxAge: 60 * 60 * 24 * 7, // 7 days
             path: '/',
         });
