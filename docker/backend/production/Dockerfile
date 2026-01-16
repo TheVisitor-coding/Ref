@@ -3,24 +3,25 @@
 # =============================================================================
 
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:lts-alpine3.23@sha256:931d7d57f8c1fd0e2179dbff7cc7da4c9dd100998bc2b32afc85142d8efbc213 AS builder
 
 # Set working directory
 WORKDIR /app
 
 # Install system dependencies
-RUN apk add --no-cache \
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add --no-cache \
     python3 \
     make \
     g++ \
-    git \
-    && rm -rf /var/cache/apk/*
+    git
 
 # Copy package files
 COPY apps/api/package*.json ./
 
 # Install all dependencies
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 # Copy source code
 COPY apps/api/ .
@@ -35,9 +36,9 @@ FROM node:18-alpine AS production
 WORKDIR /app
 
 # Install system dependencies
-RUN apk add --no-cache \
-    dumb-init \
-    && rm -rf /var/cache/apk/*
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add --no-cache \
+    dumb-init
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
@@ -47,7 +48,8 @@ RUN addgroup -g 1001 -S nodejs && \
 COPY apps/api/package*.json ./
 
 # Install only production dependencies
-RUN npm ci --only=production && npm cache clean --force
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --only=production
 
 # Copy built application from builder stage
 COPY --from=builder --chown=strapi:nodejs /app ./
