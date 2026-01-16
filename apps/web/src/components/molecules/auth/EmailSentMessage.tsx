@@ -75,7 +75,7 @@ export default function EmailSentMessage({ email }: EmailSentMessageProps) {
             <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-700 text-left space-y-2">
                 <p className="font-medium">Pour activer votre compte :</p>
                 <ol className="list-decimal list-inside space-y-1 ml-2">
-                    <li>Ouvrez l'email de confirmation</li>
+                    <li>Ouvrez l&apos;email de confirmation</li>
                     <li>Cliquez sur le lien de vérification</li>
                     <li>Vous serez automatiquement connecté</li>
                 </ol>
@@ -119,7 +119,7 @@ export default function EmailSentMessage({ email }: EmailSentMessageProps) {
                 ) : (
                     <>
                         <RefreshCw className="mr-2 h-4 w-4" />
-                        Renvoyer l'email
+                        Renvoyer l&apos;email
                     </>
                 )}
             </Button>
@@ -134,7 +134,7 @@ export default function EmailSentMessage({ email }: EmailSentMessageProps) {
 
             {/* Help Text */}
             <p className="text-xs text-gray-500">
-                Vous n'avez pas reçu l'email ? Vérifiez vos spams ou utilisez le bouton ci-dessus.
+                Vous n&apos;avez pas reçu l&apos;email ? Vérifiez vos spams ou utilisez le bouton ci-dessus.
             </p>
         </div>
     );

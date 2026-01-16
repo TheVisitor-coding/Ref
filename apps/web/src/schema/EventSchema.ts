@@ -1,5 +1,5 @@
 import z from "zod";
-import type { EventColor, EventType, RecurrenceType } from "@/types/CoachEvent";
+// import type { EventColor, EventType, RecurrenceType } from "@/types/CoachEvent";
 import { formatDateToISO, formatTimeForStrapi } from "@/utils/date";
 
 export const EventFormSchema = z.object({
