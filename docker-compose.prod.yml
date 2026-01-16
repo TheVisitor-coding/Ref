@@ -5,7 +5,7 @@ services:
   # DATABASE SERVICE (PRODUCTION)
   # =============================================================================
   postgres:
-    image: postgres:15-alpine
+    image: postgres:18.1-bookworm@sha256:5aaff0c455063edde680a623f90caddac9fdbaa3dfcfe10ce6ced50fd0eab9f0
     container_name: ${PROJECT_SLUG}_postgres
     restart: unless-stopped
     environment:
@@ -39,6 +39,7 @@ services:
   # =============================================================================
   backend:
     container_name: ${PROJECT_SLUG}_backend
+    image: ${DOCKER_REGISTRY}/${PROJECT_SLUG}_backend:${DOCKER_IMAGE_TAG:-latest}
     restart: unless-stopped
     build:
       context: .
@@ -100,6 +101,7 @@ services:
   # =============================================================================
   frontend:
     container_name: ${PROJECT_SLUG}_frontend
+    image: ${DOCKER_REGISTRY}/${PROJECT_SLUG}_frontend:${DOCKER_IMAGE_TAG:-latest}
     restart: unless-stopped
     build:
       context: .
@@ -145,7 +147,7 @@ services:
   # =============================================================================
   prometheus:
     container_name: ${PROJECT_SLUG}_prometheus
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.9.1@sha256:1f0f50f06acaceb0f5670d2c8a658a599affe7b0d8e78b898c1035653849a702
     restart: unless-stopped
     ports:
       - "127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"
@@ -170,7 +172,7 @@ services:
 
   grafana:
     container_name: ${PROJECT_SLUG}_grafana
-    image: grafana/grafana:latest
+    image: grafana/grafana:nightly@sha256:9be5ff7e987b98ff82a02d888412c8bf65da089f98b4c60df67c03a40d6fbed2
     restart: unless-stopped
     ports:
       - "127.0.0.1:${GRAFANA_PORT:-3001}:3000"
@@ -195,7 +197,7 @@ services:
   # =============================================================================
   backup:
     container_name: ${PROJECT_SLUG}_backup
-    image: postgres:15-alpine
+    image: postgres:18.1-bookworm@sha256:5aaff0c455063edde680a623f90caddac9fdbaa3dfcfe10ce6ced50fd0eab9f0
     restart: "no"
     volumes:
       - ./docker/backup:/backup
@@ -225,8 +227,6 @@ volumes:
   pgdata:
     driver: local
   strapi_uploads:
-    driver: local
-  nginx_logs:
     driver: local
   prometheus_data:
     driver: local
