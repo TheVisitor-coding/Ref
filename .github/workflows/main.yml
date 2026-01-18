@@ -3,8 +3,6 @@ name: CI/CD
 on:
   push:
     branches: [ "develop" ]
-  pull_request:
-    branches: [ "develop" ]
 
   workflow_dispatch:
 
@@ -111,6 +109,9 @@ jobs:
             
             # Restart services
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
+
+            # Down Data Container
+            docker compose -f docker-compose.prod.yml down grafana prometheus
             
             # Clean up old images
             docker image prune -f
