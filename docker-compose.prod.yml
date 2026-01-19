@@ -75,6 +75,15 @@ services:
       TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
       STRAPI_CORS_ORIGIN: ${STRAPI_CORS_ORIGIN}
 
+      # Email Configuration
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_SECURE: ${SMTP_SECURE}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_DEFAULT_FROM: ${SMTP_DEFAULT_FROM}
+      SMTP_DEFAULT_REPLY_TO: ${SMTP_DEFAULT_REPLY_TO}
+
       # Timezone
       TZ: ${TIMEZONE:-UTC}
     depends_on:

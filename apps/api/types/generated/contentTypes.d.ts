@@ -1777,6 +1777,8 @@ export interface PluginUsersPermissionsUser
     >;
     company_name: Schema.Attribute.String;
     confirmationToken: Schema.Attribute.String & Schema.Attribute.Private;
+    confirmationTokenExpiresAt: Schema.Attribute.DateTime &
+      Schema.Attribute.Private;
     confirmed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     conversation_participations: Schema.Attribute.Relation<
       'oneToMany',
