@@ -5,7 +5,7 @@ services:
   # DATABASE SERVICE
   # =============================================================================
   postgres:
-    image: postgres:15-alpine
+    image: postgres:17.7-alpine3.23@sha256:ff4ccc02b97e0ebb6b328ef9ff92522f95586f83be6801896b615088defc8ad2
     container_name: ${PROJECT_SLUG}_postgres
     restart: unless-stopped
     environment:
