@@ -5,6 +5,8 @@ import Providers from "@/components/providers/Providers";
 import { SidebarProvider } from "@/components/providers/SidebarProviders";
 import AppLayout from "@/components/organisms/layouts/AppLayout";
 
+import FaroInitializer from "@/components/FaroInitializer";
+
 const fontInter = {
   variable: "--font-inter",
   subsets: ["latin"],
@@ -25,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={`${fontInter.variable} overflow-x-hidden bg-background `}>
+        <FaroInitializer />
         {process.env.NODE_ENV !== "development" && (
           <Script
             id="microsoft-clarity"
