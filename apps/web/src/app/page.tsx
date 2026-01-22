@@ -1,9 +1,35 @@
-import Image from "next/image";
+import { updateLastPreDashboardViewAction } from "@/actions/user-actions";
+import DashboardClient from "@/components/organisms/dashboard/DashboardClient";
+import { getTokenFromCookie } from "@/actions/auth-actions";
+import { getUserInfo } from "@/services/userService";
+import { isToday } from "@/utils/date";
 
-export default function Home() {
+
+
+export default async function Dashboard() {
+
+  const authCookie = await getTokenFromCookie();
+  let userInfo = null;
+
+  let shouldShowPreDashboard = false;
+
+  if (authCookie) {
+    userInfo = await getUserInfo(authCookie);
+    if (userInfo) {
+      const lastPreDashboardView = userInfo.lastPredashboardSeenAt;
+      if (lastPreDashboardView) {
+        shouldShowPreDashboard = !isToday(lastPreDashboardView);
+      }
+    }
+  }
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <h1>Hello World</h1>
-    </div>
+    <>
+      <DashboardClient
+        initialShowPreDashboard={shouldShowPreDashboard}
+        userInfo={userInfo}
+        updateLastPreDashboardViewAction={updateLastPreDashboardViewAction}
+      />
+    </>
   );
 }

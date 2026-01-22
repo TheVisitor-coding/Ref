@@ -1,0 +1,61 @@
+'use client'
+
+import { User } from "@/types/User";
+import { useState, useTransition } from "react";
+import PreDashboard from "./PreDashboard";
+import { updateLastPreDashboardViewAction } from "@/actions/user-actions";
+import MainDashboard from "./MainDashboard";
+
+type UpdateLastPreDashboardViewResult = typeof updateLastPreDashboardViewAction;
+
+function DashboardClient({
+    initialShowPreDashboard,
+    updateLastPreDashboardViewAction,
+    userInfo
+}: {
+    initialShowPreDashboard: boolean;
+    userInfo: User | null;
+    updateLastPreDashboardViewAction: UpdateLastPreDashboardViewResult;
+}) {
+    const [showPreDashboard, setShowPreDashboard] = useState<boolean>(initialShowPreDashboard);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [isPending, startTransition] = useTransition();
+
+    const handleDashboardClose = async () => {
+        if (!userInfo) {
+            setShowPreDashboard(false);
+            return;
+        }
+        setErrorMessage(null);
+        startTransition(async () => {
+            const result = await updateLastPreDashboardViewAction(userInfo.id);
+
+            if (!result.success) {
+                setErrorMessage(result.errorMessage);
+                return;
+            }
+
+            setShowPreDashboard(false);
+        });
+    };
+
+    return (
+        <div
+            className={`w-full h-full rounded-2xl ${showPreDashboard ? 'bg-white shadow-container overflow-hidden' : ''}`}
+            aria-busy={isPending}
+        >
+            {showPreDashboard ? (
+                <>
+                    <PreDashboard onClose={handleDashboardClose} />
+                    {errorMessage && (
+                        <p className="px-6 py-2 text-center text-sm text-red-500">{errorMessage}</p>
+                    )}
+                </>
+            ) : (
+                <MainDashboard />
+            )}
+        </div>
+    );
+}
+
+export default DashboardClient;

@@ -1,0 +1,65 @@
+{
+  "kind": "collectionType",
+  "collectionName": "notifications",
+  "info": {
+    "singularName": "notification",
+    "pluralName": "notifications",
+    "displayName": "Notification"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "notifications"
+    },
+    "notification_type": {
+      "type": "enumeration",
+      "enum": [
+        "session_created",
+        "session_modified",
+        "payment_received",
+        "message_received",
+        "invitation_sent",
+        "subscription_expiring"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "content": {
+      "type": "text",
+      "required": true
+    },
+    "action_url": {
+      "type": "text"
+    },
+    "priority": {
+      "type": "enumeration",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "urgent"
+      ]
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    },
+    "read_at": {
+      "type": "datetime"
+    },
+    "metadata": {
+      "type": "json"
+    },
+    "expires_at": {
+      "type": "datetime"
+    }
+  }
+}

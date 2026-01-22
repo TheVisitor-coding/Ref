@@ -1,0 +1,124 @@
+{
+  "kind": "collectionType",
+  "collectionName": "athlete_invoices",
+  "info": {
+    "singularName": "athlete-invoice",
+    "pluralName": "athlete-invoices",
+    "displayName": "Athlete_invoice"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "athlete_subscription": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::athlete-subscription.athlete-subscription",
+      "inversedBy": "athlete_invoices"
+    },
+    "athlete": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "coach": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "invoice_type": {
+      "type": "enumeration",
+      "enum": [
+        "invoice",
+        "estimate",
+        "credit_note"
+      ],
+      "default": "invoice"
+    },
+    "invoice_number": {
+      "type": "string",
+      "maxLength": 50,
+      "required": true,
+      "unique": true
+    },
+    "amount_ht": {
+      "type": "decimal",
+      "required": true
+    },
+    "amount_ttc": {
+      "type": "decimal",
+      "required": true
+    },
+    "currency": {
+      "type": "string",
+      "default": "EUR",
+      "maxLength": 3
+    },
+    "statusInvoice": {
+      "type": "enumeration",
+      "enum": [
+        "draft",
+        "sent",
+        "paid",
+        "overdue",
+        "cancelled"
+      ],
+      "default": "draft"
+    },
+    "due_date": {
+      "type": "date",
+      "required": true
+    },
+    "issued_date": {
+      "type": "date"
+    },
+    "paid_date": {
+      "type": "date"
+    },
+    "description": {
+      "type": "text"
+    },
+    "tax_rate": {
+      "type": "decimal",
+      "default": 0.2
+    },
+    "tax_amount": {
+      "type": "decimal"
+    },
+    "lines": {
+      "type": "json",
+      "required": true
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "client_address": {
+      "type": "string"
+    },
+    "client_city": {
+      "type": "string"
+    },
+    "client_email": {
+      "type": "string"
+    },
+    "coach_name": {
+      "type": "string"
+    },
+    "coach_address": {
+      "type": "string"
+    },
+    "coach_city": {
+      "type": "string"
+    },
+    "coach_email": {
+      "type": "string"
+    },
+    "payment_instructions": {
+      "type": "text"
+    },
+    "metadata": {
+      "type": "json"
+    }
+  }
+}

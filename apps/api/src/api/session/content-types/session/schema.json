@@ -1,0 +1,217 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sessions",
+  "info": {
+    "singularName": "session",
+    "pluralName": "sessions",
+    "displayName": "Session"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "coach": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "sessions_as_coach"
+    },
+    "athlete": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "sessions_as_athlete"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 255,
+      "required": true
+    },
+    "sport": {
+      "type": "string",
+      "maxLength": 100,
+      "required": false
+    },
+    "tags": {
+      "type": "json",
+      "required": false
+    },
+    "description": {
+      "type": "text",
+      "required": false
+    },
+    "objectives": {
+      "type": "text",
+      "required": false
+    },
+    "session_body": {
+      "type": "text",
+      "required": false
+    },
+    "coach_comment": {
+      "type": "text",
+      "required": false
+    },
+    "start_datetime": {
+      "type": "datetime",
+      "required": true
+    },
+    "end_datetime": {
+      "type": "datetime",
+      "required": false
+    },
+    "location": {
+      "type": "string",
+      "maxLength": 255,
+      "required": false
+    },
+    "session_type": {
+      "type": "enumeration",
+      "default": "training",
+      "enum": [
+        "training",
+        "consultation",
+        "personal",
+        "reminder",
+        "template"
+      ]
+    },
+    "requires_presence": {
+      "type": "boolean",
+      "default": false
+    },
+    "status": {
+      "type": "enumeration",
+      "default": "draft",
+      "enum": [
+        "draft",
+        "scheduled",
+        "confirmed",
+        "in_progress",
+        "completed",
+        "cancelled",
+        "conflict_pending"
+      ]
+    },
+    "intensity_level": {
+      "type": "enumeration",
+      "required": false,
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "very_high"
+      ]
+    },
+    "expected_duration_minutes": {
+      "type": "integer",
+      "required": false,
+      "min": 1
+    },
+    "actual_duration_minutes": {
+      "type": "integer",
+      "required": false,
+      "min": 1
+    },
+    "rpe": {
+      "type": "integer",
+      "required": false,
+      "min": 1,
+      "max": 10
+    },
+    "distance_km": {
+      "type": "decimal",
+      "required": false
+    },
+    "heart_rate_avg": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "speed_kmh": {
+      "type": "decimal",
+      "required": false
+    },
+    "power_watts": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "difficulty_level": {
+      "type": "integer",
+      "required": false,
+      "min": 1,
+      "max": 10
+    },
+    "equipment_needed": {
+      "type": "text",
+      "required": false
+    },
+    "preparation_notes": {
+      "type": "text",
+      "required": false
+    },
+    "session_notes": {
+      "type": "text",
+      "required": false
+    },
+    "athlete_feedback": {
+      "type": "text",
+      "required": false
+    },
+    "coach_rating": {
+      "type": "integer",
+      "required": false,
+      "min": 1,
+      "max": 5
+    },
+    "athlete_rating": {
+      "type": "integer",
+      "required": false,
+      "min": 1,
+      "max": 5
+    },
+    "is_template": {
+      "type": "boolean",
+      "default": false
+    },
+    "template_name": {
+      "type": "string",
+      "maxLength": 255,
+      "required": false
+    },
+    "is_recurring": {
+      "type": "boolean",
+      "default": false
+    },
+    "recurring_rule": {
+      "type": "json",
+      "required": false
+    },
+    "child_sessions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::session.session",
+      "mappedBy": "parent_session"
+    },
+    "parent_session": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::session.session",
+      "inversedBy": "child_sessions"
+    },
+    "base_session": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::planning-conflict.planning-conflict",
+      "mappedBy": "session"
+    },
+    "conflict_session": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::planning-conflict.planning-conflict",
+      "mappedBy": "conflicting_session"
+    }
+  }
+}

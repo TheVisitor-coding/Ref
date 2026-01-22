@@ -1,0 +1,56 @@
+{
+  "kind": "collectionType",
+  "collectionName": "platform_invoices",
+  "info": {
+    "singularName": "platform-invoice",
+    "pluralName": "platform-invoices",
+    "displayName": "Platform_invoice"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "subscription": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::platform-subscription.platform-subscription",
+      "inversedBy": "platform_invoices"
+    },
+    "invoice_number": {
+      "type": "string",
+      "maxLength": 50,
+      "required": true,
+      "unique": true
+    },
+    "amount": {
+      "type": "biginteger",
+      "required": true
+    },
+    "currency": {
+      "type": "string",
+      "maxLength": 3,
+      "required": true
+    },
+    "statusInvoice": {
+      "type": "enumeration",
+      "enum": [
+        "draft",
+        "open",
+        "paid",
+        "void",
+        "uncollectible"
+      ]
+    },
+    "stripe_invoice_id": {
+      "type": "string"
+    },
+    "due_date": {
+      "type": "date",
+      "required": true
+    },
+    "paid_at": {
+      "type": "datetime"
+    }
+  }
+}

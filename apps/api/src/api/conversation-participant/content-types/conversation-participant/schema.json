@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "conversation_participants",
+  "info": {
+    "singularName": "conversation-participant",
+    "pluralName": "conversation-participants",
+    "displayName": "Conversation_participant"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "conversation": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::conversation.conversation",
+      "inversedBy": "conversation_participants"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "conversation_participations"
+    },
+    "role": {
+      "type": "enumeration",
+      "enum": [
+        "admin",
+        "member"
+      ]
+    },
+    "joined_at": {
+      "type": "datetime",
+      "required": true
+    },
+    "left_at": {
+      "type": "datetime"
+    },
+    "last_read_at": {
+      "type": "datetime"
+    }
+  }
+}

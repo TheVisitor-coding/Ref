@@ -1,26 +1,482 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  /* Color Variables */
+  --color-primary: #333;
+  --color-secondary: #666666;
+  --color-accent: #EC5849;
+  --color-grey: #757575;
+  --color-grey-light: #EAEAEA;
+  --color-primary-blue: #0655FF;
+  --color-primary-blue-light: #E6EEFF;
+  --color-information-light: #F2FAFF;
+  --color-background: #FCF8F6;
+  --color-background-light: #FBF7F4;
+  --color-background-lighter: #F4F7FF;
+  --color-background-grey-light: #F2EEEC;
+  --color-backeground-hover: #F5F5F5;
+  --color-white: #FFFFFF;
+  --color-white-100: #FAFAFA;
+  --color-black: #000000;
+  --color-grey-button: #D6D6D6;
+  --color-border-input: #666;
+
+  --color-error-50: #FCE9E9;
+  --color-error: #DC2626;
+
+  --color-disabled: #999;
+
+  /* Sports Colors */
+  --color-sport-running-light: #D2E9DB;
+  --color-sport-running-dark: #088D36;
+  --color-sport-cycling-light: #EADDEE;
+  --color-sport-cycling-dark: #8E529E;
+
+  /* Shadow Variables */
+  --shadow-container: 0 0 0 1px rgba(31, 34, 37, 0.09), 0 24px 48px 0 rgba(0, 0, 0, 0.04), 0 4px 16px 0 rgba(0, 0, 0, 0.02);
+  --shadow-button: 0 8px 16px 0 rgba(6, 85, 255, 0.20);
+  --shadow-authContainer: 0 8px 16px 0 rgba(1, 48, 96, 0.04);
+}
+
+/* ====================================
+   Variables Shadcn/UI
+   ==================================== */
+@theme inline {
+  /* Radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Shadcn Colors - Préfixées pour éviter les conflits */
+  --color-shadcn-background: var(--shadcn-background);
+  --color-shadcn-foreground: var(--shadcn-foreground);
+  --color-shadcn-card: var(--shadcn-card);
+  --color-shadcn-card-foreground: var(--shadcn-card-foreground);
+  --color-shadcn-popover: var(--shadcn-popover);
+  --color-shadcn-popover-foreground: var(--shadcn-popover-foreground);
+  --color-shadcn-primary: var(--shadcn-primary);
+  --color-shadcn-primary-foreground: var(--shadcn-primary-foreground);
+  --color-shadcn-secondary: var(--shadcn-secondary);
+  --color-shadcn-secondary-foreground: var(--shadcn-secondary-foreground);
+  --color-shadcn-muted: var(--shadcn-muted);
+  --color-shadcn-muted-foreground: var(--shadcn-muted-foreground);
+  --color-shadcn-accent: var(--shadcn-accent);
+  --color-shadcn-accent-foreground: var(--shadcn-accent-foreground);
+  --color-shadcn-destructive: var(--shadcn-destructive);
+  --color-shadcn-border: var(--shadcn-border);
+  --color-shadcn-input: var(--shadcn-input);
+  --color-shadcn-ring: var(--shadcn-ring);
+  
+  /* Charts */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  
+  /* Sidebar */
+  --color-shadcn-sidebar: var(--shadcn-sidebar);
+  --color-shadcn-sidebar-foreground: var(--shadcn-sidebar-foreground);
+  --color-shadcn-sidebar-primary: var(--shadcn-sidebar-primary);
+  --color-shadcn-sidebar-primary-foreground: var(--shadcn-sidebar-primary-foreground);
+  --color-shadcn-sidebar-accent: var(--shadcn-sidebar-accent);
+  --color-shadcn-sidebar-accent-foreground: var(--shadcn-sidebar-accent-foreground);
+  --color-shadcn-sidebar-border: var(--shadcn-sidebar-border);
+  --color-shadcn-sidebar-ring: var(--shadcn-sidebar-ring);
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Shadcn Base Variables */
+  --radius: 0.625rem;
+  
+  /* Light Theme */
+  --shadcn-background: oklch(1 0 0);
+  --shadcn-foreground: oklch(0.145 0 0);
+  --shadcn-card: oklch(1 0 0);
+  --shadcn-card-foreground: oklch(0.145 0 0);
+  --shadcn-popover: oklch(1 0 0);
+  --shadcn-popover-foreground: oklch(0.145 0 0);
+  --shadcn-primary: oklch(0.205 0 0);
+  --shadcn-primary-foreground: oklch(0.985 0 0);
+  --shadcn-secondary: oklch(0.97 0 0);
+  --shadcn-secondary-foreground: oklch(0.205 0 0);
+  --shadcn-muted: oklch(0.97 0 0);
+  --shadcn-muted-foreground: oklch(0.556 0 0);
+  --shadcn-accent: oklch(0.97 0 0);
+  --shadcn-accent-foreground: oklch(0.205 0 0);
+  --shadcn-destructive: oklch(0.577 0.245 27.325);
+  --shadcn-border: oklch(0.922 0 0);
+  --shadcn-input: oklch(0.922 0 0);
+  --shadcn-ring: oklch(0.708 0 0);
+  
+  /* Charts */
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  
+  /* Sidebar */
+  --shadcn-sidebar: oklch(0.985 0 0);
+  --shadcn-sidebar-foreground: oklch(0.145 0 0);
+  --shadcn-sidebar-primary: oklch(0.205 0 0);
+  --shadcn-sidebar-primary-foreground: oklch(0.985 0 0);
+  --shadcn-sidebar-accent: oklch(0.97 0 0);
+  --shadcn-sidebar-accent-foreground: oklch(0.205 0 0);
+  --shadcn-sidebar-border: oklch(0.922 0 0);
+  --shadcn-sidebar-ring: oklch(0.708 0 0);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  /* Dark Theme */
+  --shadcn-background: oklch(0.145 0 0);
+  --shadcn-foreground: oklch(0.985 0 0);
+  --shadcn-card: oklch(0.205 0 0);
+  --shadcn-card-foreground: oklch(0.985 0 0);
+  --shadcn-popover: oklch(0.205 0 0);
+  --shadcn-popover-foreground: oklch(0.985 0 0);
+  --shadcn-primary: oklch(0.922 0 0);
+  --shadcn-primary-foreground: oklch(0.205 0 0);
+  --shadcn-secondary: oklch(0.269 0 0);
+  --shadcn-secondary-foreground: oklch(0.985 0 0);
+  --shadcn-muted: oklch(0.269 0 0);
+  --shadcn-muted-foreground: oklch(0.708 0 0);
+  --shadcn-accent: oklch(0.269 0 0);
+  --shadcn-accent-foreground: oklch(0.985 0 0);
+  --shadcn-destructive: oklch(0.704 0.191 22.216);
+  --shadcn-border: oklch(1 0 0 / 10%);
+  --shadcn-input: oklch(1 0 0 / 15%);
+  --shadcn-ring: oklch(0.556 0 0);
+  
+  /* Charts */
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  
+  /* Sidebar */
+  --shadcn-sidebar: oklch(0.205 0 0);
+  --shadcn-sidebar-foreground: oklch(0.985 0 0);
+  --shadcn-sidebar-primary: oklch(0.488 0.243 264.376);
+  --shadcn-sidebar-primary-foreground: oklch(0.985 0 0);
+  --shadcn-sidebar-accent: oklch(0.269 0 0);
+  --shadcn-sidebar-accent-foreground: oklch(0.985 0 0);
+  --shadcn-sidebar-border: oklch(1 0 0 / 10%);
+  --shadcn-sidebar-ring: oklch(0.556 0 0);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-shadcn-border outline-shadcn-ring/50;
+  }
+  body {
+    @apply bg-shadcn-background text-shadcn-foreground;
+  }
+
+  .select--noarrow button > svg {
+    display: none;
+  }
+
+  .select--noarrow button span {
+    font-size: 1rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.fullcalendar-wrapper {
+  --fc-border-color: #d6d6d6;
+  --fc-today-bg-color: transparent;
+  --fc-page-bg-color: #fff;
+  --fc-neutral-bg-color: #f9f7f6;
+  --fc-event-border-color: transparent;
+}
+
+.fullcalendar-wrapper .fc {
+  font-family: inherit;
+}
+
+/* Header des jours de la semaine */
+.fullcalendar-wrapper .fc-col-header {
+  border-bottom: 1px solid var(--fc-border-color);
+}
+
+.fullcalendar-wrapper .fc-col-header-cell {
+  padding: 16px 12px;
+  font-weight: 400;
+  font-size: 14px;
+  color: #333;
+  text-transform: capitalize;
+  border: none;
+}
+
+.fullcalendar-wrapper .fc-col-header-cell-cushion {
+  padding: 0;
+}
+
+/* Cellules du calendrier */
+.fullcalendar-wrapper .fc-daygrid-day {
+  border: 1px solid var(--fc-border-color);
+  min-height: 120px;
+}
+
+.fullcalendar-wrapper .fc-daygrid-day-frame {
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* Numéro du jour */
+.fullcalendar-wrapper .fc-daygrid-day-top {
+  flex-direction: row;
+  padding: 4px;
+}
+
+.fullcalendar-wrapper .fc-daygrid-day-number {
+  font-size: 10px;
+  font-weight: 400;
+  color: #333;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Jour actuel (aujourd'hui) */
+.fullcalendar-wrapper .fc-day-today .fc-daygrid-day-number {
+  background-color: #0655ff;
+  color: #fff;
+  border-radius: 8px;
+}
+
+/* Jours du mois précédent/suivant */
+.fullcalendar-wrapper .fc-day-other {
+  background-color: var(--fc-neutral-bg-color);
+}
+
+.fullcalendar-wrapper .fc-day-other .fc-daygrid-day-number {
+  color: #999;
+}
+
+/* Jours passés */
+.fullcalendar-wrapper .fc-day-past:not(.fc-day-today) {
+  background-color: var(--fc-neutral-bg-color);
+}
+
+/* Zone des événements */
+.fullcalendar-wrapper .fc-daygrid-day-events {
+  flex: 1;
+  margin-top: 4px;
+}
+
+/* Style des événements */
+.fullcalendar-wrapper .fc-daygrid-event {
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  border-left-width: 4px;
+  border-left-style: solid;
+  margin: 2px 0;
+}
+
+.fullcalendar-wrapper .fc-daygrid-event:hover {
+  cursor: pointer;
+}
+
+.fullcalendar-wrapper .fc-event-title {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Événement par défaut (rouge) */
+.fullcalendar-wrapper .fc-event {
+  background-color: #fdecea;
+  border-color: #e74c3c;
+  color: #333;
+}
+
+/* Bouton "more" pour les événements supplémentaires */
+.fullcalendar-wrapper .fc-daygrid-more-link {
+  font-size: 12px;
+  color: #666;
+  padding: 4px;
+}
+
+/* Supprime les bordures par défaut de FullCalendar */
+.fullcalendar-wrapper .fc-scrollgrid {
+  border: none;
+}
+
+.fullcalendar-wrapper .fc-scrollgrid-section > td {
+  border: none;
+}
+
+/* Vue semaine dayGrid */
+.fullcalendar-wrapper .fc-dayGridWeek-view .fc-daygrid-day {
+  min-height: 200px;
+}
+
+/* Header des jours */
+.fullcalendar-wrapper .fc-timegrid .fc-col-header-cell {
+  padding: 12px 8px;
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: capitalize;
+  border-bottom: 1px solid var(--fc-border-color);
+}
+
+.fullcalendar-wrapper .fc-timegrid .fc-col-header-cell-cushion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Colonne des heures */
+.fullcalendar-wrapper .fc-timegrid-axis {
+  width: 60px;
+  padding: 0;
+}
+
+.fullcalendar-wrapper .fc-timegrid-slot-label {
+  font-size: 12px;
+  font-weight: 400;
+  color: #666;
+  vertical-align: top;
+  padding-top: 4px;
+  border: none;
+}
+
+.fullcalendar-wrapper .fc-timegrid-slot-label-cushion {
+  padding: 4px 12px;
+}
+
+/* Slots horaires */
+.fullcalendar-wrapper .fc-timegrid-slot {
+  height: 60px;
+  border-bottom: 1px solid var(--fc-border-color);
+}
+
+.fullcalendar-wrapper .fc-timegrid-slot-minor {
+  border-bottom: 1px dashed #e5e5e5;
+}
+
+/* Colonnes des jours */
+.fullcalendar-wrapper .fc-timegrid-col {
+  border-right: 1px solid var(--fc-border-color);
+}
+
+.fullcalendar-wrapper .fc-timegrid-col:last-child {
+  border-right: none;
+}
+
+/* Indicateur du temps actuel (ligne rouge) */
+.fullcalendar-wrapper .fc-timegrid-now-indicator-line {
+  border-color: #EC5849;
+  border-width: 2px;
+}
+
+.fullcalendar-wrapper .fc-timegrid-now-indicator-arrow {
+  border-color: #EC5849;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+}
+
+/* Événements dans timeGrid */
+.fullcalendar-wrapper .fc-timegrid-event {
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  border: none;
+  border-left: 4px solid #EC5849;
+  background-color: #fdecea;
+  color: #333;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.fullcalendar-wrapper .fc-timegrid-event:hover {
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.fullcalendar-wrapper .fc-timegrid-event .fc-event-main {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fullcalendar-wrapper .fc-timegrid-event .fc-event-title {
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.fullcalendar-wrapper .fc-timegrid-event .fc-event-time {
+  font-weight: 400;
+  font-size: 11px;
+  color: #666;
+  opacity: 1;
+}
+
+/* Jour actuel dans timeGrid */
+.fullcalendar-wrapper .fc-timegrid .fc-day-today {
+  background-color: rgba(6, 85, 255, 0.03);
+}
+
+/* Supprimer le trait de séparation de la colonne d'axe */
+.fullcalendar-wrapper .fc-timegrid-axis-frame {
+  border: none;
+}
+
+/* Améliorer la grille */
+.fullcalendar-wrapper .fc-timegrid-body {
+  border-top: 1px solid var(--fc-border-color);
+}
+
+.fullcalendar-wrapper .fc-timegrid-cols {
+  border-left: 1px solid var(--fc-border-color);
+}
+
+/* ====================================
+   Vue TimeGrid Jour (timeGridDay)
+   ==================================== */
+
+/* Masquer le header des jours pour la vue jour (pas besoin d'afficher le jour) */
+.fullcalendar-wrapper .fc-timeGridDay-view .fc-col-header {
+  display: none;
+}
+
+/* Ajustements spécifiques pour la vue jour */
+.fullcalendar-wrapper .fc-timeGridDay-view .fc-timegrid-col {
+  border-right: none;
+}
+
+/* Slots plus grands pour la vue jour */
+.fullcalendar-wrapper .fc-timeGridDay-view .fc-timegrid-slot {
+  height: 70px;
+}
+
+/* Événements dans la vue jour */
+.fullcalendar-wrapper .fc-timeGridDay-view .fc-timegrid-event {
+  border-radius: 4px;
+  padding: 4px 12px;
+}
+
+.fullcalendar-wrapper .fc-timeGridDay-view .fc-timegrid-event .fc-event-title {
+  font-size: 14px;
+}
+
+.fullcalendar-wrapper .fc-timeGridDay-view .fc-timegrid-event .fc-event-time {
+  font-size: 10px;
 }
