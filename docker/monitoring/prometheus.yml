@@ -6,6 +6,12 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
 
+remote_write:
+  - url: ${GRAFANA_CLOUD_URL}
+    basic_auth:
+      username: ${GRAFANA_CLOUD_USER}
+      password: ${GRAFANA_CLOUD_API_KEY}
+
 rule_files:
   # - "first_rules.yml"
   # - "second_rules.yml"
