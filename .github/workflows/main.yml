@@ -51,7 +51,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_backend
           tags: |
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/develop' }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
             type=sha,prefix=
 
       - name: Build and push Backend
@@ -71,7 +71,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_frontend
           tags: |
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/develop' }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
             type=sha,prefix=
 
       - name: Build and push Frontend
@@ -88,7 +88,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build-and-push
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main'
     
     steps:
       - name: Deploy to VPS
@@ -102,7 +102,7 @@ jobs:
             cd ~/apps/ref
             
             # Pull latest code references
-            git pull origin develop
+            git pull origin main
             
             # Pull new images
             docker compose -f docker-compose.prod.yml pull
