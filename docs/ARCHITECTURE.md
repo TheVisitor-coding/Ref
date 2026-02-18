@@ -108,6 +108,11 @@ L'outil Trivy est utilisé pour scanner les images Docker à la recherche de vul
 
 Gitleaks est utilisé pour détecter les secrets (API keys, tokens) qui auraient pu être commit dans le code source. Ainsi on évite de fuiter des credentials sensibles dans le repository. Gitleaks scanne l'historique complet du repository pour détecter les secrets même s'ils ont été supprimés dans des commits ultérieurs.
 
+### Snyk Sécurité des dépendances
+Snyk est utilisé pour scanner les dépendances du projet à la recherche de vulnérabilités connues. Snyk fournit des rapports détaillés sur les vulnérabilités détectées ainsi que des recommandations pour les corriger (mise à jour de version, patch, etc.).
+
+Le point fort de Snyk est qu'il créé automatiquement des pull requests comportant les mises à jour nécessaires pour corriger les vulnérabilités détectées dans les dépendances. Cela permet de maintenir les dépendances à jour et de réduire le risque de vulnérabilités dans le projet facilement.
+
 ## Problématiques rencontrés
 
 ### Récupération des métriques de monitoring
