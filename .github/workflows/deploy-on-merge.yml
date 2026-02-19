@@ -27,6 +27,7 @@ jobs:
 
             - name: Normalize image name
               id: image-name
+              shell: bash
               run: echo "value=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
             - name: Set up Docker Buildx
