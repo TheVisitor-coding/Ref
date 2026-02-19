@@ -26,7 +26,7 @@ describe('Auth Utils', () => {
 
             const result = await verifyToken('valid-token');
             expect(result).toEqual(mockPayload);
-            expect(jwtVerify).toHaveBeenCalledWith('valid-token', expect.any(Uint8Array));
+            expect(jwtVerify).toHaveBeenCalledWith('valid-token', new TextEncoder().encode('test-secret'));
         });
 
         it('should return null if JWT_SECRET is not defined', async () => {
