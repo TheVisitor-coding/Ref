@@ -1,89 +1,314 @@
 {
-  "dashboard": {
-    "id": null,
-    "title": "Stack Overview",
-    "tags": ["strapi", "nextjs", "docker"],
-    "style": "dark",
-    "timezone": "browser",
-    "panels": [
-      {
-        "id": 1,
-        "title": "Services Status",
-        "type": "stat",
-        "targets": [
-          {
-            "expr": "up{job=\"strapi-backend\"}",
-            "legendFormat": "Strapi Backend"
-          },
-          {
-            "expr": "up{job=\"nextjs-frontend\"}",
-            "legendFormat": "Next.js Frontend"
-          },
-          {
-            "expr": "up{job=\"nginx\"}",
-            "legendFormat": "Nginx"
-          }
-        ],
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "thresholds": {
-              "steps": [
-                {"color": "red", "value": 0},
-                {"color": "green", "value": 1}
-              ]
+  "id": null,
+  "uid": "stack-overview",
+  "title": "Stack Overview - MyDigitalStartup",
+  "tags": ["strapi", "nextjs", "docker", "monitoring"],
+  "style": "dark",
+  "timezone": "browser",
+  "editable": true,
+  "schemaVersion": 39,
+  "version": 1,
+  "templating": { "list": [] },
+  "annotations": { "list": [] },
+  "links": [],
+  "panels": [
+    {
+      "id": 1,
+      "title": "🟢 Services Uptime",
+      "description": "Service availability based on HTTP probes",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "probe_success{service=\"strapi-backend\"}",
+          "legendFormat": "Strapi Backend",
+          "refId": "A"
+        },
+        {
+          "expr": "probe_success{service=\"nextjs-frontend\"}",
+          "legendFormat": "Next.js Frontend",
+          "refId": "B"
+        },
+        {
+          "expr": "up{job=\"prometheus\"}",
+          "legendFormat": "Prometheus",
+          "refId": "C"
+        },
+        {
+          "expr": "up{job=\"cadvisor\"}",
+          "legendFormat": "cAdvisor",
+          "refId": "D"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "DOWN", "color": "red", "index": 0 },
+                "1": { "text": "UP", "color": "green", "index": 1 }
+              }
             }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
           }
         },
-        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+        "overrides": []
       },
-      {
-        "id": 2,
-        "title": "HTTP Requests",
-        "type": "graph",
-        "targets": [
-          {
-            "expr": "rate(http_requests_total[5m])",
-            "legendFormat": "{{job}}"
-          }
-        ],
-        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      "options": {
+        "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" },
+        "orientation": "horizontal",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto"
       },
-      {
-        "id": 3,
-        "title": "Response Time",
-        "type": "graph",
-        "targets": [
-          {
-            "expr": "rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])",
-            "legendFormat": "{{job}}"
-          }
-        ],
-        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
-      },
-      {
-        "id": 4,
-        "title": "Error Rate",
-        "type": "graph",
-        "targets": [
-          {
-            "expr": "rate(http_requests_total{status=~\"5..\"}[5m])",
-            "legendFormat": "{{job}} - 5xx errors"
-          },
-          {
-            "expr": "rate(http_requests_total{status=~\"4..\"}[5m])",
-            "legendFormat": "{{job}} - 4xx errors"
-          }
-        ],
-        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
-      }
-    ],
-    "time": {
-      "from": "now-1h",
-      "to": "now"
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 }
     },
-    "refresh": "30s"
-  }
-} 
+    {
+      "id": 7,
+      "title": "⏱️ HTTP Response Time (seconds)",
+      "description": "Probe duration for each service endpoint",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "probe_duration_seconds{service=\"strapi-backend\"}",
+          "legendFormat": "Strapi Backend",
+          "refId": "A"
+        },
+        {
+          "expr": "probe_duration_seconds{service=\"nextjs-frontend\"}",
+          "legendFormat": "Next.js Frontend",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "drawStyle": "line",
+            "showPoints": "never",
+            "spanNulls": true
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "gridPos": { "h": 7, "w": 24, "x": 0, "y": 4 }
+    },
+    {
+      "id": 2,
+      "title": "📊 CPU Usage (%)",
+      "description": "Total CPU usage from cAdvisor",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{id!=\"/\"}[5m]) * 100",
+          "legendFormat": "{{ id }}",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{id=\"/\"}[5m]) * 100",
+          "legendFormat": "Total (host)",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "drawStyle": "line",
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisSoftMin": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 11 }
+    },
+    {
+      "id": 3,
+      "title": "💾 Memory Usage",
+      "description": "Memory consumption from cAdvisor",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{id!=\"/\"} / 1024 / 1024",
+          "legendFormat": "{{ id }}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_usage_bytes{id=\"/\"} / 1024 / 1024",
+          "legendFormat": "Total (host)",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "drawStyle": "line",
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisSoftMin": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 11 }
+    },
+    {
+      "id": 4,
+      "title": "🌐 Network Received (bytes/s)",
+      "description": "Network traffic received",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(container_network_receive_bytes_total[5m])",
+          "legendFormat": "{{ id }} RX",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "drawStyle": "line",
+            "showPoints": "never"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 19 }
+    },
+    {
+      "id": 5,
+      "title": "🌐 Network Transmitted (bytes/s)",
+      "description": "Network traffic transmitted",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(container_network_transmit_bytes_total[5m])",
+          "legendFormat": "{{ id }} TX",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "drawStyle": "line",
+            "showPoints": "never"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 19 }
+    },
+    {
+      "id": 6,
+      "title": "📋 Prometheus Targets",
+      "description": "All Prometheus scrape targets and their status",
+      "type": "table",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "up",
+          "legendFormat": "",
+          "instant": true,
+          "format": "table",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "custom": { "align": "auto" }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Value" },
+            "properties": [
+              { "id": "custom.cellOptions", "value": { "type": "color-background" } },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "0": { "text": "DOWN", "color": "red" },
+                      "1": { "text": "UP", "color": "green" }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "transformations": [
+        { "id": "organize", "options": { "excludeByName": { "Time": true, "__name__": true }, "renameByName": { "job": "Service", "instance": "Instance", "Value": "Status" } } }
+      ],
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 27 }
+    }
+  ],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "refresh": "30s"
+}

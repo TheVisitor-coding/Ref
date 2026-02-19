@@ -192,7 +192,7 @@ export async function generateInvoiceNumber(): Promise<string> {
         return `${year}${month}-001`;
     }
 
-    const [, period, num] = match;
-    const nextNum = String(parseInt(num) + 1).padStart(3, '0');
+    const [, period, num]: [string, string, string] = match;
+    const nextNum = String(Number.parseInt(num) + 1).padStart(3, '0');
     return `${period}-${nextNum}`;
 }
