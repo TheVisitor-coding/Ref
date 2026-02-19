@@ -21,7 +21,7 @@ export default async function CheckEmailPage({ searchParams }: CheckEmailPagePro
                     priority
                 />
                 <div className="text-center">
-                    <p className="text-gray-600">Email manquant. Veuillez recommencer l'inscription.</p>
+                    <p className="text-gray-600">Email manquant. Veuillez recommencer l&apos;inscription.</p>
                 </div>
             </main>
         );

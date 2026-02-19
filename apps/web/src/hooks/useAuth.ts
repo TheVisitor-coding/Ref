@@ -52,7 +52,7 @@ interface UseRegisterOptions {
 
 export function useRegister(options?: UseRegisterOptions) {
     const queryClient = useQueryClient();
-    const { syncFromApi } = useAuthStore();
+    // const { syncFromApi } = useAuthStore();
 
     const mutation = useMutation({
         mutationFn: registerCoach,

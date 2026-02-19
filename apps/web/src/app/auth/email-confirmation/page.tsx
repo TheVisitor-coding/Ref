@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button';
 import { useEmailConfirmation } from '@/hooks/useAuth';
 import Image from 'next/image';
 
-export default function EmailConfirmationPage() {
+import { Suspense } from 'react';
+
+function EmailConfirmationContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const token = searchParams.get('confirmation');
@@ -15,7 +17,7 @@ export default function EmailConfirmationPage() {
     const [errorMessage, setErrorMessage] = useState('');
     const [redirectCountdown, setRedirectCountdown] = useState(3);
 
-    const { confirm, isLoading, error, isSuccess } = useEmailConfirmation(token || '', {
+    const { confirm, isLoading } = useEmailConfirmation(token || '', {
         onSuccess: () => {
             setStatus('success');
             // Countdown visuel avant redirection
@@ -142,7 +144,7 @@ export default function EmailConfirmationPage() {
                                 </p>
                             ) : (
                                 <p>
-                                    Une erreur s'est produite. Veuillez réessayer ou contacter le support.
+                                    Une erreur s&apos;est produite. Veuillez réessayer ou contacter le support.
                                 </p>
                             )}
                         </div>
@@ -168,5 +170,17 @@ export default function EmailConfirmationPage() {
                 )}
             </div>
         </main>
+    );
+}
+
+export default function EmailConfirmationPage() {
+    return (
+        <Suspense fallback={
+            <main className="w-full h-screen p-20 flex items-center justify-center bg-white">
+                <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+            </main>
+        }>
+            <EmailConfirmationContent />
+        </Suspense>
     );
 }

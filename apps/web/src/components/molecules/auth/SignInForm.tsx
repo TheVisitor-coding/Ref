@@ -116,7 +116,7 @@ export default function SignInForm() {
                             Email non confirmé
                         </p>
                         <p className="text-sm text-orange-700">
-                            Votre adresse email n'a pas encore été confirmée. Vérifiez votre boîte mail ou cliquez ci-dessous pour recevoir un nouveau lien.
+                            Votre adresse email n&apos;a pas encore été confirmée. Vérifiez votre boîte mail ou cliquez ci-dessous pour recevoir un nouveau lien.
                         </p>
                     </div>
 
@@ -141,7 +141,7 @@ export default function SignInForm() {
                         ) : (
                             <>
                                 <RefreshCw className="mr-2 h-4 w-4" />
-                                Renvoyer l'email de confirmation
+                                Renvoyer l&apos;email de confirmation
                             </>
                         )}
                     </Button>

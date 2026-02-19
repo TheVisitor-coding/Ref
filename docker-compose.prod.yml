@@ -5,7 +5,7 @@ services:
   # DATABASE SERVICE (PRODUCTION)
   # =============================================================================
   postgres:
-    image: postgres:18.1-bookworm@sha256:5aaff0c455063edde680a623f90caddac9fdbaa3dfcfe10ce6ced50fd0eab9f0
+    image: postgres:17.7-alpine3.23@sha256:ff4ccc02b97e0ebb6b328ef9ff92522f95586f83be6801896b615088defc8ad2
     container_name: ${PROJECT_SLUG}_postgres
     restart: unless-stopped
     environment:
@@ -59,6 +59,15 @@ services:
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
       DATABASE_SSL: false
 
+      # OpenTelemetry
+      NODE_OPTIONS: "--require ./instrumentation.js"
+      OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-strapi-backend}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+      OTEL_EXPORTER_OTLP_HEADERS: ${OTEL_EXPORTER_OTLP_HEADERS}
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+
       # Strapi Configuration
       NODE_ENV: production
       STRAPI_HOST: 0.0.0.0
@@ -74,6 +83,16 @@ services:
       APP_KEYS: ${APP_KEYS}
       TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
       STRAPI_CORS_ORIGIN: ${STRAPI_CORS_ORIGIN}
+
+      # Email Configuration
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_SECURE: ${SMTP_SECURE}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_DEFAULT_FROM: ${SMTP_DEFAULT_FROM}
+      SMTP_DEFAULT_REPLY_TO: ${SMTP_DEFAULT_REPLY_TO}
+      EMAIL_CONFIRMATION_URL: ${EMAIL_CONFIRMATION_URL}
 
       # Timezone
       TZ: ${TIMEZONE:-UTC}
@@ -143,7 +162,7 @@ services:
           memory: 128M
 
   # =============================================================================
-  # MONITORING SERVICES (PRODUCTION)
+  # MONITORING SERVICES (PRODUCTION) - Self-hosted
   # =============================================================================
   prometheus:
     container_name: ${PROJECT_SLUG}_prometheus
@@ -172,7 +191,7 @@ services:
 
   grafana:
     container_name: ${PROJECT_SLUG}_grafana
-    image: grafana/grafana:nightly@sha256:9be5ff7e987b98ff82a02d888412c8bf65da089f98b4c60df67c03a40d6fbed2
+    image: grafana/grafana:12.3@sha256:9e1e77ade304069aee3196e9a4f210830e96e80ce9a2640891eccc324b152faf
     restart: unless-stopped
     ports:
       - "127.0.0.1:${GRAFANA_PORT:-3001}:3000"
@@ -181,16 +200,62 @@ services:
       - ./docker/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
-      GF_USERS_ALLOW_SIGN_UP: false
+      GF_USERS_ALLOW_SIGN_UP: "false"
       GF_SERVER_DOMAIN: ${GRAFANA_DOMAIN:-localhost}
+    depends_on:
+      - prometheus
     networks:
       - app-network
+      - proxy
     deploy:
       resources:
         limits:
           memory: 256M
         reservations:
           memory: 128M
+
+  cadvisor:
+    container_name: ${PROJECT_SLUG}_cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.51.0
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    command:
+      - "--docker_only=true"
+      - "--disable_metrics=disk,udp,tcp,percpu,sched,process,hugetlb"
+    expose:
+      - "8080"
+    networks:
+      - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  blackbox-exporter:
+    container_name: ${PROJECT_SLUG}_blackbox
+    image: prom/blackbox-exporter:v0.25.0
+    restart: unless-stopped
+    volumes:
+      - ./docker/monitoring/blackbox.yml:/config/blackbox.yml:ro
+    command:
+      - "--config.file=/config/blackbox.yml"
+    expose:
+      - "9115"
+    networks:
+      - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+        reservations:
+          memory: 32M
 
   # =============================================================================
   # BACKUP SERVICE (PRODUCTION)
