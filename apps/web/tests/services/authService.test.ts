@@ -1,4 +1,6 @@
 import { loginUser, registerCoach, AuthError } from '@/services/authService';
+import type { OnboardingDataSchemaType } from '@/schema/AuthSchema';
+import { FEATURE_IDS } from '@/data/featuresList';
 
 // Mock global fetch
 global.fetch = jest.fn();
@@ -43,7 +45,12 @@ describe('AuthService', () => {
         const mockRegisterData = {
             email: 'new@example.com',
             password: 'password',
-            onboardingData: {} as any,
+            onboardingData: {
+                firstName: 'Jean',
+                selectedSports: ['football'],
+                athletesCount: 1,
+                selectedFeatures: [FEATURE_IDS[0]],
+            } satisfies OnboardingDataSchemaType,
         };
 
         it('should register successfully', async () => {
@@ -97,9 +104,9 @@ describe('AuthService', () => {
             });
 
             // Mock setTimeout to resolve immediately
-            jest.spyOn(global, 'setTimeout').mockImplementation((fn: any) => {
+            jest.spyOn(global, 'setTimeout').mockImplementation((fn: TimerHandler) => {
                 if (typeof fn === 'function') fn();
-                return {} as any;
+                return 0 as unknown as ReturnType<typeof setTimeout>;
             });
 
             const result = await registerCoach(mockRegisterData);

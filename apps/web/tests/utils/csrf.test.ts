@@ -8,7 +8,10 @@ jest.mock('next/headers', () => ({
 
 describe('CSRF Utils', () => {
     describe('verifyCsrfToken', () => {
-        let mockCookies: any;
+        let mockCookies: {
+            get: jest.Mock;
+            delete: jest.Mock;
+        };
 
         beforeEach(() => {
             // Mock the cookie store

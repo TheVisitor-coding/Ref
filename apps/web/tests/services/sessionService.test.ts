@@ -1,6 +1,7 @@
 import { addSessionForAthlete, fetchSessionsForAthlete } from '@/services/sessionService';
 import { getTokenFromCookie } from '@/actions/auth-actions';
 import { getMeId } from '@/services/userService';
+import type { SessionPayload } from '@/schema/SessionSchema';
 
 jest.mock('@/actions/auth-actions', () => ({
     getTokenFromCookie: jest.fn(),
@@ -26,7 +27,7 @@ describe('sessionService', () => {
             (getTokenFromCookie as jest.Mock).mockResolvedValue('token');
             (getMeId as jest.Mock).mockResolvedValue(10);
 
-            const payload = { name: 'Workout' } as any;
+            const payload = { name: 'Workout' } as SessionPayload;
             const mockResponseData = { documentId: 'doc1', ...payload };
 
             (global.fetch as jest.Mock).mockResolvedValueOnce({

@@ -11,7 +11,7 @@ describe('diffChanges Utils', () => {
 
         it('should handle missing keys gracefully (returns undefined for them)', () => {
             const obj = { a: 1 };
-            // @ts-ignore
+            // @ts-expect-error testing key not present in source object
             const result = pick(obj, ['a', 'b']);
             expect(result).toEqual({ a: 1, b: undefined });
         });
@@ -48,7 +48,7 @@ describe('diffChanges Utils', () => {
         it('should detect change from value to null', () => {
             const before = { a: 1 };
             const after = { a: null };
-            // @ts-ignore
+            // @ts-expect-error testing type transition to null
             const result = diffChanges(before, after, ['a']);
 
             expect(result.old_values).toEqual({ a: 1 });

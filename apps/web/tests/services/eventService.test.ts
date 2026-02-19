@@ -1,6 +1,7 @@
 import { fetchCoachEvents, createCoachEvent, deleteCoachEvent } from '@/services/eventService';
 import { getTokenFromCookie } from '@/actions/auth-actions';
 import { getMeId } from '@/services/userService';
+import type { EventPayload } from '@/schema/EventSchema';
 
 jest.mock('@/actions/auth-actions', () => ({
     getTokenFromCookie: jest.fn(),
@@ -39,7 +40,7 @@ describe('eventService', () => {
             (getTokenFromCookie as jest.Mock).mockResolvedValue('token');
             (getMeId as jest.Mock).mockResolvedValue(10);
 
-            const payload = { title: 'New Event', start: '2024-01-01' } as any;
+            const payload = { title: 'New Event', start: '2024-01-01' } as unknown as EventPayload;
             const mockCreated = { id: 2, ...payload };
 
             (global.fetch as jest.Mock).mockResolvedValueOnce({

@@ -9,11 +9,11 @@ describe('Validation Utils', () => {
         });
 
         it('should return false for invalid types (null, undefined, number)', () => {
-            // @ts-ignore
+            // @ts-expect-error testing invalid runtime input type
             expect(isValidFirstName(null)).toBe(false);
-            // @ts-ignore
+            // @ts-expect-error testing invalid runtime input type
             expect(isValidFirstName(undefined)).toBe(false);
-            // @ts-ignore
+            // @ts-expect-error testing invalid runtime input type
             expect(isValidFirstName(123)).toBe(false);
         });
 

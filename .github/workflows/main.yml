@@ -64,7 +64,7 @@ jobs:
 
       - name: Linting
         working-directory: apps/web
-        run: npx next lint
+        run: npm run lint
 
       - name: Unit Tests with Coverage
         working-directory: apps/web
