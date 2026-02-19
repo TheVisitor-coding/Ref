@@ -50,13 +50,13 @@ services:
       - strapi_uploads:/app/public/uploads
     environment:
       # Database Configuration
-      DATABASE_CLIENT: ${DATABASE_CLIENT:-postgres}
-      DATABASE_NAME: ${DATABASE_NAME:-strapidb}
-      DATABASE_HOST: ${DATABASE_HOST:-postgres}
-      DATABASE_PORT: ${DATABASE_PORT:-5432}
-      DATABASE_USERNAME: ${DATABASE_USERNAME:-strapi}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-strapi}
-      DATABASE_SSL: ${DATABASE_SSL:-false}
+      DATABASE_CLIENT: postgres
+      DATABASE_NAME: ${POSTGRES_DB:-strapidb}
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: ${POSTGRES_USER:-strapi}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-strapi}
+      DATABASE_SSL: false
 
       # Strapi Configuration
       NODE_ENV: ${NODE_ENV:-development}
@@ -138,33 +138,6 @@ services:
       start_period: 40s
 
   # =============================================================================
-  # REVERSE PROXY (NGINX) - COMMENTÉ POUR LE DÉVELOPPEMENT
-  # =============================================================================
-  # nginx:
-  #   container_name: ${PROJECT_SLUG}_nginx
-  #   restart: unless-stopped
-  #   build:
-  #     context: ./docker/nginx
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "${NGINX_PORT_EXTERNAL:-80}:80"
-  #     - "${NGINX_SSL_PORT_EXTERNAL:-443}:443"
-  #   volumes:
-  #     - ./docker/nginx/ssl:/etc/nginx/ssl:ro
-  #     - nginx_logs:/var/log/nginx
-  #   depends_on:
-  #     - frontend
-  #     - backend
-  #   networks:
-  #     - app-network
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #     start_period: 40s
-
-  # =============================================================================
   # MONITORING SERVICES (OPTIONAL)
   # =============================================================================
   prometheus:
@@ -190,7 +163,7 @@ services:
 
   grafana:
     container_name: ${PROJECT_SLUG}_grafana
-    image: grafana/grafana:nightly
+    image: grafana/grafana:12.3@sha256:9e1e77ade304069aee3196e9a4f210830e96e80ce9a2640891eccc324b152faf
     restart: unless-stopped
     ports:
       - "${GRAFANA_PORT:-3001}:3000"
@@ -199,7 +172,44 @@ services:
       - ./docker/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
     environment:
       GF_SECURITY_ADMIN_PASSWORD: admin
-      GF_USERS_ALLOW_SIGN_UP: false
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    depends_on:
+      - prometheus
+    networks:
+      - app-network
+    profiles:
+      - monitoring
+
+  cadvisor:
+    container_name: ${PROJECT_SLUG}_cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.51.0
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    command:
+      - "--docker_only=true"
+      - "--disable_metrics=disk,udp,tcp,percpu,sched,process,hugetlb"
+    expose:
+      - "8080"
+    networks:
+      - app-network
+    profiles:
+      - monitoring
+
+  blackbox-exporter:
+    container_name: ${PROJECT_SLUG}_blackbox
+    image: prom/blackbox-exporter:v0.25.0
+    restart: unless-stopped
+    volumes:
+      - ./docker/monitoring/blackbox.yml:/config/blackbox.yml:ro
+    command:
+      - "--config.file=/config/blackbox.yml"
+    expose:
+      - "9115"
     networks:
       - app-network
     profiles:

@@ -1,13 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEmailConfirmation } from '@/hooks/useAuth';
 import Image from 'next/image';
-
-import { Suspense } from 'react';
 
 function EmailConfirmationContent() {
     const searchParams = useSearchParams();

@@ -1,5 +1,4 @@
 import z from "zod";
-// import type { EventColor, EventType, RecurrenceType } from "@/types/CoachEvent";
 import { formatDateToISO, formatTimeForStrapi } from "@/utils/date";
 
 export const EventFormSchema = z.object({
@@ -56,9 +55,9 @@ export type EventForm = z.infer<typeof EventFormSchema>;
 export type EventPayload = z.infer<typeof EventPayloadSchema>;
 
 export function transformEventFormToPayload(form: EventForm): EventPayload {
-    const recurrenceData = form.recurrence !== 'none'
-        ? { type: form.recurrence }
-        : null;
+    const recurrenceData = form.recurrence === 'none'
+        ? null
+        : { type: form.recurrence };
 
     return {
         title: form.title,

@@ -45,7 +45,7 @@ export async function addSessionForAthlete(
     const result = await res.json();
 
     try {
-        addLogAction({
+        await addLogAction({
             userId: coachId,
             affectedUserId: athleteId,
             tableName: 'sessions',
