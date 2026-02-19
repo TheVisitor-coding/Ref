@@ -8,7 +8,7 @@ interface AnimatedRoleTextProps {
     className?: string;
 }
 
-export default function AnimatedRoleText({ roles, className = '' }: AnimatedRoleTextProps) {
+export default function AnimatedRoleText({ roles, className = '' }: Readonly<AnimatedRoleTextProps>) {
     const containerRef = useRef<HTMLSpanElement>(null);
     const activeIndex = useRef(0);
 
@@ -75,7 +75,7 @@ export default function AnimatedRoleText({ roles, className = '' }: AnimatedRole
                     {role.split('').map((char, j) => (
                         <span
                             key={j}
-                            className={`letter inline-block ${i !== 0 ? 'translate-y-full' : ''}`}
+                            className={`letter inline-block ${i === 0 ? '' : 'translate-y-full'}`}
                         >
                             {char === ' ' ? '\u00A0' : char}
                         </span>

@@ -52,7 +52,6 @@ interface UseRegisterOptions {
 
 export function useRegister(options?: UseRegisterOptions) {
     const queryClient = useQueryClient();
-    // const { syncFromApi } = useAuthStore();
 
     const mutation = useMutation({
         mutationFn: registerCoach,
@@ -206,7 +205,7 @@ export function useResendConfirmation(options?: UseResendConfirmationOptions) {
     const mutation = useMutation({
         mutationFn: async (email: string) => {
             // Validate email format before sending
-            if (!email || !email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            if (!email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                 throw new Error('Adresse email invalide');
             }
 
@@ -242,4 +241,4 @@ export function useResendConfirmation(options?: UseResendConfirmationOptions) {
     };
 }
 
-export type { RegisterRequest, LoginRequest };
+export { type LoginRequest, type RegisterRequest } from '@/services/authService';

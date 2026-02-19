@@ -1,11 +1,11 @@
 import '@testing-library/jest-dom';
-import { TextEncoder, TextDecoder } from 'util';
+import { TextEncoder, TextDecoder } from 'node:util';
 
-Object.assign(global, { TextEncoder, TextDecoder });
+Object.assign(globalThis, { TextEncoder, TextDecoder });
 
-if (typeof global.Request === 'undefined') {
-    global.Headers = class Headers {
-        private map = new Map<string, string>();
+if (globalThis.Request === undefined) {
+    globalThis.Headers = class Headers {
+        private readonly map = new Map<string, string>();
         constructor(init?: any) {
             if (init) {
                 if (typeof init.forEach === 'function') {
@@ -24,7 +24,7 @@ if (typeof global.Request === 'undefined') {
         forEach(callback: (value: string, key: string) => void) { this.map.forEach(callback); }
     } as any;
 
-    global.Request = class Request {
+    globalThis.Request = class Request {
         url: string;
         headers: Headers;
         constructor(input: string | Request, init?: any) {

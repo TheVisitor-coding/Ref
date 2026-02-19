@@ -131,7 +131,7 @@ export function validatePassword(password: string): ValidationError | null {
         };
     }
 
-    if (PASSWORD_RULES.requireNumber && !/[0-9]/.test(password)) {
+    if (PASSWORD_RULES.requireNumber && !/\d/.test(password)) {
         return {
             field: 'password',
             message: 'Password must contain at least one number',

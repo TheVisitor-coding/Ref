@@ -55,7 +55,7 @@ module.exports = {
       },
     });
 
-    if (!user || !user.password) {
+    if (!user?.password) {
       throw new ValidationError('Invalid identifier or password');
     }
 
