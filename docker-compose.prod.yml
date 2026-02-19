@@ -162,7 +162,7 @@ services:
           memory: 128M
 
   # =============================================================================
-  # MONITORING SERVICES (PRODUCTION)
+  # MONITORING SERVICES (PRODUCTION) - Self-hosted
   # =============================================================================
   prometheus:
     container_name: ${PROJECT_SLUG}_prometheus
@@ -171,49 +171,15 @@ services:
     ports:
       - "127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"
     volumes:
-      - ./docker/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml.template:ro
+      - ./docker/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
-    environment:
-      - GRAFANA_CLOUD_URL=${GRAFANA_CLOUD_URL}
-      - GRAFANA_CLOUD_USER=${GRAFANA_CLOUD_USER}
-      - GRAFANA_CLOUD_API_KEY=${GRAFANA_CLOUD_API_KEY}
-    entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        # Check if Grafana Cloud variables are set
-        if [ -z "$GRAFANA_CLOUD_URL" ] || [ -z "$GRAFANA_CLOUD_USER" ] || [ -z "$GRAFANA_CLOUD_API_KEY" ]; then
-          echo "Warning: One or more Grafana Cloud environment variables are missing."
-          echo "Prometheus will start without remote_write configuration."
-          # Create a config file without remote_write or use template as is if it doesn't have placeholders yet
-          # For now, we will just copy the template but the user needs to be aware
-          cp /etc/prometheus/prometheus.yml.template /etc/prometheus/prometheus.yml
-        else
-          # Substitute environment variables in the template
-          # We need to install gettext for envsubst if it's not in the image, but prom/prometheus uses busybox/alpine usually
-          # The official image might not have envsubst. Let's use sed for safely if envsubst is missing or difficult.
-          # Actually, the official prom/prometheus image is SCRATCH based or very minimal (Busybox).
-          # It DOES NOT have shell or envsubst usually in the scratch one, but the user is using `prom/prometheus:v3.9.1` which is based on busybox/alpine presumably?
-          # Wait, the official image `prom/prometheus` is typically based on Quay.io/prometheus/busybox.
-          # Let's check if we can run shell. Yes checking line 25 of original file for healthcheck of POSTGRES... wait.
-          # The PROMETHEUS service doesn't have a healthcheck in the file I read.
-          # Let's assume we can run sh.
-          
-          # Using sed to replace placeholders
-          sed -e "s|\${GRAFANA_CLOUD_URL}|$GRAFANA_CLOUD_URL|g" \
-              -e "s|\${GRAFANA_CLOUD_USER}|$GRAFANA_CLOUD_USER|g" \
-              -e "s|\${GRAFANA_CLOUD_API_KEY}|$GRAFANA_CLOUD_API_KEY|g" \
-              /etc/prometheus/prometheus.yml.template > /etc/prometheus/prometheus.yml
-        fi
-        
-        # Start Prometheus with the generated config
-        exec /bin/prometheus \
-          --config.file=/etc/prometheus/prometheus.yml \
-          --storage.tsdb.path=/prometheus \
-          --web.console.libraries=/etc/prometheus/console_libraries \
-          --web.console.templates=/etc/prometheus/consoles \
-          --storage.tsdb.retention.time=200h \
-          --web.enable-lifecycle
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--storage.tsdb.retention.time=200h"
+      - "--web.enable-lifecycle"
     networks:
       - app-network
     deploy:
@@ -223,27 +189,73 @@ services:
         reservations:
           memory: 128M
 
-  # grafana:
-  #   container_name: ${PROJECT_SLUG}_grafana
-  #   image: grafana/grafana:nightly@sha256:9be5ff7e987b98ff82a02d888412c8bf65da089f98b4c60df67c03a40d6fbed2
-  #   restart: unless-stopped
-  #   ports:
-  #     - "127.0.0.1:${GRAFANA_PORT:-3001}:3000"
-  #   volumes:
-  #     - grafana_data:/var/lib/grafana
-  #     - ./docker/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
-  #   environment:
-  #     GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
-  #     GF_USERS_ALLOW_SIGN_UP: false
-  #     GF_SERVER_DOMAIN: ${GRAFANA_DOMAIN:-localhost}
-  #   networks:
-  #     - app-network
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         memory: 256M
-  #       reservations:
-  #         memory: 128M
+  grafana:
+    container_name: ${PROJECT_SLUG}_grafana
+    image: grafana/grafana:12.3@sha256:9e1e77ade304069aee3196e9a4f210830e96e80ce9a2640891eccc324b152faf
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-3001}:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_DOMAIN: ${GRAFANA_DOMAIN:-localhost}
+    depends_on:
+      - prometheus
+    networks:
+      - app-network
+      - proxy
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+
+  cadvisor:
+    container_name: ${PROJECT_SLUG}_cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.51.0
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    command:
+      - "--docker_only=true"
+      - "--disable_metrics=disk,udp,tcp,percpu,sched,process,hugetlb"
+    expose:
+      - "8080"
+    networks:
+      - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  blackbox-exporter:
+    container_name: ${PROJECT_SLUG}_blackbox
+    image: prom/blackbox-exporter:v0.25.0
+    restart: unless-stopped
+    volumes:
+      - ./docker/monitoring/blackbox.yml:/config/blackbox.yml:ro
+    command:
+      - "--config.file=/config/blackbox.yml"
+    expose:
+      - "9115"
+    networks:
+      - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+        reservations:
+          memory: 32M
 
   # =============================================================================
   # BACKUP SERVICE (PRODUCTION)
