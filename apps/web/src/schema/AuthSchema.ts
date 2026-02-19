@@ -57,9 +57,8 @@ export type EmailConfirmationSchemaType = z.infer<typeof emailConfirmationSchema
 
 export const resendConfirmationSchema = z.object({
     email: z
-        .string()
+        .email()
         .min(1, "L'email est requis")
-        .email('Adresse e-mail invalide'),
 });
 
 export type ResendConfirmationSchemaType = z.infer<typeof resendConfirmationSchema>;

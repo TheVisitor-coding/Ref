@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import useAuthStore from '@/store/AuthStore';
-import { signupSchema, loginSchema } from '@/schema/AuthSchema';
+import { signupSchema, loginSchema, resendConfirmationSchema } from '@/schema/AuthSchema';
 import {
     registerCoach,
     loginUser,
@@ -204,17 +204,16 @@ interface UseResendConfirmationOptions {
 export function useResendConfirmation(options?: UseResendConfirmationOptions) {
     const mutation = useMutation({
         mutationFn: async (email: string) => {
-            // Validate email format before sending
-            if (!email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                throw new Error('Adresse email invalide');
-            }
+            const normalizedEmail = email.trim().toLowerCase();
+            const validation = resendConfirmationSchema.safeParse({ email: normalizedEmail });
+            if (!validation.success) throw new Error(validation.error.issues[0]?.message || 'Adresse email invalide');
 
             const response = await fetch('/api/auth/resend-confirmation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email: email.trim().toLowerCase() }),
+                body: JSON.stringify({ email: normalizedEmail }),
             });
 
             const data = await response.json();
