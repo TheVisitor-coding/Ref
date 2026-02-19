@@ -91,7 +91,10 @@ docker-compose down -v && docker-compose up -d
 
 ### Pipeline Overview
 
-Le pipeline CI/CD s'exécute automatiquement sur chaque **pull request** vers la branche `main` :
+Le pipeline CI/CD est séparé en **2 workflows GitHub Actions** pour gagner en lisibilité :
+
+1. **Pull Request Analysis** : exécuté sur chaque PR vers `main` (opened, synchronize, reopened, ready_for_review)
+2. **Build & Deploy** : exécuté uniquement à la fermeture d'une PR **mergée** vers `main`
 
 | Étape | Outil | Description |
 |-------|-------|-------------|
@@ -100,9 +103,21 @@ Le pipeline CI/CD s'exécute automatiquement sur chaque **pull request** vers la
 | **Tests** | Jest | Tests unitaires avec rapport de couverture |
 | **SCA** | npm audit | Scan des dépendances pour vulnérabilités connues |
 | **Secrets** | Gitleaks | Détection de secrets commités (API keys, tokens) |
-| **Build** | Docker | Build multi-stage des images (backend + frontend) |
-| **Container Scan** | Trivy | Scan de vulnérabilités dans les images Docker |
-| **Deploy** | SSH | Déploiement automatique sur le VPS (uniquement sur push main) |
+| **Build** | Docker | Build multi-stage des images (backend + frontend) après merge PR |
+| **Container Scan** | Trivy | Scan de vulnérabilités dans les images Docker avant déploiement |
+| **Deploy** | SSH | Déploiement automatique sur le VPS uniquement après merge PR vers `main` |
+
+### Artefacts générés par le pipeline
+
+En plus du statut des jobs, la CI produit plusieurs artefacts exploitables pour l'analyse et les preuves d'évaluation :
+
+| Artefact | Job source | Contenu | Utilité |
+|----------|------------|---------|---------|
+| `frontend-coverage` | `lint-and-test` | `apps/web/coverage/lcov.info` | Mesurer la couverture de tests et alimenter SonarQube |
+| `npm-audit-reports` | `security-scans` | `apps/web/audit-frontend.txt` + `apps/api/audit-backend.txt` | Conserver la preuve SCA frontend/backend à chaque exécution |
+| Résultat Gitleaks | `security-scans` | Logs du step `Secret Detection - Gitleaks` (statut bloquant) | Vérifier qu'aucun secret (token, clé API) n'est introduit dans le repo |
+
+Ces artefacts permettent de fournir un rapport des analyses de sécurité facilitant le suivi ainsi que le debug en cas d'échec de la CI.
 
 ### Stratégie de branches
 
@@ -236,7 +251,8 @@ docker compose exec postgres psql -U strapi -d strapidb < docker/backup/backup_Y
 ```
 Ref/
 ├── .github/workflows/
-│   └── main.yml                # Pipeline CI/CD
+│   ├── main.yml                # Pull Request Analysis (qualité + sécurité)
+│   └── deploy-on-merge.yml     # Build images + déploiement post-merge
 ├── apps/
 │   ├── api/                    # Strapi 5 (Backend)
 │   └── web/                    # Next.js 14 (Frontend)

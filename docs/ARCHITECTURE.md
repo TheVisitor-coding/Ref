@@ -34,38 +34,52 @@ Application web full-stack composée d'un CMS headless (Strapi), d'un frontend R
 
 ## Pipeline CI/CD
 
+Le pipeline est volontairement séparé en deux workflows pour garder des responsabilités claires :
+
+- `main.yml` : **Pull Request Analysis** (qualité + sécurité sur PR vers `main`)
+- `deploy-on-merge.yml` : **Build & Deploy** (uniquement quand la PR est mergée vers `main`, ou déclenchement manuel)
+
 ```mermaid
 flowchart LR
-    A["Push / PR<br>sur main"] --> B["SAST<br>SonarQube"]
+    A["PR vers main<br>opened/sync/reopened"] --> B["SAST<br>SonarQube"]
     A --> C["Lint & Test<br>Next.js"]
     A --> D["Security Scans<br>SCA + Gitleaks"]
-    
-    C --> E["Build & Push<br>Docker Images"]
-    D --> E
-    
-    E --> F["Trivy<br>Container Scan"]
-    F --> G["Deploy SSH<br>VPS Infomaniak"]
-    
-    B -.-> |informatif| E
+
+    E["PR mergée vers main<br>event closed + merged"] --> F["Build & Push<br>Docker Images"]
+    F --> G["Trivy<br>Container Scan"]
+    G --> H["Deploy SSH<br>VPS Infomaniak"]
     
     style A fill:#4CAF50,color:#fff
+    style E fill:#4CAF50,color:#fff
     style B fill:#FF9800,color:#fff
     style C fill:#2196F3,color:#fff
     style D fill:#f44336,color:#fff
-    style E fill:#9C27B0,color:#fff
-    style F fill:#f44336,color:#fff
-    style G fill:#4CAF50,color:#fff
+    style F fill:#9C27B0,color:#fff
+    style G fill:#f44336,color:#fff
+    style H fill:#4CAF50,color:#fff
 ```
 
 ### Détail des jobs CI/CD
 
 | Job | Outils | Rôle | Bloquant ? |
 |-----|--------|------|------------|
-| `analyze` | SonarQube | SAST — analyse statique du code | Non (informatif) |
+| `analyze` | SonarQube | SAST — analyse statique du code (workflow PR) | Non (informatif) |
 | `lint-and-test` | ESLint, Jest | Linting + Tests unitaires avec couverture | ✅ Oui |
-| `security-scans` | npm audit, Gitleaks | SCA dépendances + détection de secrets | ✅ Oui |
-| `build-and-push` | Docker, Trivy | Build multi-stage + push GHCR + scan conteneur | ✅ Oui |
-| `deploy` | SSH | Déploiement automatique sur VPS | Uniquement sur push main |
+| `security-scans` | npm audit, Gitleaks | SCA dépendances + détection de secrets (workflow PR) | ✅ Oui |
+| `build-and-push` | Docker, Trivy | Build multi-stage + push GHCR + scan conteneur (post-merge) | ✅ Oui |
+| `deploy` | SSH | Déploiement automatique sur VPS (post-merge) | Uniquement sur PR mergée vers `main` |
+
+### Artefacts de pipeline (preuves techniques)
+
+Pour conserver une traçabilité claire de chaque exécution, le pipeline produit les artefacts suivants :
+
+| Artefact | Généré par | Contenu | Usage |
+|----------|------------|---------|-------|
+| `frontend-coverage` | `lint-and-test` | Rapport `lcov.info` du frontend | Qualité de tests + alimentation SonarQube |
+| `npm-audit-reports` | `security-scans` | Rapports audit frontend/backend (`.txt`) | Preuve SCA et suivi des dépendances vulnérables |
+| Résultat Gitleaks | `security-scans` | Sortie du step `Secret Detection - Gitleaks` | Validation qu'aucun secret n'est commité |
+
+Ces artéfacts, au-delà du "pipeline vert", permettent de conserver les preuves vérifiables de qualité et de sécurité.
 
 ## Choix Technologiques
 
@@ -130,7 +144,8 @@ Le point fort de Snyk est qu'il créé automatiquement des pull requests comport
 ```
 Ref/
 ├── .github/workflows/
-│   └── main.yml              # Pipeline CI/CD complet
+│   ├── main.yml              # Pull Request Analysis (qualité + sécurité)
+│   └── deploy-on-merge.yml   # Build images + déploiement post-merge
 ├── apps/
 │   ├── api/                   # Strapi 5 (Backend CMS)
 │   └── web/                   # Next.js 14 (Frontend React)

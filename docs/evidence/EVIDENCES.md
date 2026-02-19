@@ -4,15 +4,27 @@ Ce dossier contient les captures d'écran suivantes pour la validation de l'éva
 
 | Fichier | Description |
 |---------|-------------|
-| `ci-pipeline-success.png` | Capture du pipeline CI/CD complet passé au vert sur GitHub Actions |
-| `security-scan-report.png` | Capture d'un rapport de scan de sécurité (Trivy, SonarQube ou npm audit) |
-| `app-https.png` | Capture de l'application accessible en HTTPS avec certificat SSL valide |
-| `monitoring-dashboard.png` | Capture du dashboard Grafana Cloud avec métriques (uptime, CPU/RAM) |
+| app-https.png | Capture de l'application accessible en HTTPS |
+| workflow-pull-request.png | Capture du workflow GitHub Actions pour l'analyse de Pull Request |
+| workflow-build-deploy.png | Capture du workflow GitHub Actions pour le Build & Deploy |
+| artefacts.png | Capture des artéfacts générés par le pipeline CI/CD |
+| monitoring-dashboard.png | Capture du dashboard de monitoring (Grafana) |
+| prometheus-scraping.png | Capture de Prometheus montrant les services scrapés |
 
 
 ## Application Accessible en HTTPS
 
 ![app-https.png](./app-https.png)
+
+## Validation du Pipeline CI/CD
+- **Pull Request Analysis** :
+![workflow-pull-request](./workflow-pull-request.png)
+
+- **Build & Deploy** :
+![workflow-build-deploy](./workflow-build-deploy.png)
+
+## Artéfacts CI/CD
+![artefacts.png](./artefacts.png)
 
 ## Monitoring Dashboard
 
@@ -22,4 +34,4 @@ Ce dossier contient les captures d'écran suivantes pour la validation de l'éva
 
 - **Prometheus** :
 
-![prometheus-scrape.png](./prometheus-scraping.png)
+![prometheus-scraping.png](./prometheus-scraping.png)
