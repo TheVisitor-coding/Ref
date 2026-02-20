@@ -3,7 +3,7 @@
 # =============================================================================
 
 # Build stage
-FROM node:lts-alpine3.23@sha256:931d7d57f8c1fd0e2179dbff7cc7da4c9dd100998bc2b32afc85142d8efbc213 AS builder
+FROM node:24-alpine3.23 AS builder
 
 # Set working directory
 WORKDIR /app
@@ -30,7 +30,7 @@ COPY apps/web/ .
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine AS production
+FROM node:24-alpine3.23 AS production
 
 # Set working directory
 WORKDIR /app
