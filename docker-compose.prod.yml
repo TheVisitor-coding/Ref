@@ -202,6 +202,7 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
       GF_USERS_ALLOW_SIGN_UP: "false"
       GF_SERVER_DOMAIN: ${GRAFANA_DOMAIN:-localhost}
+      GF_PLUGINS_PREINSTALL: ""
     depends_on:
       - prometheus
     networks:
