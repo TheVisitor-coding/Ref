@@ -16,6 +16,15 @@ Ce dossier contient les captures d'écran suivantes pour la validation de l'éva
 
 ![app-https.png](./app-https.png)
 
+## Sécurité de la branche main
+
+Protection de la branche `main` avec les règles suivantes :
+- Requiert au moins 1 approbation de code review
+- Requiert le passage réussi du pipeline CI/CD avant tout merge
+- Branche en readonly interdisant les pushs sur `main` sans PR
+
+![branch-security.png](./branch-security.png)
+
 ## Validation du Pipeline CI/CD
 - **Pull Request Analysis** :
 ![workflow-pull-request](./workflow-pull-request.png)
