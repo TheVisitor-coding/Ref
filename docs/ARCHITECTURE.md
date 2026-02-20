@@ -6,31 +6,7 @@ Application web full-stack composée d'un CMS headless (Strapi), d'un frontend R
 
 ## Schéma d'Infrastructure
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                        VPS Infomaniak                            │
-│                                                                  │
-│  ┌─────────────────┐                                             │
-│  │  Nginx Proxy    │ ◄── HTTPS (Let's Encrypt)                   │
-│  │  Manager        │                                             │
-│  └────────┬────────┘                                             │
-│           │                                                      │
-│  ┌────────▼────────────────────────────────────────────────────┐  │
-│  │              Docker Network (app-network)                   │  │
-│  │                                                             │  │
-│  │  ┌──────────────┐   ┌──────────────┐   ┌───────────────┐   │  │
-│  │  │  Next.js 14   │   │  Strapi 5    │   │  PostgreSQL   │   │  │
-│  │  │  (Frontend)   │──►│  (Backend)   │──►│  17-Alpine    │   │  │
-│  │  │  :3000        │   │  :1337       │   │  :5432        │   │  │
-│  │  └──────────────┘   └──────────────┘   └───────────────┘   │  │
-│  │                                                             │  │
-│  │  ┌──────────────┐             ┌────────────────────────┐    │  │
-│  │  │  Prometheus   │────────────►│  Grafana Cloud         │    │  │
-│  │  │  :9090        │               (Dashboard externe)   │    │  │
-│  │  └──────────────┘             └────────────────────────┘    │  │
-│  └─────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────┘
-```
+![architecture.png](./evidence/architecture.png)
 
 ## Pipeline CI/CD
 
@@ -38,26 +14,6 @@ Le pipeline est volontairement séparé en deux workflows pour garder des respon
 
 - `main.yml` : **Pull Request Analysis** (qualité + sécurité sur PR vers `main`)
 - `deploy-on-merge.yml` : **Build & Deploy** (uniquement quand la PR est mergée vers `main`, ou déclenchement manuel)
-
-```mermaid
-flowchart LR
-    A["PR vers main<br>opened/sync/reopened"] --> B["SAST<br>SonarQube"]
-    A --> C["Lint & Test<br>Next.js"]
-    A --> D["Security Scans<br>SCA + Gitleaks"]
-
-    E["PR mergée vers main<br>event closed + merged"] --> F["Build & Push<br>Docker Images"]
-    F --> G["Trivy<br>Container Scan"]
-    G --> H["Deploy SSH<br>VPS Infomaniak"]
-    
-    style A fill:#4CAF50,color:#fff
-    style E fill:#4CAF50,color:#fff
-    style B fill:#FF9800,color:#fff
-    style C fill:#2196F3,color:#fff
-    style D fill:#f44336,color:#fff
-    style F fill:#9C27B0,color:#fff
-    style G fill:#f44336,color:#fff
-    style H fill:#4CAF50,color:#fff
-```
 
 ### Détail des jobs CI/CD
 
